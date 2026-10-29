@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="script-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>AI Prediction Lab · Repka</title>
+  <meta name="description" content="Four AI models make dated market calls. Every call is logged in a public ledger before anyone sees it, misses included.">
+  <meta property="og:site_name" content="Repka">
+  <meta property="og:title" content="AI Prediction Lab · Repka">
+  <meta property="og:description" content="Four AI models make dated market calls. Every call is logged in a public ledger before anyone sees it, misses included.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="turnip.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <img src="turnip.svg" alt="" width="28" height="28">
+        <span>Repka<small>AI Prediction Lab</small></span>
+      </a>
+      <nav aria-label="Site">
+        <a href="index.html" aria-current="page">Forecasts</a>
+        <a href="ledger.html">Ledger</a>
+        <a href="index.html#articles">Articles</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+<section class="hero">
+  <h1>Four AI models make market calls. Every call is logged before anyone sees it.</h1>
+  <p class="lede">ChatGPT, Claude, Gemini and Grok each call whether gold, silver, the S&amp;P 500 and the NASDAQ end higher, lower or about flat by a set date. The call goes into a public ledger first; only then does a video or post about it go out. Misses stay on the record next to the hits.</p>
+</section>
+
+<section class="host">
+  <img src="turnip.svg" alt="" width="56" height="56">
+  <div>
+    <h2>Who is Repka?</h2>
+    <p>Repka is the grandpa who hosts the videos: an animated AI character, not a real person. The name is Russian for &ldquo;little turnip&rdquo;, from the folk tale known in English as <i>The Enormous Turnip</i>.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Scoreboard</h2>
+  <div class="table-wrap">
+  <table class="scoreboard">
+    <thead><tr><th scope="col">Model</th><th scope="col" class="num">Forecasts</th><th scope="col" class="num">Checked</th><th scope="col" class="num">Pending</th><th scope="col" class="num">Hits</th><th scope="col" class="num">Misses</th><th scope="col" class="num">Hit rate</th><th scope="col" class="num">Avg. confidence</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">ChatGPT</th><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td class="num">—</td></tr>
+      <tr><th scope="row">Claude</th><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td class="num">—</td></tr>
+      <tr><th scope="row">Gemini</th><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td class="num">—</td></tr>
+      <tr><th scope="row">Grok</th><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td class="num">—</td></tr>
+    </tbody>
+  </table>
+</div>
+  <p class="note">Hit rate is the share of checked calls that came true. Average confidence is how sure the model said it was on those same calls. The gap between the two shows how well a model knows its own limits.</p>
+  <p><a href="ledger.html">Every call, with reasoning and prices</a> · <a href="data/ledger.json">Raw data (JSON)</a></p>
+</section>
+
+<section id="articles">
+  <h2>Articles</h2>
+  <p class="empty">No articles yet.</p>
+</section>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p><strong>This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.</strong></p>
+      <p>The host is an animated AI character, not a real person.</p>
+      <p>The full record is public: <a href="data/ledger.json">ledger.json</a>.</p>
+    </div>
+  </footer>
+</body>
+</html>

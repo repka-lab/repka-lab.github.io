@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 2: at the computer</title>
+  <!--
+    Episode scene 2: Grandpa sits down at the computer.
+    The camera then zooms into #screen, which becomes scene 3 (monitor.svg).
+
+    Character slot: translate(176 125) scale(1), sitting, hands on the keyboard.
+      head rotate(4 80 80)              eyes translate(3 -1)
+      arm-left rotate(-29 59 100)       arm-left-forearm rotate(-95.5 54 129)
+      arm-right rotate(-33.5 101 100)   arm-right-forearm rotate(-49.4 106 129)
+      leg-left rotate(-90 72 152)       leg-left-shin rotate(90 72 184)
+      leg-right rotate(-90 88 152)      leg-right-shin rotate(90 88 184)
+      chalk display=none; side shoes shown pointing right, front shoes hidden
+      Seen in profile (Rig.SEATED adds this): the hips draw in by 8 and the shoulders by 21, so legs
+      and arms hang from x 80, and the side torso replaces the front one.
+    Same scale as the board scene: the thighs rest on the seat at y 286.5, the soles land at y 314.5
+    and the hands at y 243.5 and x 290 / 302, just above the keyboard. The knees and toes stay left
+    of the front desk leg at x 322.
+
+    Palette: navy room, orange wood, green chair. Classes carry a d- prefix, because the
+    episode puts every scene in one document; "steam" stays bare, episode.js looks it up.
+  -->
+  <style>
+    .d-out { stroke: #0d1828; stroke-width: 2; stroke-linejoin: round; }
+    .d-metal { fill: none; stroke: #8fa3bf; stroke-width: 4; stroke-linecap: round; }
+    .d-seat { fill: #1f7a5c; }
+    .d-wood { fill: #b8642a; }
+    .d-wood-dark { fill: #8a4a1f; }
+    .d-key { fill: #2b4365; stroke: #8fa3bf; stroke-width: 1.5; }
+    .d-bezel { fill: #24395a; }
+    .d-screen { fill: #0a1526; }
+    .d-mug { fill: #f08a24; }
+    .d-steam { fill: none; stroke: #cfe3ff; stroke-width: 2; stroke-linecap: round; opacity: 0.4; }
+  </style>
+
+  <rect width="640" height="360" fill="#13233a"/>
+  <rect y="312" width="640" height="48" fill="#0d1828"/>
+  <line x1="0" y1="312" x2="640" y2="312" stroke="#2b4365" stroke-width="3"/>
+
+  <g id="chair">
+    <line class="d-metal" x1="260" y1="295" x2="260" y2="302"/>
+    <line class="d-metal" x1="242" y1="305" x2="278" y2="305"/>
+    <circle cx="244" cy="310" r="4" fill="#8fa3bf"/>
+    <circle cx="276" cy="310" r="4" fill="#8fa3bf"/>
+    <path class="d-seat d-out" d="M228 291 L222 223 Q222 216 227.5 216 Q233 216 233 223 L237 289 Z"/>
+    <rect class="d-seat d-out" x="226" y="286.5" width="68" height="8" rx="4"/>
+  </g>
+
+  <g id="desk">
+    <rect class="d-wood-dark d-out" x="322" y="260" width="9" height="52"/>
+    <rect class="d-wood-dark d-out" x="583" y="260" width="9" height="52"/>
+    <rect class="d-wood d-out" x="274" y="252" width="334" height="8" rx="2"/>
+  </g>
+  <rect id="keyboard" class="d-key" x="280" y="245" width="46" height="6" rx="2"/>
+
+  <g id="monitor">
+    <line class="d-metal" x1="458" y1="239" x2="458" y2="249"/>
+    <line class="d-metal" x1="436" y1="250.5" x2="480" y2="250.5"/>
+    <rect class="d-bezel d-out" x="355" y="114" width="206" height="128" rx="9"/>
+    <rect id="screen" class="d-screen" x="360" y="119" width="196" height="118" rx="6"/>
+    <g id="screen-content">
+      <line x1="372" y1="133" x2="440" y2="133" stroke="#f0efec" stroke-width="3" stroke-linecap="round"/>
+      <line x1="372" y1="221" x2="470" y2="221" stroke="#2b4365" stroke-width="1"/>
+      <line x1="442" y1="147" x2="442" y2="221" stroke="#6f86a6" stroke-width="1" stroke-dasharray="3 3"/>
+      <polyline points="372,207 386,201 400,204 414,191 428,194 442,183 456,191 470,201" fill="none" stroke="#c9d3e0" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="486" y="153" width="40" height="7" rx="2" fill="#199e70"/>
+      <rect x="486" y="165" width="52" height="7" rx="2" fill="#d95926"/>
+      <rect x="486" y="177" width="48" height="7" rx="2" fill="#3987e5"/>
+      <rect x="486" y="189" width="34" height="7" rx="2" fill="#c98500"/>
+    </g>
+  </g>
+
+  <g id="mug">
+    <path d="M580 237 Q591 243 580 249" fill="none" stroke="#0d1828" stroke-width="6" stroke-linecap="round"/>
+    <path d="M580 237 Q591 243 580 249" fill="none" stroke="#f08a24" stroke-width="3" stroke-linecap="round"/>
+    <rect class="d-mug d-out" x="560" y="231" width="20" height="21" rx="3"/>
+    <path class="d-steam steam" d="M566 225 q-4 -6 0 -12 q4 -6 0 -12 M575 225 q-4 -6 0 -12 q4 -6 0 -12"/>
+  </g>
+
+  <!-- character -->
+</svg>

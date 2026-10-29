@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="script-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>Ledger · Repka</title>
+  <meta name="description" content="The full, append-only record of every AI market call: reasoning, prompt hash, prices and result.">
+  <meta property="og:site_name" content="Repka">
+  <meta property="og:title" content="Ledger · Repka">
+  <meta property="og:description" content="The full, append-only record of every AI market call: reasoning, prompt hash, prices and result.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="turnip.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <img src="turnip.svg" alt="" width="28" height="28">
+        <span>Repka<small>AI Prediction Lab</small></span>
+      </a>
+      <nav aria-label="Site">
+        <a href="index.html">Forecasts</a>
+        <a href="ledger.html" aria-current="page">Ledger</a>
+        <a href="index.html#articles">Articles</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+<section class="hero">
+  <h1>The ledger</h1>
+  <p class="lede">Every call the models have made, newest first. Nothing is edited or removed once it is recorded.</p>
+</section>
+
+<section>
+  <h2>How a call is recorded</h2>
+  <ul class="rules">
+    <li><strong>Ledger first.</strong> A call is written here before any video or post about it goes out.</li>
+    <li><strong>Append-only.</strong> Entries are never edited or deleted. A check is added as a new entry next to its call, and misses stay.</li>
+    <li><strong>What a call holds.</strong> The model and its exact version, the asset, the direction (up, down or flat), a confidence from 0 to 100%, the check date and the model&rsquo;s own reasoning.</li>
+    <li><strong>Flat band.</strong> A move smaller than &plusmn;0.5% counts as flat. The band is stored with each call, so it cannot be moved afterwards.</li>
+    <li><strong>Prompt hash.</strong> The SHA-256 hash of the exact prompt text the model received. Anyone holding the prompt can recompute it, so the prompt cannot be quietly changed later.</li>
+    <li><strong>Times</strong> are in UTC.</li>
+  </ul>
+  <p><a href="data/ledger.json">Download the raw ledger (JSON)</a></p>
+</section>
+
+<section>
+  <h2>All calls</h2>
+  <p class="empty">No forecasts recorded yet. The first ones appear here before any video or post about them goes out.</p>
+</section>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p><strong>This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.</strong></p>
+      <p>The host is an animated AI character, not a real person.</p>
+      <p>The full record is public: <a href="data/ledger.json">ledger.json</a>.</p>
+    </div>
+  </footer>
+</body>
+</html>

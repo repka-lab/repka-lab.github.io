@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 2: at the computer</title>
+  <!--
+    Episode scene 2: Grandpa sits down at the computer.
+    The camera then zooms into #screen, which becomes scene 3 (monitor.svg).
+
+    Character slot: translate(156 75) scale(1.1), sitting, hands on the keyboard.
+      head rotate(4 80 80)              eyes translate(3 -1)
+      arm-left rotate(-57.6 64 100)     arm-left-forearm rotate(-44.7 58 135)
+      arm-right rotate(-21.7 96 100)    arm-right-forearm rotate(-65.3 102 135)
+      leg-left rotate(-96.1 80 170)     leg-left-shin rotate(70.4 68 210)
+      leg-right rotate(-65.2 80 170)    leg-right-shin rotate(80.9 92 210)
+      chalk display=none
+    The knees reach x 298, so the front desk leg stands at x 308.
+
+    Palette: navy room, orange wood, green chair. Classes carry a d- prefix, because the
+    episode puts every scene in one document; "steam" stays bare, episode.js looks it up.
+  -->
+  <style>
+    .d-out { stroke: #0d1828; stroke-width: 2; stroke-linejoin: round; }
+    .d-metal { fill: none; stroke: #8fa3bf; stroke-width: 4; stroke-linecap: round; }
+    .d-seat { fill: #1f7a5c; }
+    .d-wood { fill: #b8642a; }
+    .d-wood-dark { fill: #8a4a1f; }
+    .d-key { fill: #2b4365; stroke: #8fa3bf; stroke-width: 1.5; }
+    .d-bezel { fill: #24395a; }
+    .d-screen { fill: #0a1526; }
+    .d-mug { fill: #f08a24; }
+    .d-steam { fill: none; stroke: #cfe3ff; stroke-width: 2; stroke-linecap: round; opacity: 0.4; }
+  </style>
+
+  <rect width="640" height="360" fill="#13233a"/>
+  <rect y="312" width="640" height="48" fill="#0d1828"/>
+  <line x1="0" y1="312" x2="640" y2="312" stroke="#2b4365" stroke-width="3"/>
+
+  <g id="chair">
+    <line class="d-metal" x1="238" y1="270" x2="238" y2="298"/>
+    <line class="d-metal" x1="214" y1="302" x2="262" y2="302"/>
+    <circle cx="216" cy="307" r="4" fill="#8fa3bf"/>
+    <circle cx="260" cy="307" r="4" fill="#8fa3bf"/>
+    <path class="d-seat d-out" d="M211 266 L205 186 Q205 178 212 179 Q218 180 218 188 L222 262 Z"/>
+    <rect class="d-seat d-out" x="204" y="261" width="66" height="10" rx="4"/>
+  </g>
+
+  <g id="desk">
+    <rect class="d-wood-dark d-out" x="304" y="226" width="9" height="86"/>
+    <rect class="d-wood-dark d-out" x="583" y="226" width="9" height="86"/>
+    <rect class="d-wood d-out" x="272" y="221" width="336" height="8" rx="2"/>
+  </g>
+  <rect id="keyboard" class="d-key" x="280" y="214" width="56" height="7" rx="2"/>
+
+  <g id="monitor">
+    <line class="d-metal" x1="458" y1="208" x2="458" y2="218"/>
+    <line class="d-metal" x1="436" y1="219.5" x2="480" y2="219.5"/>
+    <rect class="d-bezel d-out" x="355" y="83" width="206" height="128" rx="9"/>
+    <rect id="screen" class="d-screen" x="360" y="88" width="196" height="118" rx="6"/>
+    <g id="screen-content">
+      <line x1="372" y1="102" x2="440" y2="102" stroke="#f0efec" stroke-width="3" stroke-linecap="round"/>
+      <line x1="372" y1="190" x2="470" y2="190" stroke="#2b4365" stroke-width="1"/>
+      <line x1="442" y1="116" x2="442" y2="190" stroke="#6f86a6" stroke-width="1" stroke-dasharray="3 3"/>
+      <polyline points="372,176 386,170 400,173 414,160 428,163 442,152 456,160 470,170" fill="none" stroke="#c9d3e0" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="486" y="122" width="40" height="7" rx="2" fill="#199e70"/>
+      <rect x="486" y="134" width="52" height="7" rx="2" fill="#d95926"/>
+      <rect x="486" y="146" width="48" height="7" rx="2" fill="#3987e5"/>
+      <rect x="486" y="158" width="34" height="7" rx="2" fill="#c98500"/>
+    </g>
+  </g>
+
+  <g id="mug">
+    <path d="M580 206 Q591 212 580 218" fill="none" stroke="#0d1828" stroke-width="6" stroke-linecap="round"/>
+    <path d="M580 206 Q591 212 580 218" fill="none" stroke="#f08a24" stroke-width="3" stroke-linecap="round"/>
+    <rect class="d-mug d-out" x="560" y="200" width="20" height="21" rx="3"/>
+    <path class="d-steam steam" d="M566 194 q-4 -6 0 -12 q4 -6 0 -12 M575 194 q-4 -6 0 -12 q4 -6 0 -12"/>
+  </g>
+
+  <!-- character -->
+</svg>

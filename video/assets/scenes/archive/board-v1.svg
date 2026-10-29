@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 1: the chalkboard</title>
+  <!--
+    Episode scene 1: Grandpa explains the method on the board.
+    In Remotion every stroke in #chalk-drawing is revealed with stroke-dashoffset, in document order.
+
+    Character slot: translate(350 17.5) scale(1.25), standing, chalk on the Grok arrow.
+    At this scale the chalk reaches the top row with the arm beside the head, not behind it.
+      head rotate(-6 80 80)          eyes translate(-3 0)
+      arm-left rotate(-5.3 64 100)   arm-left-forearm rotate(107.2 58 135)
+      arm-right rotate(-11.1 96 100) arm-right-forearm rotate(62.9 102 135)
+
+    Palette: navy room, green board, orange wood. Classes carry a b- prefix, because the
+    episode puts every scene in one document; "dash" stays bare, episode.js looks it up.
+  -->
+  <style>
+    .b-board { fill: #1e4a3c; stroke: #b8642a; stroke-width: 8; }
+    .b-wood { fill: #b8642a; }
+    .b-chalk { fill: none; stroke: #f4f1e8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .b-chalk.dash { stroke-dasharray: 2 8; }
+    .b-chalk-text { fill: #f4f1e8; font: 14px 'Segoe Print', 'Comic Sans MS', cursive; }
+  </style>
+
+  <rect width="640" height="360" fill="#13233a"/>
+  <rect y="330" width="640" height="30" fill="#0d1828"/>
+  <line x1="0" y1="330" x2="640" y2="330" stroke="#2b4365" stroke-width="3"/>
+
+  <g id="board">
+    <rect class="b-board" x="30" y="36" width="380" height="226" rx="4"/>
+    <rect class="b-wood" x="44" y="262" width="352" height="7" rx="2"/>
+    <rect x="84" y="256" width="16" height="5" rx="1.5" fill="#f4f1e8"/>
+  </g>
+
+  <g id="chalk-drawing">
+    <text class="b-chalk-text" x="56" y="72">GOLD</text>
+    <path class="b-chalk" d="M60 88 L60 228 L220 228"/>
+    <polyline class="b-chalk" points="60,204 82,190 102,196 124,166 146,176 170,150"/>
+    <line class="b-chalk dash" x1="170" y1="92" x2="170" y2="228"/>
+    <path class="b-chalk" d="M170 150 L204 116 M192 116 L204 116 L204 128"/>
+    <path class="b-chalk" d="M170 150 L204 184 M204 172 L204 184 L192 184"/>
+    <text class="b-chalk-text" x="208" y="157" style="font-size: 20px">?</text>
+
+    <text class="b-chalk-text" x="238" y="72">1 prompt → 4 models</text>
+    <text class="b-chalk-text" x="252" y="104">ChatGPT</text>
+    <text class="b-chalk-text" x="252" y="126">Claude</text>
+    <text class="b-chalk-text" x="252" y="148">Gemini</text>
+    <text class="b-chalk-text" x="252" y="170">Grok</text>
+    <path class="b-chalk" d="M375 104 L375 90 M369 96 L375 90 L381 96"/>
+    <path class="b-chalk" d="M375 112 L375 126 M369 120 L375 126 L381 120"/>
+    <path class="b-chalk" d="M375 134 L375 148 M369 142 L375 148 L381 142"/>
+    <path class="b-chalk" d="M375 170 L375 156 M369 162 L375 156 L381 162"/>
+    <rect class="b-chalk" x="252" y="186" width="110" height="30" rx="3"/>
+    <text class="b-chalk-text" x="307" y="206" text-anchor="middle">LEDGER</text>
+    <text class="b-chalk-text" x="244" y="244">then check: ✓ / ✗</text>
+  </g>
+
+  <!-- character -->
+</svg>

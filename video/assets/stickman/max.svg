@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <title>Max, AI stick figure researcher</title>
+  <!--
+    Skeleton for Remotion. Every movable part is its own group.
+    Rotate a part with rotate(angle pivotX pivotY) around its pivot:
+
+      head                 270,138  neck
+      arm-left             270,165  shoulder
+        arm-left-forearm   236,200  elbow (carries the magnifier)
+      arm-right            270,165  shoulder
+        arm-right-forearm  312,185  elbow (hand on chin)
+      leg-left, leg-right  270,255  hip
+      eye-left, eye-right  blink = scaleY around cy 100
+
+    Colours live in <style>: swap .ink / .paper for the dark palette.
+    Max only (avatar, corner of a card): hide #props, viewBox="135 48 195 310".
+  -->
+  <style>
+    .ink { fill: none; stroke: #1a1a1a; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 3; }
+    .paper { fill: #ffffff; }
+    .solid { fill: #1a1a1a; stroke: none; }
+    .lens { fill: #2f80ed; fill-opacity: 0.12; }
+    .accent { fill: none; stroke: #2f80ed; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .badge-text { fill: #1a1a1a; font: 700 12px sans-serif; }
+  </style>
+
+  <g id="props">
+    <g id="desk" class="ink">
+      <line x1="15" y1="262" x2="228" y2="262"/>
+      <line x1="28" y1="262" x2="28" y2="350"/>
+      <line x1="215" y1="262" x2="215" y2="350"/>
+    </g>
+    <g id="notebook">
+      <rect class="ink thin paper" x="24" y="250" width="40" height="12" rx="2"/>
+      <line class="ink thin" x1="30" y1="244" x2="60" y2="240"/>
+    </g>
+    <g id="laptop">
+      <rect class="ink paper" x="70" y="172" width="112" height="82" rx="5"/>
+      <path class="ink paper" d="M60 262 L192 262 L184 254 L68 254 Z"/>
+      <g id="chart">
+        <line class="ink thin" x1="82" y1="240" x2="170" y2="240" stroke-dasharray="1 7"/>
+        <polyline class="accent" points="82,226 98,212 112,230 130,200 146,218 168,206"/>
+      </g>
+    </g>
+  </g>
+
+  <g id="max">
+    <line id="leg-left" class="ink" x1="270" y1="255" x2="248" y2="350"/>
+    <line id="leg-right" class="ink" x1="270" y1="255" x2="292" y2="350"/>
+    <line id="torso" class="ink" x1="270" y1="138" x2="270" y2="255"/>
+
+    <g id="badge">
+      <path class="ink thin" d="M259 143 L266 185 M281 143 L274 185"/>
+      <rect class="ink thin paper" x="255" y="185" width="30" height="18" rx="3"/>
+      <text class="badge-text" x="270" y="198.5" text-anchor="middle">AI</text>
+    </g>
+
+    <g id="arm-right">
+      <line class="ink" x1="270" y1="165" x2="312" y2="185"/>
+      <g id="arm-right-forearm">
+        <line class="ink" x1="312" y1="185" x2="281" y2="133"/>
+      </g>
+    </g>
+
+    <g id="head">
+      <circle class="ink paper" cx="270" cy="100" r="38"/>
+      <g id="glasses" class="ink thin">
+        <circle cx="256" cy="98" r="11"/>
+        <circle cx="284" cy="98" r="11"/>
+        <line x1="267" y1="98" x2="273" y2="98"/>
+        <line x1="245" y1="96" x2="233" y2="94"/>
+        <line x1="295" y1="96" x2="307" y2="94"/>
+      </g>
+      <g id="eyes" class="solid">
+        <circle id="eye-left" cx="253" cy="100" r="3.5"/>
+        <circle id="eye-right" cx="281" cy="100" r="3.5"/>
+      </g>
+      <g id="brows" class="ink thin">
+        <line id="brow-left" x1="246" y1="80" x2="264" y2="81"/>
+        <line id="brow-right" x1="277" y1="76" x2="295" y2="70"/>
+      </g>
+      <path id="mouth" class="ink thin" d="M259 121 Q270 125 282 117"/>
+      <g id="headphones">
+        <path class="ink" d="M226 100 A44 44 0 0 1 314 100"/>
+        <rect class="solid" x="219" y="86" width="14" height="28" rx="6"/>
+        <rect class="solid" x="307" y="86" width="14" height="28" rx="6"/>
+      </g>
+    </g>
+
+    <g id="arm-left">
+      <line class="ink" x1="270" y1="165" x2="236" y2="200"/>
+      <g id="arm-left-forearm">
+        <line class="ink" x1="236" y1="200" x2="196" y2="210"/>
+        <g id="magnifier">
+          <line class="ink" x1="177" y1="207" x2="196" y2="210" style="stroke-width: 7"/>
+          <circle class="ink lens" cx="160" cy="205" r="17"/>
+          <path class="ink thin" d="M151 198 A10 10 0 0 1 160 194"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

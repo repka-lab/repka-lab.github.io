@@ -1,0 +1,9 @@
+{
+  "note": "DRAFT. Sample ideas written by hand to test the monitor scene. Not real calls from these models and not logged in data/ledger.json.",
+  "ideas": [
+    { "model": "ChatGPT", "call": "up", "reason": "Two higher closes in a row after the Oct 26 low." },
+    { "model": "Claude", "call": "down", "reason": "Still under its 3-week average close of 81.8k." },
+    { "model": "Gemini", "call": "up", "reason": "Back above its 7-day average close of 80.8k." },
+    { "model": "Grok", "call": "down", "reason": "Still about 3% under the Oct 21 close of 84k." }
+  ]
+}

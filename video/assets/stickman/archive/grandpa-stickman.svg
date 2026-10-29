@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 260" width="320" height="520">
+  <title>Grandpa, AI stick figure researcher</title>
+  <!--
+    Character skeleton for Remotion. Every movable part is its own group;
+    nesting keeps the forearm on the elbow and the shin on the knee.
+    Rotate a part with rotate(angle pivotX pivotY) around its pivot:
+
+      head                   80,80   neck
+      arm-left, arm-right    80,100  shoulder
+        arm-left-forearm     58,135  elbow (holds the chalk)
+        arm-right-forearm    102,135 elbow
+      leg-left, leg-right    80,170  hip
+        leg-left-shin        68,210  knee
+        leg-right-shin       92,210  knee
+      eyes                   translate by 2-3 to look left/right
+      eye-left, eye-right    blink = scaleY around cy 51
+      chalk                  display="none" when not at the board
+
+    The badge is drawn above the arms on purpose: "AI" must stay readable in every pose.
+    Ready poses (standing at the board, sitting at the desk) are listed
+    in the comments of video/assets/scenes/board.svg and desk.svg.
+  -->
+  <style>
+    .ink { fill: none; stroke: #1a1a1a; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 3; }
+    .paper { fill: #ffffff; }
+    .solid { fill: #1a1a1a; stroke: none; }
+    .badge-text { fill: #1a1a1a; font: 700 10px sans-serif; }
+  </style>
+
+  <g id="grandpa">
+    <g id="leg-left">
+      <line class="ink" x1="80" y1="170" x2="68" y2="210"/>
+      <g id="leg-left-shin">
+        <line class="ink" x1="68" y1="210" x2="64" y2="250"/>
+      </g>
+    </g>
+    <g id="leg-right">
+      <line class="ink" x1="80" y1="170" x2="92" y2="210"/>
+      <g id="leg-right-shin">
+        <line class="ink" x1="92" y1="210" x2="96" y2="250"/>
+      </g>
+    </g>
+    <line id="torso" class="ink" x1="80" y1="80" x2="80" y2="170"/>
+
+    <g id="arm-right">
+      <line class="ink" x1="80" y1="100" x2="102" y2="135"/>
+      <g id="arm-right-forearm">
+        <line class="ink" x1="102" y1="135" x2="110" y2="168"/>
+      </g>
+    </g>
+    <g id="arm-left">
+      <line class="ink" x1="80" y1="100" x2="58" y2="135"/>
+      <g id="arm-left-forearm">
+        <line class="ink" x1="58" y1="135" x2="50" y2="168"/>
+        <g id="chalk">
+          <line x1="50" y1="168" x2="47.6" y2="177.7" stroke="#1a1a1a" stroke-width="7" stroke-linecap="round"/>
+          <line x1="50" y1="168" x2="47.6" y2="177.7" stroke="#f4f1e8" stroke-width="3.5" stroke-linecap="round"/>
+        </g>
+      </g>
+    </g>
+
+    <g id="badge">
+      <path class="ink thin" d="M73 84 L77 114 M87 84 L83 114"/>
+      <rect class="ink thin paper" x="68" y="114" width="24" height="15" rx="3"/>
+      <text class="badge-text" x="80" y="125.5" text-anchor="middle">AI</text>
+    </g>
+
+    <g id="head">
+      <circle class="ink paper" cx="80" cy="50" r="30"/>
+      <path id="hair" class="ink thin" d="M51 42 L42 39 M53 35 L45 30 M57 29 L52 22 M109 42 L118 39 M107 35 L115 30 M103 29 L108 22"/>
+      <g id="glasses" class="ink thin">
+        <circle cx="69" cy="50" r="9"/>
+        <circle cx="91" cy="50" r="9"/>
+        <line x1="78" y1="50" x2="82" y2="50"/>
+        <line x1="60" y1="49" x2="51" y2="47"/>
+        <line x1="100" y1="49" x2="109" y2="47"/>
+      </g>
+      <g id="eyes" class="solid">
+        <circle id="eye-left" cx="69" cy="51" r="3"/>
+        <circle id="eye-right" cx="91" cy="51" r="3"/>
+      </g>
+      <g id="brows" class="ink">
+        <line id="brow-left" x1="61" y1="38" x2="76" y2="37"/>
+        <line id="brow-right" x1="84" y1="37" x2="99" y2="31"/>
+      </g>
+      <path id="mustache" class="solid" d="M66 69 Q73 60 80 65 Q87 60 94 69 Q87 67 80 70 Q73 67 66 69 Z"/>
+      <path id="mouth" class="ink thin" d="M75 75 Q80 77 85 74"/>
+    </g>
+  </g>
+</svg>

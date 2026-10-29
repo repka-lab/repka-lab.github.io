@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Grandpa episode preview</title>
+<style>
+  html, body { margin: 0; width: 1280px; height: 720px; overflow: hidden; background: #13233a; }
+  .layer { position: absolute; inset: 0; opacity: 0; }
+  .layer > svg { display: block; width: 1280px; height: 720px; }
+  #flash { background: #1e3352; }
+</style>
+</head>
+<body>
+<div class="layer" id="layer-board">
+<svg id="s1-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 1: the chalkboard</title>
+  <!--
+    Episode scene 1: Grandpa explains the method on the board.
+    In Remotion every stroke in #chalk-drawing is revealed with stroke-dashoffset, in document order.
+
+    Character slot: translate(388 80) scale(1), standing at the right edge of the board, chalk on the Grok arrow.
+    At this scale the chalk reaches no higher than y 104, so the board starts at y 94 and no stroke starts above y 115.
+      head rotate(-6 80 80)          eyes translate(-3 0)
+      arm-left rotate(34.5 64 100)   arm-left-forearm rotate(108.7 58 135)
+      arm-right rotate(-11.1 96 100) arm-right-forearm rotate(62.9 102 135)
+      leg-left rotate(1.5 72 166)    leg-left-foot rotate(-1.5 72 245)
+      leg-right rotate(-1.5 88 166)  leg-right-foot rotate(1.5 88 245)
+      front shoes shown, side shoes hidden; the soles land at y 332.5, just in front of the floor line.
+
+    Palette: navy room, green board, orange wood. Classes carry a b- prefix, because the
+    episode puts every scene in one document; "dash" stays bare, episode.js looks it up.
+  -->
+  <style>
+    .b-board { fill: #1e4a3c; stroke: #b8642a; stroke-width: 8; }
+    .b-wood { fill: #b8642a; }
+    .b-chalk { fill: none; stroke: #f4f1e8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .b-chalk.dash { stroke-dasharray: 2 8; }
+    .b-chalk-text { fill: #f4f1e8; font: 14px 'Segoe Print', 'Comic Sans MS', cursive; }
+  </style>
+  <style>
+    .gp-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .gp-out { stroke: #0d1828; stroke-width: 2; stroke-linejoin: round; }
+    .gp-thin { stroke: #0d1828; stroke-width: 1.5; stroke-linejoin: round; }
+    .gp-edge { fill: #0d1828; stroke: #0d1828; stroke-width: 4; stroke-linejoin: round; }
+    .gp-sleeve-edge { stroke: #0d1828; stroke-width: 14; }
+    .gp-sleeve { stroke: #4a6c9e; stroke-width: 10.5; }
+    .gp-cuff { fill: none; stroke: #eef2f6; stroke-width: 10; }
+    .gp-trouser { fill: #34507c; }
+    .gp-sock { fill: #f08a24; }
+    .gp-suit { fill: #4a6c9e; }
+    .gp-suit-dark { fill: #3a5784; }
+    .gp-shirt { fill: #eef2f6; }
+    .gp-tie { fill: #f08a24; }
+    .gp-skin { fill: #f1c7a5; }
+    .gp-nose { fill: #eba889; }
+    .gp-hair { fill: #dfe4ea; }
+    .gp-hair-light { fill: #f4f6f9; }
+    .gp-strand { stroke: #b5bfcb; stroke-width: 1.4; }
+    .gp-shoe { fill: #6b3a1c; }
+    .gp-badge { fill: #2fb586; }
+    .gp-badge-text { fill: #0d1828; font: 800 9.5px 'Segoe UI', system-ui, sans-serif; }
+  </style>
+
+  <rect width="640" height="360" fill="#13233a"/>
+  <rect y="330" width="640" height="30" fill="#0d1828"/>
+  <line x1="0" y1="330" x2="640" y2="330" stroke="#2b4365" stroke-width="3"/>
+
+  <g id="s1-board">
+    <rect class="b-board" x="30" y="94" width="410" height="168" rx="4"/>
+    <rect class="b-wood" x="44" y="262" width="382" height="7" rx="2"/>
+    <rect x="84" y="256" width="16" height="5" rx="1.5" fill="#f4f1e8"/>
+  </g>
+
+  <g id="s1-chalk-drawing">
+    <text class="b-chalk-text" x="56" y="122">GOLD</text>
+    <path class="b-chalk" d="M60 132 L60 238 L220 238"/>
+    <polyline class="b-chalk" points="60,220 82,209 102,214 124,191 146,199 170,179"/>
+    <line class="b-chalk dash" x1="170" y1="135" x2="170" y2="238"/>
+    <path class="b-chalk" d="M170 179 L196 153 M186 153 L196 153 L196 163"/>
+    <path class="b-chalk" d="M170 179 L196 205 M196 195 L196 205 L186 205"/>
+    <text class="b-chalk-text" x="200" y="186" style="font-size: 20px">?</text>
+
+    <text class="b-chalk-text" x="238" y="122">1 prompt → 4 models</text>
+    <text class="b-chalk-text" x="252" y="148">ChatGPT</text>
+    <text class="b-chalk-text" x="348" y="148">Claude</text>
+    <text class="b-chalk-text" x="252" y="172">Gemini</text>
+    <text class="b-chalk-text" x="348" y="172">Grok</text>
+    <path class="b-chalk" d="M330 148 L330 134 M324 140 L330 134 L336 140"/>
+    <path class="b-chalk" d="M410 134 L410 148 M404 142 L410 148 L416 142"/>
+    <path class="b-chalk" d="M330 158 L330 172 M324 166 L330 172 L336 166"/>
+    <path class="b-chalk" d="M410 172 L410 158 M404 164 L410 158 L416 164"/>
+    <rect class="b-chalk" x="252" y="184" width="110" height="28" rx="3"/>
+    <text class="b-chalk-text" x="307" y="203" text-anchor="middle">LEDGER</text>
+    <text class="b-chalk-text" x="244" y="236">then check: ✓ / ✗</text>
+  </g>
+
+  <g id="s1-place">
+  <g id="s1-grandpa">
+    <g id="s1-leg-left">
+      <path class="gp-edge" d="M64.5 160 L79.5 160 L78.5 208 A6.5 6.5 0 0 1 65.5 208 Z"/>
+      <g id="s1-leg-left-shin">
+        <rect class="gp-sock gp-out" x="67.5" y="234" width="9" height="11"/>
+        <g id="s1-leg-left-foot">
+          <g id="s1-leg-left-shoe-front">
+            <path class="gp-shoe gp-out" d="M65.5 252.5 C62.3 252.5 61.2 250.3 61.8 248 C62.8 244.8 66.2 243 71 243 C75.5 243 78.6 244.4 79.3 247.2 C79.9 249.8 78.8 252.5 75.8 252.5 Z"/>
+            <ellipse cx="67.5" cy="246.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s1-leg-left-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M64 252.5 L64 246 Q64 243 67 243 L74 243 Q77.5 243 80 245.5 Q86 246.5 86 250 Q86 252.5 83.5 252.5 Z"/>
+            <ellipse cx="81.5" cy="247.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M65.5 208 A6.5 6.5 0 0 1 78.5 208 L78.3 238 L65.7 238 Z"/>
+        <path class="gp-trouser" d="M65.5 208 A6.5 6.5 0 0 1 78.5 208 L78.3 238 L65.7 238 Z"/>
+      </g>
+      <path class="gp-trouser" d="M64.5 160 L79.5 160 L78.5 208 A6.5 6.5 0 0 1 65.5 208 Z"/>
+    </g>
+    <g id="s1-leg-right">
+      <path class="gp-edge" d="M80.5 160 L95.5 160 L94.5 208 A6.5 6.5 0 0 1 81.5 208 Z"/>
+      <g id="s1-leg-right-shin">
+        <rect class="gp-sock gp-out" x="83.5" y="234" width="9" height="11"/>
+        <g id="s1-leg-right-foot">
+          <g id="s1-leg-right-shoe-front">
+            <path class="gp-shoe gp-out" d="M94.5 252.5 C97.7 252.5 98.8 250.3 98.2 248 C97.2 244.8 93.8 243 89 243 C84.5 243 81.4 244.4 80.7 247.2 C80.1 249.8 81.2 252.5 84.2 252.5 Z"/>
+            <ellipse cx="92.5" cy="246.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s1-leg-right-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M80 252.5 L80 246 Q80 243 83 243 L90 243 Q93.5 243 96 245.5 Q102 246.5 102 250 Q102 252.5 99.5 252.5 Z"/>
+            <ellipse cx="97.5" cy="247.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M81.5 208 A6.5 6.5 0 0 1 94.5 208 L94.3 238 L81.7 238 Z"/>
+        <path class="gp-trouser" d="M81.5 208 A6.5 6.5 0 0 1 94.5 208 L94.3 238 L81.7 238 Z"/>
+      </g>
+      <path class="gp-trouser" d="M80.5 160 L95.5 160 L94.5 208 A6.5 6.5 0 0 1 81.5 208 Z"/>
+    </g>
+
+    <g id="s1-torso">
+      <path class="gp-suit gp-out" d="M58 96 C66 92.5 94 92.5 102 96 C106 98 107.5 102 107.5 107 L106.5 168 C106.5 172 104.5 173.5 101 174.5 C92 176.5 68 176.5 59 174.5 C55.5 173.5 53.5 172 53.5 168 L52.5 107 C52.5 102 54 98 58 96 Z"/>
+      <path class="gp-shirt" d="M69 95 L91 95 L80 123 Z"/>
+      <path class="gp-tie gp-out" d="M76.5 97 L83.5 97 L82 103 L78 103 Z M78 103 L82 103 L83.5 116 L80 120 L76.5 116 Z"/>
+      <path class="gp-suit-dark gp-out" d="M69 95 L61 105 L66.5 108.5 L63 112 L80 123 Z M91 95 L99 105 L93.5 108.5 L97 112 L80 123 Z"/>
+      <line class="gp-line" x1="80" y1="123" x2="80" y2="176" stroke="#0d1828" stroke-width="1.5"/>
+      <path class="gp-suit-dark gp-thin" d="M57 150 L70 150 L70 154 L57 154 Z M90 150 L103 150 L103 154 L90 154 Z"/>
+      <circle cx="80" cy="153" r="2.2" fill="#0d1828"/>
+      <circle cx="80" cy="163" r="2.2" fill="#0d1828"/>
+    </g>
+
+    <g id="s1-arm-right">
+      <line class="gp-line gp-sleeve-edge" x1="96" y1="100" x2="102" y2="135"/>
+      <g id="s1-arm-right-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="102" y1="135" x2="107.66" y2="158.33"/>
+        <line class="gp-line gp-sleeve" x1="102" y1="135" x2="107.66" y2="158.33"/>
+        <line class="gp-cuff" x1="107.19" y1="156.38" x2="108.14" y2="160.27"/>
+        <circle class="gp-skin gp-out" cx="109.42" cy="165.61" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="96" y1="100" x2="102" y2="135"/>
+    </g>
+    <g id="s1-arm-left">
+      <line class="gp-line gp-sleeve-edge" x1="64" y1="100" x2="58" y2="135"/>
+      <g id="s1-arm-left-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="58" y1="135" x2="52.34" y2="158.33"/>
+        <line class="gp-line gp-sleeve" x1="58" y1="135" x2="52.34" y2="158.33"/>
+        <line class="gp-cuff" x1="52.81" y1="156.38" x2="51.86" y2="160.27"/>
+        <g id="s1-chalk">
+          <line x1="50" y1="168" x2="47.6" y2="177.7" stroke="#0d1828" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="50" y1="168" x2="47.6" y2="177.7" stroke="#f4f1e8" stroke-width="3.5" stroke-linecap="round"/>
+        </g>
+        <circle class="gp-skin gp-out" cx="50.58" cy="165.61" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="64" y1="100" x2="58" y2="135"/>
+    </g>
+
+    <g id="s1-badge">
+      <rect class="gp-badge gp-out" x="69" y="131" width="22" height="14" rx="3"/>
+      <text class="gp-badge-text" x="80" y="141.7" text-anchor="middle">AI</text>
+    </g>
+
+    <g id="s1-head">
+      <path id="s1-hair" class="gp-hair gp-out" d="M71 42.75 Q59 41.25 56.75 49.5 Q52.25 54 55.25 59.25 Q53 64.5 58.25 67.5 L66.5 67.5 Z M89 42.75 Q101 41.25 103.25 49.5 Q107.75 54 104.75 59.25 Q107 64.5 101.75 67.5 L93.5 67.5 Z"/>
+      <circle class="gp-skin gp-out" cx="62" cy="63.5" r="4.5"/>
+      <circle class="gp-skin gp-out" cx="98" cy="63.5" r="4.5"/>
+      <ellipse class="gp-skin gp-out" cx="80" cy="60" rx="18" ry="21"/>
+      <ellipse cx="87.5" cy="45" rx="3.8" ry="1.9" fill="#ffffff" opacity="0.35" transform="rotate(-20 87.5 45)"/>
+      <path class="gp-line" d="M71.75 42 Q80 37.5 89 42" stroke="#dfe4ea" stroke-width="2"/>
+      <path id="s1-beard" class="gp-hair gp-out" d="M62 60 C61 70 61.5 79 64 87 C66.5 95 67.5 103 70 110 C72 115.5 75.5 121 80 126 C84.5 121 88 115.5 90 110 C92.5 103 93.5 95 96 87 C98.5 79 99 70 98 60 C95.75 66 92 69 87.5 69.75 C84.5 70.5 82.25 69 80 69 C77.75 69 75.5 70.5 72.5 69.75 C68 69 64.25 66 62 60 Z"/>
+      <path class="gp-line gp-strand" d="M69.5 80 Q70.5 88 73 95 M90.5 80 Q89.5 88 87 95 M80 82 L80 90 M75 101 Q76.5 109 78 116 M85 101 Q83.5 109 82 116"/>
+      <ellipse class="gp-nose gp-out" cx="80" cy="67" rx="4" ry="3.4"/>
+      <path id="s1-mustache" class="gp-hair-light gp-out" d="M67.25 74.75 C69.5 69.5 75.5 68.75 80 71.75 C84.5 68.75 90.5 69.5 92.75 74.75 C89 75.88 84.5 75.13 80 74 C75.5 75.13 71 75.88 67.25 74.75 Z"/>
+      <path id="s1-mouth" class="gp-line" d="M76.25 76.6 Q80 79.6 83.75 76.6" stroke="#0d1828" stroke-width="2"/>
+      <g id="s1-glasses" class="gp-line" stroke="#1b2a40" stroke-width="2.2">
+        <circle cx="72" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+        <circle cx="88" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+        <line x1="78.8" y1="60" x2="81.2" y2="60"/>
+        <line x1="65.2" y1="59.3" x2="62.4" y2="57.8"/>
+        <line x1="94.8" y1="59.3" x2="97.6" y2="57.8"/>
+      </g>
+      <g id="s1-eyes" fill="#0d1828">
+        <circle id="s1-eye-left" cx="72" cy="60.8" r="2.2"/>
+        <circle id="s1-eye-right" cx="88" cy="60.8" r="2.2"/>
+      </g>
+      <g id="s1-brows" class="gp-hair-light" stroke="#0d1828" stroke-width="1.3" stroke-linejoin="round">
+        <path id="s1-brow-left" d="M65 51.75 C67.25 48 73.25 47.25 77.75 49.13 C73.25 50.25 68.75 50.63 65 51.75 Z"/>
+        <path id="s1-brow-right" d="M82.25 49.5 C86 45.75 91.25 44.25 95 45 C91.25 46.88 86.75 48.38 82.25 49.5 Z"/>
+      </g>
+    </g>
+  </g>
+  </g>
+</svg>
+
+</div>
+<div class="layer" id="layer-desk">
+<svg id="s2-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 2: at the computer</title>
+  <!--
+    Episode scene 2: Grandpa sits down at the computer.
+    The camera then zooms into #screen, which becomes scene 3 (monitor.svg).
+
+    Character slot: translate(168 104) scale(1), sitting, hands on the keyboard.
+      head rotate(4 80 80)              eyes translate(3 -1)
+      arm-left rotate(-57.6 64 100)     arm-left-forearm rotate(-44.7 58 135)
+      arm-right rotate(-21.7 96 100)    arm-right-forearm rotate(-65.3 102 135)
+      leg-left rotate(-90 72 166)       leg-left-shin rotate(90 72 208)
+      leg-right rotate(-90 88 166)      leg-right-shin rotate(90 88 208)
+      chalk display=none; side shoes shown pointing right, front shoes hidden
+    Same scale as the board scene: the thighs rest on the seat at y 279.5, the soles land at y 314.5
+    and the hands at y 228.5, just above the keyboard. The knees and toes stay left of the front desk leg at x 322.
+
+    Palette: navy room, orange wood, green chair. Classes carry a d- prefix, because the
+    episode puts every scene in one document; "steam" stays bare, episode.js looks it up.
+  -->
+  <style>
+    .d-out { stroke: #0d1828; stroke-width: 2; stroke-linejoin: round; }
+    .d-metal { fill: none; stroke: #8fa3bf; stroke-width: 4; stroke-linecap: round; }
+    .d-seat { fill: #1f7a5c; }
+    .d-wood { fill: #b8642a; }
+    .d-wood-dark { fill: #8a4a1f; }
+    .d-key { fill: #2b4365; stroke: #8fa3bf; stroke-width: 1.5; }
+    .d-bezel { fill: #24395a; }
+    .d-screen { fill: #0a1526; }
+    .d-mug { fill: #f08a24; }
+    .d-steam { fill: none; stroke: #cfe3ff; stroke-width: 2; stroke-linecap: round; opacity: 0.4; }
+  </style>
+  <style>
+    .gp-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .gp-out { stroke: #0d1828; stroke-width: 2; stroke-linejoin: round; }
+    .gp-thin { stroke: #0d1828; stroke-width: 1.5; stroke-linejoin: round; }
+    .gp-edge { fill: #0d1828; stroke: #0d1828; stroke-width: 4; stroke-linejoin: round; }
+    .gp-sleeve-edge { stroke: #0d1828; stroke-width: 14; }
+    .gp-sleeve { stroke: #4a6c9e; stroke-width: 10.5; }
+    .gp-cuff { fill: none; stroke: #eef2f6; stroke-width: 10; }
+    .gp-trouser { fill: #34507c; }
+    .gp-sock { fill: #f08a24; }
+    .gp-suit { fill: #4a6c9e; }
+    .gp-suit-dark { fill: #3a5784; }
+    .gp-shirt { fill: #eef2f6; }
+    .gp-tie { fill: #f08a24; }
+    .gp-skin { fill: #f1c7a5; }
+    .gp-nose { fill: #eba889; }
+    .gp-hair { fill: #dfe4ea; }
+    .gp-hair-light { fill: #f4f6f9; }
+    .gp-strand { stroke: #b5bfcb; stroke-width: 1.4; }
+    .gp-shoe { fill: #6b3a1c; }
+    .gp-badge { fill: #2fb586; }
+    .gp-badge-text { fill: #0d1828; font: 800 9.5px 'Segoe UI', system-ui, sans-serif; }
+  </style>
+
+  <rect width="640" height="360" fill="#13233a"/>
+  <rect y="312" width="640" height="48" fill="#0d1828"/>
+  <line x1="0" y1="312" x2="640" y2="312" stroke="#2b4365" stroke-width="3"/>
+
+  <g id="s2-chair">
+    <line class="d-metal" x1="252" y1="288" x2="252" y2="301"/>
+    <line class="d-metal" x1="234" y1="305" x2="270" y2="305"/>
+    <circle cx="236" cy="310" r="4" fill="#8fa3bf"/>
+    <circle cx="268" cy="310" r="4" fill="#8fa3bf"/>
+    <path class="d-seat d-out" d="M220 284 L214 216 Q214 209 219.5 209 Q225 209 225 216 L229 282 Z"/>
+    <rect class="d-seat d-out" x="218" y="279.5" width="68" height="8" rx="4"/>
+  </g>
+
+  <g id="s2-desk">
+    <rect class="d-wood-dark d-out" x="322" y="245" width="9" height="67"/>
+    <rect class="d-wood-dark d-out" x="583" y="245" width="9" height="67"/>
+    <rect class="d-wood d-out" x="274" y="237" width="334" height="8" rx="2"/>
+  </g>
+  <rect id="s2-keyboard" class="d-key" x="280" y="230" width="46" height="6" rx="2"/>
+
+  <g id="s2-monitor">
+    <line class="d-metal" x1="458" y1="224" x2="458" y2="234"/>
+    <line class="d-metal" x1="436" y1="235.5" x2="480" y2="235.5"/>
+    <rect class="d-bezel d-out" x="355" y="99" width="206" height="128" rx="9"/>
+    <rect id="s2-screen" class="d-screen" x="360" y="104" width="196" height="118" rx="6"/>
+    <g id="s2-screen-content">
+      <line x1="372" y1="118" x2="440" y2="118" stroke="#f0efec" stroke-width="3" stroke-linecap="round"/>
+      <line x1="372" y1="206" x2="470" y2="206" stroke="#2b4365" stroke-width="1"/>
+      <line x1="442" y1="132" x2="442" y2="206" stroke="#6f86a6" stroke-width="1" stroke-dasharray="3 3"/>
+      <polyline points="372,192 386,186 400,189 414,176 428,179 442,168 456,176 470,186" fill="none" stroke="#c9d3e0" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="486" y="138" width="40" height="7" rx="2" fill="#199e70"/>
+      <rect x="486" y="150" width="52" height="7" rx="2" fill="#d95926"/>
+      <rect x="486" y="162" width="48" height="7" rx="2" fill="#3987e5"/>
+      <rect x="486" y="174" width="34" height="7" rx="2" fill="#c98500"/>
+    </g>
+  </g>
+
+  <g id="s2-mug">
+    <path d="M580 222 Q591 228 580 234" fill="none" stroke="#0d1828" stroke-width="6" stroke-linecap="round"/>
+    <path d="M580 222 Q591 228 580 234" fill="none" stroke="#f08a24" stroke-width="3" stroke-linecap="round"/>
+    <rect class="d-mug d-out" x="560" y="216" width="20" height="21" rx="3"/>
+    <path class="d-steam steam" d="M566 210 q-4 -6 0 -12 q4 -6 0 -12 M575 210 q-4 -6 0 -12 q4 -6 0 -12"/>
+  </g>
+
+  <g id="s2-place">
+  <g id="s2-grandpa">
+    <g id="s2-leg-left">
+      <path class="gp-edge" d="M64.5 160 L79.5 160 L78.5 208 A6.5 6.5 0 0 1 65.5 208 Z"/>
+      <g id="s2-leg-left-shin">
+        <rect class="gp-sock gp-out" x="67.5" y="234" width="9" height="11"/>
+        <g id="s2-leg-left-foot">
+          <g id="s2-leg-left-shoe-front">
+            <path class="gp-shoe gp-out" d="M65.5 252.5 C62.3 252.5 61.2 250.3 61.8 248 C62.8 244.8 66.2 243 71 243 C75.5 243 78.6 244.4 79.3 247.2 C79.9 249.8 78.8 252.5 75.8 252.5 Z"/>
+            <ellipse cx="67.5" cy="246.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s2-leg-left-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M64 252.5 L64 246 Q64 243 67 243 L74 243 Q77.5 243 80 245.5 Q86 246.5 86 250 Q86 252.5 83.5 252.5 Z"/>
+            <ellipse cx="81.5" cy="247.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M65.5 208 A6.5 6.5 0 0 1 78.5 208 L78.3 238 L65.7 238 Z"/>
+        <path class="gp-trouser" d="M65.5 208 A6.5 6.5 0 0 1 78.5 208 L78.3 238 L65.7 238 Z"/>
+      </g>
+      <path class="gp-trouser" d="M64.5 160 L79.5 160 L78.5 208 A6.5 6.5 0 0 1 65.5 208 Z"/>
+    </g>
+    <g id="s2-leg-right">
+      <path class="gp-edge" d="M80.5 160 L95.5 160 L94.5 208 A6.5 6.5 0 0 1 81.5 208 Z"/>
+      <g id="s2-leg-right-shin">
+        <rect class="gp-sock gp-out" x="83.5" y="234" width="9" height="11"/>
+        <g id="s2-leg-right-foot">
+          <g id="s2-leg-right-shoe-front">
+            <path class="gp-shoe gp-out" d="M94.5 252.5 C97.7 252.5 98.8 250.3 98.2 248 C97.2 244.8 93.8 243 89 243 C84.5 243 81.4 244.4 80.7 247.2 C80.1 249.8 81.2 252.5 84.2 252.5 Z"/>
+            <ellipse cx="92.5" cy="246.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s2-leg-right-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M80 252.5 L80 246 Q80 243 83 243 L90 243 Q93.5 243 96 245.5 Q102 246.5 102 250 Q102 252.5 99.5 252.5 Z"/>
+            <ellipse cx="97.5" cy="247.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M81.5 208 A6.5 6.5 0 0 1 94.5 208 L94.3 238 L81.7 238 Z"/>
+        <path class="gp-trouser" d="M81.5 208 A6.5 6.5 0 0 1 94.5 208 L94.3 238 L81.7 238 Z"/>
+      </g>
+      <path class="gp-trouser" d="M80.5 160 L95.5 160 L94.5 208 A6.5 6.5 0 0 1 81.5 208 Z"/>
+    </g>
+
+    <g id="s2-torso">
+      <path class="gp-suit gp-out" d="M58 96 C66 92.5 94 92.5 102 96 C106 98 107.5 102 107.5 107 L106.5 168 C106.5 172 104.5 173.5 101 174.5 C92 176.5 68 176.5 59 174.5 C55.5 173.5 53.5 172 53.5 168 L52.5 107 C52.5 102 54 98 58 96 Z"/>
+      <path class="gp-shirt" d="M69 95 L91 95 L80 123 Z"/>
+      <path class="gp-tie gp-out" d="M76.5 97 L83.5 97 L82 103 L78 103 Z M78 103 L82 103 L83.5 116 L80 120 L76.5 116 Z"/>
+      <path class="gp-suit-dark gp-out" d="M69 95 L61 105 L66.5 108.5 L63 112 L80 123 Z M91 95 L99 105 L93.5 108.5 L97 112 L80 123 Z"/>
+      <line class="gp-line" x1="80" y1="123" x2="80" y2="176" stroke="#0d1828" stroke-width="1.5"/>
+      <path class="gp-suit-dark gp-thin" d="M57 150 L70 150 L70 154 L57 154 Z M90 150 L103 150 L103 154 L90 154 Z"/>
+      <circle cx="80" cy="153" r="2.2" fill="#0d1828"/>
+      <circle cx="80" cy="163" r="2.2" fill="#0d1828"/>
+    </g>
+
+    <g id="s2-arm-right">
+      <line class="gp-line gp-sleeve-edge" x1="96" y1="100" x2="102" y2="135"/>
+      <g id="s2-arm-right-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="102" y1="135" x2="107.66" y2="158.33"/>
+        <line class="gp-line gp-sleeve" x1="102" y1="135" x2="107.66" y2="158.33"/>
+        <line class="gp-cuff" x1="107.19" y1="156.38" x2="108.14" y2="160.27"/>
+        <circle class="gp-skin gp-out" cx="109.42" cy="165.61" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="96" y1="100" x2="102" y2="135"/>
+    </g>
+    <g id="s2-arm-left">
+      <line class="gp-line gp-sleeve-edge" x1="64" y1="100" x2="58" y2="135"/>
+      <g id="s2-arm-left-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="58" y1="135" x2="52.34" y2="158.33"/>
+        <line class="gp-line gp-sleeve" x1="58" y1="135" x2="52.34" y2="158.33"/>
+        <line class="gp-cuff" x1="52.81" y1="156.38" x2="51.86" y2="160.27"/>
+        <g id="s2-chalk">
+          <line x1="50" y1="168" x2="47.6" y2="177.7" stroke="#0d1828" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="50" y1="168" x2="47.6" y2="177.7" stroke="#f4f1e8" stroke-width="3.5" stroke-linecap="round"/>
+        </g>
+        <circle class="gp-skin gp-out" cx="50.58" cy="165.61" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="64" y1="100" x2="58" y2="135"/>
+    </g>
+
+    <g id="s2-badge">
+      <rect class="gp-badge gp-out" x="69" y="131" width="22" height="14" rx="3"/>
+      <text class="gp-badge-text" x="80" y="141.7" text-anchor="middle">AI</text>
+    </g>
+
+    <g id="s2-head">
+      <path id="s2-hair" class="gp-hair gp-out" d="M71 42.75 Q59 41.25 56.75 49.5 Q52.25 54 55.25 59.25 Q53 64.5 58.25 67.5 L66.5 67.5 Z M89 42.75 Q101 41.25 103.25 49.5 Q107.75 54 104.75 59.25 Q107 64.5 101.75 67.5 L93.5 67.5 Z"/>
+      <circle class="gp-skin gp-out" cx="62" cy="63.5" r="4.5"/>
+      <circle class="gp-skin gp-out" cx="98" cy="63.5" r="4.5"/>
+      <ellipse class="gp-skin gp-out" cx="80" cy="60" rx="18" ry="21"/>
+      <ellipse cx="87.5" cy="45" rx="3.8" ry="1.9" fill="#ffffff" opacity="0.35" transform="rotate(-20 87.5 45)"/>
+      <path class="gp-line" d="M71.75 42 Q80 37.5 89 42" stroke="#dfe4ea" stroke-width="2"/>
+      <path id="s2-beard" class="gp-hair gp-out" d="M62 60 C61 70 61.5 79 64 87 C66.5 95 67.5 103 70 110 C72 115.5 75.5 121 80 126 C84.5 121 88 115.5 90 110 C92.5 103 93.5 95 96 87 C98.5 79 99 70 98 60 C95.75 66 92 69 87.5 69.75 C84.5 70.5 82.25 69 80 69 C77.75 69 75.5 70.5 72.5 69.75 C68 69 64.25 66 62 60 Z"/>
+      <path class="gp-line gp-strand" d="M69.5 80 Q70.5 88 73 95 M90.5 80 Q89.5 88 87 95 M80 82 L80 90 M75 101 Q76.5 109 78 116 M85 101 Q83.5 109 82 116"/>
+      <ellipse class="gp-nose gp-out" cx="80" cy="67" rx="4" ry="3.4"/>
+      <path id="s2-mustache" class="gp-hair-light gp-out" d="M67.25 74.75 C69.5 69.5 75.5 68.75 80 71.75 C84.5 68.75 90.5 69.5 92.75 74.75 C89 75.88 84.5 75.13 80 74 C75.5 75.13 71 75.88 67.25 74.75 Z"/>
+      <path id="s2-mouth" class="gp-line" d="M76.25 76.6 Q80 79.6 83.75 76.6" stroke="#0d1828" stroke-width="2"/>
+      <g id="s2-glasses" class="gp-line" stroke="#1b2a40" stroke-width="2.2">
+        <circle cx="72" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+        <circle cx="88" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+        <line x1="78.8" y1="60" x2="81.2" y2="60"/>
+        <line x1="65.2" y1="59.3" x2="62.4" y2="57.8"/>
+        <line x1="94.8" y1="59.3" x2="97.6" y2="57.8"/>
+      </g>
+      <g id="s2-eyes" fill="#0d1828">
+        <circle id="s2-eye-left" cx="72" cy="60.8" r="2.2"/>
+        <circle id="s2-eye-right" cx="88" cy="60.8" r="2.2"/>
+      </g>
+      <g id="s2-brows" class="gp-hair-light" stroke="#0d1828" stroke-width="1.3" stroke-linejoin="round">
+        <path id="s2-brow-left" d="M65 51.75 C67.25 48 73.25 47.25 77.75 49.13 C73.25 50.25 68.75 50.63 65 51.75 Z"/>
+        <path id="s2-brow-right" d="M82.25 49.5 C86 45.75 91.25 44.25 95 45 C91.25 46.88 86.75 48.38 82.25 49.5 Z"/>
+      </g>
+    </g>
+  </g>
+  </g>
+</svg>
+
+</div>
+<div class="layer" id="layer-monitor">
+<svg id="s3-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 3: the monitor</title>
+  <!--
+    Episode scene 3: the camera zooms into the screen from desk.svg.
+
+    SAMPLE LAYOUT: every call and number here is a placeholder. In Remotion this screen
+    is filled from data/ledger.json and data/results.json, never typed in by hand.
+
+    Model colours, dark steps validated on the #0a1526 screen in this adjacent order:
+      ChatGPT #199e70, Claude #d95926, Gemini #3987e5, Grok #c98500.
+    Claude and Grok are too close to tell apart by colour alone,
+    so every coloured mark has the model name next to it.
+    The hit/miss reds and greens fail the deutan check, so ✓/✗ and the word always go with them.
+  -->
+  <style>
+    .t-primary { fill: #eef2f6; font: 600 12px system-ui, 'Segoe UI', sans-serif; }
+    .t-secondary { fill: #b9c6d8; font: 11px system-ui, 'Segoe UI', sans-serif; }
+    .t-muted { fill: #8193ad; font: 10px system-ui, 'Segoe UI', sans-serif; }
+    .num { font-variant-numeric: tabular-nums; }
+    .grid { stroke: #1b2c45; stroke-width: 1; }
+    .axis { stroke: #2b4365; stroke-width: 1; }
+    .marker { stroke: #6f86a6; stroke-width: 1; stroke-dasharray: 3 4; }
+  </style>
+
+  <rect width="640" height="360" fill="#13233a"/>
+  <rect x="296" y="330" width="48" height="30" fill="#24395a"/>
+  <rect x="16" y="12" width="608" height="322" rx="14" fill="#24395a" stroke="#0d1828" stroke-width="4"/>
+  <rect id="s3-screen" x="30" y="26" width="580" height="294" rx="4" fill="#0a1526"/>
+
+  <text class="t-primary" x="44" y="47">AI PREDICTION LAB · LEDGER</text>
+  <text class="t-muted" x="596" y="47" text-anchor="end">SAMPLE LAYOUT · NOT REAL DATA</text>
+  <line class="grid" x1="30" y1="58" x2="610" y2="58"/>
+
+  <g id="s3-panel-price">
+    <text class="t-secondary" x="44" y="80">Gold · price around the forecast</text>
+    <line class="grid" x1="52" y1="120" x2="336" y2="120"/>
+    <line class="grid" x1="52" y1="170" x2="336" y2="170"/>
+    <line class="grid" x1="52" y1="220" x2="336" y2="220"/>
+    <line class="axis" x1="52" y1="270" x2="336" y2="270"/>
+    <line class="marker" x1="220" y1="94" x2="220" y2="270"/>
+    <line class="marker" x1="316" y1="94" x2="316" y2="270"/>
+    <text class="t-muted" x="220" y="286" text-anchor="middle">recorded</text>
+    <text class="t-muted" x="316" y="286" text-anchor="middle">verified</text>
+    <polyline points="52,214 76,204 100,210 124,188 148,196 172,172 196,180 220,166 244,178 268,194 292,186 316,206 336,200" fill="none" stroke="#c9d3e0" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="220" cy="166" r="4" fill="#eef2f6" stroke="#0a1526" stroke-width="2"/>
+    <circle cx="316" cy="206" r="4" fill="#eef2f6" stroke="#0a1526" stroke-width="2"/>
+  </g>
+
+  <g id="s3-panel-calls">
+    <text class="t-secondary" x="364" y="80">Calls, recorded before the outcome</text>
+
+    <rect x="364" y="94" width="10" height="10" rx="2" fill="#199e70"/>
+    <text class="t-primary" x="382" y="103">ChatGPT</text>
+    <text class="t-primary" x="462" y="103">↑ up</text>
+    <text class="t-secondary num" x="508" y="103">conf 64</text>
+    <text class="t-secondary" x="596" y="103" text-anchor="end"><tspan fill="#d03b3b">✗</tspan> miss</text>
+
+    <rect x="364" y="116" width="10" height="10" rx="2" fill="#d95926"/>
+    <text class="t-primary" x="382" y="125">Claude</text>
+    <text class="t-primary" x="462" y="125">↓ down</text>
+    <text class="t-secondary num" x="508" y="125">conf 58</text>
+    <text class="t-secondary" x="596" y="125" text-anchor="end"><tspan fill="#0ca30c">✓</tspan> hit</text>
+
+    <rect x="364" y="138" width="10" height="10" rx="2" fill="#3987e5"/>
+    <text class="t-primary" x="382" y="147">Gemini</text>
+    <text class="t-primary" x="462" y="147">↓ down</text>
+    <text class="t-secondary num" x="508" y="147">conf 71</text>
+    <text class="t-secondary" x="596" y="147" text-anchor="end"><tspan fill="#0ca30c">✓</tspan> hit</text>
+
+    <rect x="364" y="160" width="10" height="10" rx="2" fill="#c98500"/>
+    <text class="t-primary" x="382" y="169">Grok</text>
+    <text class="t-primary" x="462" y="169">↑ up</text>
+    <text class="t-secondary num" x="508" y="169">conf 80</text>
+    <text class="t-secondary" x="596" y="169" text-anchor="end"><tspan fill="#d03b3b">✗</tspan> miss</text>
+  </g>
+
+  <g id="s3-panel-hit-rate">
+    <text class="t-secondary" x="364" y="200">Hit rate, all verified calls</text>
+    <line class="axis" x1="430" y1="208" x2="430" y2="274"/>
+
+    <text class="t-secondary" x="364" y="221">ChatGPT</text>
+    <rect x="430" y="212" width="70" height="10" rx="2" fill="#199e70"/>
+    <text class="t-secondary num" x="506" y="221">50%</text>
+
+    <text class="t-secondary" x="364" y="237">Claude</text>
+    <rect x="430" y="228" width="87" height="10" rx="2" fill="#d95926"/>
+    <text class="t-secondary num" x="523" y="237">62%</text>
+
+    <text class="t-secondary" x="364" y="253">Gemini</text>
+    <rect x="430" y="244" width="81" height="10" rx="2" fill="#3987e5"/>
+    <text class="t-secondary num" x="517" y="253">58%</text>
+
+    <text class="t-secondary" x="364" y="269">Grok</text>
+    <rect x="430" y="260" width="63" height="10" rx="2" fill="#c98500"/>
+    <text class="t-secondary num" x="499" y="269">45%</text>
+  </g>
+
+  <line class="grid" x1="30" y1="296" x2="610" y2="296"/>
+  <text class="t-muted" x="320" y="311" text-anchor="middle" style="font-size: 9.5px">This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.</text>
+</svg>
+
+</div>
+<div class="layer" id="layer-end">
+<svg id="s4-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <style>
+    .end-title { fill: #eef2f6; font: 700 26px 'Segoe UI', system-ui, sans-serif; }
+    .end-lead { fill: #b9c6d8; font: 13px 'Segoe UI', system-ui, sans-serif; }
+    .end-disclaimer { fill: #eef2f6; font: 600 13px 'Segoe UI', system-ui, sans-serif; }
+    .end-muted { fill: #8193ad; font: 10.5px 'Segoe UI', system-ui, sans-serif; }
+  </style>
+  <style>
+    .gp-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .gp-out { stroke: #0d1828; stroke-width: 2; stroke-linejoin: round; }
+    .gp-thin { stroke: #0d1828; stroke-width: 1.5; stroke-linejoin: round; }
+    .gp-edge { fill: #0d1828; stroke: #0d1828; stroke-width: 4; stroke-linejoin: round; }
+    .gp-sleeve-edge { stroke: #0d1828; stroke-width: 14; }
+    .gp-sleeve { stroke: #4a6c9e; stroke-width: 10.5; }
+    .gp-cuff { fill: none; stroke: #eef2f6; stroke-width: 10; }
+    .gp-trouser { fill: #34507c; }
+    .gp-sock { fill: #f08a24; }
+    .gp-suit { fill: #4a6c9e; }
+    .gp-suit-dark { fill: #3a5784; }
+    .gp-shirt { fill: #eef2f6; }
+    .gp-tie { fill: #f08a24; }
+    .gp-skin { fill: #f1c7a5; }
+    .gp-nose { fill: #eba889; }
+    .gp-hair { fill: #dfe4ea; }
+    .gp-hair-light { fill: #f4f6f9; }
+    .gp-strand { stroke: #b5bfcb; stroke-width: 1.4; }
+    .gp-shoe { fill: #6b3a1c; }
+    .gp-badge { fill: #2fb586; }
+    .gp-badge-text { fill: #0d1828; font: 800 9.5px 'Segoe UI', system-ui, sans-serif; }
+  </style>
+  <rect width="640" height="360" fill="#13233a"/>
+  <rect y="312" width="640" height="48" fill="#0d1828"/>
+  <line x1="0" y1="312" x2="640" y2="312" stroke="#2b4365" stroke-width="3"/>
+  <line x1="200" y1="88" x2="252" y2="88" stroke="#f08a24" stroke-width="3" stroke-linecap="round"/>
+  <g id="s4-text">
+    <text class="end-title" x="200" y="120">AI Prediction Lab</text>
+    <text class="end-lead" x="200" y="146">One prompt. Four AI models. Every call logged before the outcome.</text>
+    <text class="end-disclaimer" x="200" y="196">This is an experiment and documentation, not financial advice.</text>
+    <text class="end-disclaimer" x="200" y="216">I do not recommend buying or selling anything.</text>
+    <text class="end-muted" x="200" y="252">The host is an animated AI character, not a real person.</text>
+    <text class="end-muted" x="200" y="268">Preview · sample layout · not real data</text>
+  </g>
+  <g id="s4-place">
+  <g id="s4-grandpa">
+    <g id="s4-leg-left">
+      <path class="gp-edge" d="M64.5 160 L79.5 160 L78.5 208 A6.5 6.5 0 0 1 65.5 208 Z"/>
+      <g id="s4-leg-left-shin">
+        <rect class="gp-sock gp-out" x="67.5" y="234" width="9" height="11"/>
+        <g id="s4-leg-left-foot">
+          <g id="s4-leg-left-shoe-front">
+            <path class="gp-shoe gp-out" d="M65.5 252.5 C62.3 252.5 61.2 250.3 61.8 248 C62.8 244.8 66.2 243 71 243 C75.5 243 78.6 244.4 79.3 247.2 C79.9 249.8 78.8 252.5 75.8 252.5 Z"/>
+            <ellipse cx="67.5" cy="246.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s4-leg-left-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M64 252.5 L64 246 Q64 243 67 243 L74 243 Q77.5 243 80 245.5 Q86 246.5 86 250 Q86 252.5 83.5 252.5 Z"/>
+            <ellipse cx="81.5" cy="247.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M65.5 208 A6.5 6.5 0 0 1 78.5 208 L78.3 238 L65.7 238 Z"/>
+        <path class="gp-trouser" d="M65.5 208 A6.5 6.5 0 0 1 78.5 208 L78.3 238 L65.7 238 Z"/>
+      </g>
+      <path class="gp-trouser" d="M64.5 160 L79.5 160 L78.5 208 A6.5 6.5 0 0 1 65.5 208 Z"/>
+    </g>
+    <g id="s4-leg-right">
+      <path class="gp-edge" d="M80.5 160 L95.5 160 L94.5 208 A6.5 6.5 0 0 1 81.5 208 Z"/>
+      <g id="s4-leg-right-shin">
+        <rect class="gp-sock gp-out" x="83.5" y="234" width="9" height="11"/>
+        <g id="s4-leg-right-foot">
+          <g id="s4-leg-right-shoe-front">
+            <path class="gp-shoe gp-out" d="M94.5 252.5 C97.7 252.5 98.8 250.3 98.2 248 C97.2 244.8 93.8 243 89 243 C84.5 243 81.4 244.4 80.7 247.2 C80.1 249.8 81.2 252.5 84.2 252.5 Z"/>
+            <ellipse cx="92.5" cy="246.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s4-leg-right-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M80 252.5 L80 246 Q80 243 83 243 L90 243 Q93.5 243 96 245.5 Q102 246.5 102 250 Q102 252.5 99.5 252.5 Z"/>
+            <ellipse cx="97.5" cy="247.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M81.5 208 A6.5 6.5 0 0 1 94.5 208 L94.3 238 L81.7 238 Z"/>
+        <path class="gp-trouser" d="M81.5 208 A6.5 6.5 0 0 1 94.5 208 L94.3 238 L81.7 238 Z"/>
+      </g>
+      <path class="gp-trouser" d="M80.5 160 L95.5 160 L94.5 208 A6.5 6.5 0 0 1 81.5 208 Z"/>
+    </g>
+
+    <g id="s4-torso">
+      <path class="gp-suit gp-out" d="M58 96 C66 92.5 94 92.5 102 96 C106 98 107.5 102 107.5 107 L106.5 168 C106.5 172 104.5 173.5 101 174.5 C92 176.5 68 176.5 59 174.5 C55.5 173.5 53.5 172 53.5 168 L52.5 107 C52.5 102 54 98 58 96 Z"/>
+      <path class="gp-shirt" d="M69 95 L91 95 L80 123 Z"/>
+      <path class="gp-tie gp-out" d="M76.5 97 L83.5 97 L82 103 L78 103 Z M78 103 L82 103 L83.5 116 L80 120 L76.5 116 Z"/>
+      <path class="gp-suit-dark gp-out" d="M69 95 L61 105 L66.5 108.5 L63 112 L80 123 Z M91 95 L99 105 L93.5 108.5 L97 112 L80 123 Z"/>
+      <line class="gp-line" x1="80" y1="123" x2="80" y2="176" stroke="#0d1828" stroke-width="1.5"/>
+      <path class="gp-suit-dark gp-thin" d="M57 150 L70 150 L70 154 L57 154 Z M90 150 L103 150 L103 154 L90 154 Z"/>
+      <circle cx="80" cy="153" r="2.2" fill="#0d1828"/>
+      <circle cx="80" cy="163" r="2.2" fill="#0d1828"/>
+    </g>
+
+    <g id="s4-arm-right">
+      <line class="gp-line gp-sleeve-edge" x1="96" y1="100" x2="102" y2="135"/>
+      <g id="s4-arm-right-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="102" y1="135" x2="107.66" y2="158.33"/>
+        <line class="gp-line gp-sleeve" x1="102" y1="135" x2="107.66" y2="158.33"/>
+        <line class="gp-cuff" x1="107.19" y1="156.38" x2="108.14" y2="160.27"/>
+        <circle class="gp-skin gp-out" cx="109.42" cy="165.61" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="96" y1="100" x2="102" y2="135"/>
+    </g>
+    <g id="s4-arm-left">
+      <line class="gp-line gp-sleeve-edge" x1="64" y1="100" x2="58" y2="135"/>
+      <g id="s4-arm-left-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="58" y1="135" x2="52.34" y2="158.33"/>
+        <line class="gp-line gp-sleeve" x1="58" y1="135" x2="52.34" y2="158.33"/>
+        <line class="gp-cuff" x1="52.81" y1="156.38" x2="51.86" y2="160.27"/>
+        <g id="s4-chalk">
+          <line x1="50" y1="168" x2="47.6" y2="177.7" stroke="#0d1828" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="50" y1="168" x2="47.6" y2="177.7" stroke="#f4f1e8" stroke-width="3.5" stroke-linecap="round"/>
+        </g>
+        <circle class="gp-skin gp-out" cx="50.58" cy="165.61" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="64" y1="100" x2="58" y2="135"/>
+    </g>
+
+    <g id="s4-badge">
+      <rect class="gp-badge gp-out" x="69" y="131" width="22" height="14" rx="3"/>
+      <text class="gp-badge-text" x="80" y="141.7" text-anchor="middle">AI</text>
+    </g>
+
+    <g id="s4-head">
+      <path id="s4-hair" class="gp-hair gp-out" d="M71 42.75 Q59 41.25 56.75 49.5 Q52.25 54 55.25 59.25 Q53 64.5 58.25 67.5 L66.5 67.5 Z M89 42.75 Q101 41.25 103.25 49.5 Q107.75 54 104.75 59.25 Q107 64.5 101.75 67.5 L93.5 67.5 Z"/>
+      <circle class="gp-skin gp-out" cx="62" cy="63.5" r="4.5"/>
+      <circle class="gp-skin gp-out" cx="98" cy="63.5" r="4.5"/>
+      <ellipse class="gp-skin gp-out" cx="80" cy="60" rx="18" ry="21"/>
+      <ellipse cx="87.5" cy="45" rx="3.8" ry="1.9" fill="#ffffff" opacity="0.35" transform="rotate(-20 87.5 45)"/>
+      <path class="gp-line" d="M71.75 42 Q80 37.5 89 42" stroke="#dfe4ea" stroke-width="2"/>
+      <path id="s4-beard" class="gp-hair gp-out" d="M62 60 C61 70 61.5 79 64 87 C66.5 95 67.5 103 70 110 C72 115.5 75.5 121 80 126 C84.5 121 88 115.5 90 110 C92.5 103 93.5 95 96 87 C98.5 79 99 70 98 60 C95.75 66 92 69 87.5 69.75 C84.5 70.5 82.25 69 80 69 C77.75 69 75.5 70.5 72.5 69.75 C68 69 64.25 66 62 60 Z"/>
+      <path class="gp-line gp-strand" d="M69.5 80 Q70.5 88 73 95 M90.5 80 Q89.5 88 87 95 M80 82 L80 90 M75 101 Q76.5 109 78 116 M85 101 Q83.5 109 82 116"/>
+      <ellipse class="gp-nose gp-out" cx="80" cy="67" rx="4" ry="3.4"/>
+      <path id="s4-mustache" class="gp-hair-light gp-out" d="M67.25 74.75 C69.5 69.5 75.5 68.75 80 71.75 C84.5 68.75 90.5 69.5 92.75 74.75 C89 75.88 84.5 75.13 80 74 C75.5 75.13 71 75.88 67.25 74.75 Z"/>
+      <path id="s4-mouth" class="gp-line" d="M76.25 76.6 Q80 79.6 83.75 76.6" stroke="#0d1828" stroke-width="2"/>
+      <g id="s4-glasses" class="gp-line" stroke="#1b2a40" stroke-width="2.2">
+        <circle cx="72" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+        <circle cx="88" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+        <line x1="78.8" y1="60" x2="81.2" y2="60"/>
+        <line x1="65.2" y1="59.3" x2="62.4" y2="57.8"/>
+        <line x1="94.8" y1="59.3" x2="97.6" y2="57.8"/>
+      </g>
+      <g id="s4-eyes" fill="#0d1828">
+        <circle id="s4-eye-left" cx="72" cy="60.8" r="2.2"/>
+        <circle id="s4-eye-right" cx="88" cy="60.8" r="2.2"/>
+      </g>
+      <g id="s4-brows" class="gp-hair-light" stroke="#0d1828" stroke-width="1.3" stroke-linejoin="round">
+        <path id="s4-brow-left" d="M65 51.75 C67.25 48 73.25 47.25 77.75 49.13 C73.25 50.25 68.75 50.63 65 51.75 Z"/>
+        <path id="s4-brow-right" d="M82.25 49.5 C86 45.75 91.25 44.25 95 45 C91.25 46.88 86.75 48.38 82.25 49.5 Z"/>
+      </g>
+    </g>
+  </g>
+  </g>
+</svg>
+</div>
+<div class="layer" id="flash"></div>
+<script type="application/json" id="poses">{"board": {"x": 388.0, "y": 80.0, "scale": 1.0, "rotate": {"head": -6.0, "arm-left": 34.5, "arm-left-forearm": 108.7, "arm-right": -11.1, "arm-right-forearm": 62.9, "leg-left": 1.5, "leg-left-foot": -1.5, "leg-right": -1.5, "leg-right-foot": 1.5}, "translate": {"eyes": [-3.0, 0.0]}}, "desk": {"x": 168.0, "y": 104.0, "scale": 1.0, "rotate": {"head": 4.0, "arm-left": -57.6, "arm-left-forearm": -44.7, "arm-right": -21.7, "arm-right-forearm": -65.3, "leg-left": -90.0, "leg-left-shin": 90.0, "leg-right": -90.0, "leg-right-shin": 90.0}, "translate": {"eyes": [3.0, -1.0]}}}</script>
+<script src="rig.js"></script>
+<script src="episode.js"></script>
+</body>
+</html>
