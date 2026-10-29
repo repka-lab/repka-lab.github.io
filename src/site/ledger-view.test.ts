@@ -79,10 +79,17 @@ describe('renderLedgerTable', () => {
     assert.match(rowOf(renderLedgerTable(sampleLedger()), 'P0002'), /Pending/);
   });
 
+  test('names the call and the outcome as higher or lower', () => {
+    const html = renderLedgerTable(sampleLedger());
+
+    assert.match(rowOf(html, 'P0001'), /Higher, \+1\.50%/);
+    assert.match(rowOf(html, 'P0002'), /<td>Lower<\/td>/);
+  });
+
   test('escapes the model reasoning', () => {
     const row = rowOf(renderLedgerTable(sampleLedger()), 'P0001');
 
-    assert.match(row, /Gold &lt;b&gt;looks&lt;\/b&gt; firm &amp; steady\./);
+    assert.match(row, /BTC &lt;b&gt;looks&lt;\/b&gt; firm &amp; steady\./);
   });
 
   test('shows the full prompt hash', () => {

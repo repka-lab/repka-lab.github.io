@@ -9,7 +9,6 @@ import {
   addPrediction,
   buildResults,
   classifyMove,
-  DEFAULT_FLAT_THRESHOLD_PCT,
   dueForVerification,
   emptyLedger,
   getStats,
@@ -25,6 +24,8 @@ import type { Ledger, NewPrediction, NewVerification } from './ledger.ts';
 const RECORDED = new Date('2026-10-26T12:00:00Z');
 const VERIFY_DATE = '2026-11-02T21:00:00.000Z';
 const AFTER_VERIFY = new Date('2026-11-02T22:00:00Z');
+const EARLIER_VERIFY = '2026-10-30T21:00:00Z'; // also due by AFTER_VERIFY
+const LATER_VERIFY = '2026-11-09T21:00:00Z'; // not yet due at AFTER_VERIFY
 const HASH = 'a'.repeat(64);
 const REPO_LEDGER = fileURLToPath(new URL('../data/ledger.json', import.meta.url));
 
@@ -34,10 +35,9 @@ function forecast(overrides: Partial<NewPrediction> = {}): NewPrediction {
   return {
     model: 'claude',
     model_version: 'claude-opus-5-5',
-    asset: 'gold',
     direction: 'up',
     confidence: 60,
-    reasoning: 'Real yields are easing while central banks keep buying reserves.',
+    reasoning: 'Funding rates are cooling while spot volume holds up.',
     prompt_hash: HASH,
     verify_date: VERIFY_DATE,
     ...overrides,
@@ -50,7 +50,7 @@ function malformed(overrides: Json): NewPrediction {
 }
 
 function prices(start: number, end: number, id = 'P0001'): NewVerification {
-  return { prediction_id: id, price_source: 'stooq daily close', price_start: start, price_end: end };
+  return { prediction_id: id, price_source: 'exchange daily close', price_start: start, price_end: end };
 }
 
 function recorded(...inputs: NewPrediction[]): Ledger {
@@ -65,7 +65,7 @@ const LEDGER_ERROR = { name: 'LedgerError' };
 
 describe('addPrediction', () => {
   test('records forecasts with sequential ids and the clock time', () => {
-    const ledger = recorded(forecast(), forecast({ asset: 'silver' }));
+    const ledger = recorded(forecast(), forecast({ verify_date: LATER_VERIFY }));
 
     assert.deepEqual(ledger.predictions.map((p) => p.id), ['P0001', 'P0002']);
     assert.equal(ledger.predictions[0]?.date, RECORDED.toISOString());
@@ -77,13 +77,6 @@ describe('addPrediction', () => {
 
     assert.equal(ledger.predictions[0]?.id, 'P0001');
     assert.equal(ledger.predictions[0]?.date, RECORDED.toISOString());
-  });
-
-  test('applies the default flat threshold unless one is given', () => {
-    const ledger = recorded(forecast(), forecast({ asset: 'silver', flat_threshold_pct: 1 }));
-
-    assert.equal(ledger.predictions[0]?.flat_threshold_pct, DEFAULT_FLAT_THRESHOLD_PCT);
-    assert.equal(ledger.predictions[1]?.flat_threshold_pct, 1);
   });
 
   test('reads a calendar date verify_date as UTC midnight', () => {
@@ -103,8 +96,8 @@ describe('addPrediction', () => {
 
   const rejected: [string, Json, RegExp][] = [
     ['an unknown model', { model: 'llama' }, /model must be one of chatgpt, claude, gemini, grok/],
-    ['an unknown asset', { asset: 'btc' }, /asset must be one of/],
-    ['an unknown direction', { direction: 'sideways' }, /direction must be one of up, down, flat/],
+    ['an unknown direction', { direction: 'sideways' }, /direction must be one of up, down$/],
+    ['a flat call', { direction: 'flat' }, /direction must be one of up, down$/],
     ['a confidence above 100', { confidence: 101 }, /confidence must be a number from 0 to 100/],
     ['a confidence that is not a number', { confidence: '60' }, /confidence must be a number/],
     ['a NaN confidence', { confidence: Number.NaN }, /confidence must be a number/],
@@ -117,8 +110,6 @@ describe('addPrediction', () => {
     ['a verify date without a time zone', { verify_date: '2026-11-02T21:00' }, /verify_date must be an ISO 8601/],
     ['a verify date in the past', { verify_date: '2026-10-20' }, /must be after the recording time/],
     ['a verify date equal to the recording time', { verify_date: RECORDED.toISOString() }, /must be after/],
-    ['a flat threshold above 5%', { flat_threshold_pct: 6 }, /flat_threshold_pct must be a number from 0 to 5/],
-    ['a negative flat threshold', { flat_threshold_pct: -1 }, /flat_threshold_pct must be a number from 0 to 5/],
   ];
 
   for (const [what, overrides, message] of rejected) {
@@ -136,27 +127,33 @@ describe('addPrediction', () => {
     });
   });
 
-  test('refuses a second forecast for the same model, asset and verify date', () => {
+  test('refuses a second forecast for the same model and verify date', () => {
     const ledger = recorded(forecast());
 
     assert.throws(() => addPrediction(ledger, forecast({ direction: 'down' }), RECORDED), {
       ...LEDGER_ERROR,
-      message: /P0001 already holds claude on gold/,
+      message: /P0001 already holds claude for 2026-11-02T21:00:00.000Z/,
     });
+  });
+
+  test('lets every model make its own call for the same verify date', () => {
+    const ledger = recorded(...MODELS.map((model) => forecast({ model, model_version: `${model}-test` })));
+
+    assert.deepEqual(ledger.predictions.map((p) => p.model), [...MODELS]);
   });
 });
 
 describe('verifyPrediction', () => {
-  const upOnGold = recorded(forecast({ direction: 'up' }));
+  const upCall = recorded(forecast({ direction: 'up' }));
 
-  test('scores a rise beyond the threshold as a hit for an up forecast', () => {
-    const ledger = verifyPrediction(upOnGold, prices(2000, 2030), AFTER_VERIFY);
+  test('scores a rise as a hit for an up forecast', () => {
+    const ledger = verifyPrediction(upCall, prices(2000, 2030), AFTER_VERIFY);
 
     assert.deepEqual(ledger.verifications, [
       {
         prediction_id: 'P0001',
         verified_at: AFTER_VERIFY.toISOString(),
-        price_source: 'stooq daily close',
+        price_source: 'exchange daily close',
         price_start: 2000,
         price_end: 2030,
         change_pct: 1.5,
@@ -167,46 +164,53 @@ describe('verifyPrediction', () => {
   });
 
   test('scores a fall as a miss for an up forecast', () => {
-    const verification = verifyPrediction(upOnGold, prices(2000, 1980), AFTER_VERIFY).verifications[0];
+    const verification = verifyPrediction(upCall, prices(2000, 1980), AFTER_VERIFY).verifications[0];
 
     assert.equal(verification?.change_pct, -1);
     assert.equal(verification?.outcome, 'down');
     assert.equal(verification?.hit, false);
   });
 
-  test('counts a move exactly at the threshold as flat despite floating-point noise', () => {
-    const flat = recorded(forecast({ direction: 'flat' }));
+  test('counts an unchanged price as not higher, so a down forecast hits', () => {
+    const downCall = recorded(forecast({ direction: 'down' }));
 
-    // (3.015 - 3) / 3 * 100 is 0.5000000000000041 before rounding.
-    const verification = verifyPrediction(flat, prices(3, 3.015), AFTER_VERIFY).verifications[0];
+    const verification = verifyPrediction(downCall, prices(2000, 2000), AFTER_VERIFY).verifications[0];
 
-    assert.equal(verification?.change_pct, 0.5);
-    assert.equal(verification?.outcome, 'flat');
+    assert.equal(verification?.change_pct, 0);
+    assert.equal(verification?.outcome, 'down');
+    assert.equal(verification?.hit, true);
+  });
+
+  test('reads a rise too small to show in change_pct as up', () => {
+    const verification = verifyPrediction(upCall, prices(60000, 60000.01), AFTER_VERIFY).verifications[0];
+
+    assert.equal(verification?.change_pct, 0);
+    assert.equal(verification?.outcome, 'up');
     assert.equal(verification?.hit, true);
   });
 
   test('allows verification exactly at the verify date', () => {
-    const ledger = verifyPrediction(upOnGold, prices(2000, 2030), new Date(VERIFY_DATE));
+    const ledger = verifyPrediction(upCall, prices(2000, 2030), new Date(VERIFY_DATE));
 
     assert.equal(ledger.verifications.length, 1);
   });
 
   test('refuses to verify before the verify date', () => {
-    assert.throws(() => verifyPrediction(upOnGold, prices(2000, 2030), RECORDED), {
+    assert.throws(() => verifyPrediction(upCall, prices(2000, 2030), RECORDED), {
       ...LEDGER_ERROR,
       message: /P0001 cannot be verified before 2026-11-02T21:00:00.000Z/,
     });
   });
 
   test('refuses an unknown prediction id', () => {
-    assert.throws(() => verifyPrediction(upOnGold, prices(2000, 2030, 'P0042'), AFTER_VERIFY), {
+    assert.throws(() => verifyPrediction(upCall, prices(2000, 2030, 'P0042'), AFTER_VERIFY), {
       ...LEDGER_ERROR,
       message: /there is no prediction P0042/,
     });
   });
 
   test('refuses to verify the same prediction twice', () => {
-    const once = verifyPrediction(upOnGold, prices(2000, 2030), AFTER_VERIFY);
+    const once = verifyPrediction(upCall, prices(2000, 2030), AFTER_VERIFY);
 
     assert.throws(() => verifyPrediction(once, prices(2000, 1900), AFTER_VERIFY), {
       ...LEDGER_ERROR,
@@ -216,7 +220,7 @@ describe('verifyPrediction', () => {
 
   for (const bad of [0, -5, Number.POSITIVE_INFINITY, Number.NaN]) {
     test(`rejects a price of ${bad}`, () => {
-      assert.throws(() => verifyPrediction(upOnGold, prices(bad, 2030), AFTER_VERIFY), {
+      assert.throws(() => verifyPrediction(upCall, prices(bad, 2030), AFTER_VERIFY), {
         ...LEDGER_ERROR,
         message: /price_start must be a positive number/,
       });
@@ -226,33 +230,31 @@ describe('verifyPrediction', () => {
   test('rejects a missing price source', () => {
     const input = { ...prices(2000, 2030), price_source: '' };
 
-    assert.throws(() => verifyPrediction(upOnGold, input, AFTER_VERIFY), {
+    assert.throws(() => verifyPrediction(upCall, input, AFTER_VERIFY), {
       ...LEDGER_ERROR,
       message: /price_source must be a non-empty string/,
     });
   });
 
   test('returns a new ledger and leaves the original untouched', () => {
-    const next = verifyPrediction(upOnGold, prices(2000, 2030), AFTER_VERIFY);
+    const next = verifyPrediction(upCall, prices(2000, 2030), AFTER_VERIFY);
 
-    assert.equal(upOnGold.verifications.length, 0);
+    assert.equal(upCall.verifications.length, 0);
     assert.equal(next.verifications.length, 1);
   });
 });
 
 describe('classifyMove', () => {
   const cases: [number, number, string][] = [
-    [0.5, 0.5, 'flat'],
-    [-0.5, 0.5, 'flat'],
-    [0.5001, 0.5, 'up'],
-    [-0.5001, 0.5, 'down'],
-    [0, 0, 'flat'],
-    [0.0001, 0, 'up'],
+    [100, 101, 'up'],
+    [100, 99, 'down'],
+    [100, 100, 'down'],
+    [60000, 60000.01, 'up'],
   ];
 
-  for (const [change, threshold, expected] of cases) {
-    test(`reads a ${change}% move with a ${threshold}% threshold as ${expected}`, () => {
-      assert.equal(classifyMove(change, threshold), expected);
+  for (const [start, end, expected] of cases) {
+    test(`reads a move from ${start} to ${end} as ${expected}`, () => {
+      assert.equal(classifyMove(start, end), expected);
     });
   }
 });
@@ -261,9 +263,9 @@ describe('dueForVerification', () => {
   test('lists only unverified forecasts whose verify date has passed', () => {
     const ledger = verifyPrediction(
       recorded(
-        forecast({ asset: 'gold' }),
-        forecast({ asset: 'silver', verify_date: '2026-11-09T21:00:00Z' }),
-        forecast({ asset: 'sp500' }),
+        forecast(),
+        forecast({ verify_date: LATER_VERIFY }),
+        forecast({ verify_date: EARLIER_VERIFY }),
       ),
       prices(5000, 5100, 'P0003'),
       AFTER_VERIFY,
@@ -296,10 +298,10 @@ describe('getStats', () => {
     const ledger = steps.reduce(
       (current, step) => verifyPrediction(current, step, AFTER_VERIFY),
       recorded(
-        forecast({ asset: 'gold', direction: 'up', confidence: 60 }),
-        forecast({ asset: 'silver', direction: 'down', confidence: 80 }),
-        forecast({ asset: 'sp500', direction: 'up', confidence: 50 }),
-        forecast({ model: 'grok', model_version: 'grok-5', asset: 'gold', direction: 'up', confidence: 70 }),
+        forecast({ direction: 'up', confidence: 60 }),
+        forecast({ verify_date: EARLIER_VERIFY, direction: 'down', confidence: 80 }),
+        forecast({ verify_date: LATER_VERIFY, direction: 'up', confidence: 50 }),
+        forecast({ model: 'grok', model_version: 'grok-5', direction: 'up', confidence: 70 }),
       ),
     );
 
@@ -332,7 +334,7 @@ describe('buildResults', () => {
 });
 
 describe('parseLedger', () => {
-  const verified = verifyPrediction(recorded(forecast(), forecast({ asset: 'silver' })), prices(2000, 2030), AFTER_VERIFY);
+  const verified = verifyPrediction(recorded(forecast(), forecast({ verify_date: LATER_VERIFY })), prices(2000, 2030), AFTER_VERIFY);
   const stored = asJson(verified);
   const [first, second] = stored.predictions as [Json, Json];
   const [verdict] = stored.verifications as [Json];
@@ -377,7 +379,7 @@ describe('saveLedger and loadLedger', () => {
   }
 
   const one = recorded(forecast());
-  const two = addPrediction(one, forecast({ asset: 'silver' }), RECORDED);
+  const two = addPrediction(one, forecast({ verify_date: LATER_VERIFY }), RECORDED);
 
   test('writes a ledger that loads back unchanged, as 2-space JSON with a final newline', () => {
     const path = freshPath();

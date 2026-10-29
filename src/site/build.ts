@@ -17,7 +17,7 @@ import { renderArticle, renderIndex, renderLedgerPage } from './pages.ts';
 export const MARKER = '.repka-site';
 
 const MARKER_TEXT = 'Built by src/site/build.ts, which deletes and rewrites this folder. Edit the sources instead.\n';
-const ASSETS = ['style.css', 'turnip.svg'] as const;
+const ASSETS = ['style.css', 'avatar.svg'] as const;
 const PROJECT_ROOT = resolve(import.meta.dirname, '../..');
 const PUBLIC_DIR = join(PROJECT_ROOT, 'docs');
 

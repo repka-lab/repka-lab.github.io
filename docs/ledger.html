@@ -5,19 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="script-src 'none'; object-src 'none'; base-uri 'none'">
   <title>Ledger · Repka</title>
-  <meta name="description" content="The full, append-only record of every AI market call: reasoning, prompt hash, prices and result.">
+  <meta name="description" content="The full, append-only record of every weekly AI call on BTC: reasoning, prompt hash, prices and result.">
   <meta property="og:site_name" content="Repka">
   <meta property="og:title" content="Ledger · Repka">
-  <meta property="og:description" content="The full, append-only record of every AI market call: reasoning, prompt hash, prices and result.">
+  <meta property="og:description" content="The full, append-only record of every weekly AI call on BTC: reasoning, prompt hash, prices and result.">
   <meta name="twitter:card" content="summary">
-  <link rel="icon" href="turnip.svg" type="image/svg+xml">
+  <link rel="icon" href="avatar.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="site-header">
     <div class="wrap">
       <a class="brand" href="index.html">
-        <img src="turnip.svg" alt="" width="28" height="28">
+        <img src="avatar.svg" alt="" width="28" height="28">
         <span>Repka<small>AI Prediction Lab</small></span>
       </a>
       <nav aria-label="Site">
@@ -38,10 +38,11 @@
   <ul class="rules">
     <li><strong>Ledger first.</strong> A call is written here before any video or post about it goes out.</li>
     <li><strong>Append-only.</strong> Entries are never edited or deleted. A check is added as a new entry next to its call, and misses stay.</li>
-    <li><strong>What a call holds.</strong> The model and its exact version, the asset, the direction (up, down or flat), a confidence from 0 to 100%, the check date and the model&rsquo;s own reasoning.</li>
-    <li><strong>Flat band.</strong> A move smaller than &plusmn;0.5% counts as flat. The band is stored with each call, so it cannot be moved afterwards.</li>
+    <li><strong>What a call holds.</strong> The model and its exact version, the direction (higher or lower), a confidence from 0 to 100%, the check date and the model&rsquo;s own reasoning.</li>
+    <li><strong>Higher or lower.</strong> The BTC price at the end of the week is compared with the price at the start. Higher means the end price is above the start price; anything else, an unchanged price included, counts as lower.</li>
     <li><strong>Prompt hash.</strong> The SHA-256 hash of the exact prompt text the model received. Anyone holding the prompt can recompute it, so the prompt cannot be quietly changed later.</li>
     <li><strong>Times</strong> are in UTC.</li>
+    <li><strong>Still open.</strong> The exact start and end times of the week in UTC, and which public BTC price source is used for the check. Both are written here before the first call is recorded.</li>
   </ul>
   <p><a href="data/ledger.json">Download the raw ledger (JSON)</a></p>
 </section>

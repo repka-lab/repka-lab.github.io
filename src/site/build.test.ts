@@ -9,6 +9,9 @@ import { buildSite, MARKER } from './build.ts';
 import { DISCLAIMER, HOST_NOTE } from './html.ts';
 import { sampleLedger } from './test-fixtures.ts';
 
+// Words the public copy never uses. The disclaimer's "buying or selling" is allowed: only whole words count.
+const FORBIDDEN = /\b(buy|sell|should|invest|guaranteed|will go up|will go down)\b/i;
+
 const work = mkdtempSync(join(tmpdir(), 'repka-site-'));
 after(() => rmSync(work, { recursive: true, force: true }));
 
@@ -44,11 +47,11 @@ describe('buildSite', () => {
       '.nojekyll',
       MARKER,
       'articles/week-one.html',
+      'avatar.svg',
       'data/ledger.json',
       'index.html',
       'ledger.html',
       'style.css',
-      'turnip.svg',
     ]);
     assert.deepEqual(written, filesIn(out));
     assert.equal(readFileSync(join(out, 'data/ledger.json'), 'utf8'), readFileSync(ledgerPath, 'utf8'));
@@ -64,6 +67,13 @@ describe('buildSite', () => {
       const html = readFileSync(join(out, file), 'utf8');
       assert.ok(html.includes(DISCLAIMER), `${file} has no disclaimer`);
       assert.ok(html.includes(HOST_NOTE), `${file} has no host note`);
+    }
+  });
+
+  test('keeps the forbidden words off every page', () => {
+    for (const file of pages) {
+      const html = readFileSync(join(out, file), 'utf8');
+      assert.doesNotMatch(html, FORBIDDEN, `${file} uses a forbidden word`);
     }
   });
 

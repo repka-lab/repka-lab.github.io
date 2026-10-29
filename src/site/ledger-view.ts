@@ -2,12 +2,11 @@
 // A result is always a sign plus a word, so it never depends on color alone.
 
 import { getStats, MODELS } from '../ledger.ts';
-import type { Asset, Direction, Ledger, Model, Prediction, Verification } from '../ledger.ts';
+import type { Direction, Ledger, Model, Prediction, Verification } from '../ledger.ts';
 import { escapeHtml } from './html.ts';
 
 const MODEL_NAMES: Readonly<Record<Model, string>> = { chatgpt: 'ChatGPT', claude: 'Claude', gemini: 'Gemini', grok: 'Grok' };
-const ASSET_NAMES: Readonly<Record<Asset, string>> = { gold: 'Gold', silver: 'Silver', sp500: 'S&P 500', nasdaq: 'NASDAQ' };
-const DIRECTION_NAMES: Readonly<Record<Direction, string>> = { up: 'Up', down: 'Down', flat: 'Flat' };
+const DIRECTION_NAMES: Readonly<Record<Direction, string>> = { up: 'Higher', down: 'Lower' };
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const NONE = '—';
@@ -60,7 +59,7 @@ export function renderLedgerTable(ledger: Ledger): string {
 
   return `<div class="table-wrap">
   <table class="ledger">
-    <thead><tr><th scope="col">ID</th><th scope="col">Recorded</th><th scope="col">Model</th><th scope="col">Asset</th><th scope="col">Call</th><th scope="col" class="num">Confidence</th><th scope="col">Check date</th><th scope="col">Result</th><th scope="col">Details</th></tr></thead>
+    <thead><tr><th scope="col">ID</th><th scope="col">Recorded</th><th scope="col">Model</th><th scope="col">BTC call</th><th scope="col" class="num">Confidence</th><th scope="col">Check date</th><th scope="col">Result</th><th scope="col">Details</th></tr></thead>
     <tbody>
       ${rows.join('\n      ')}
     </tbody>
@@ -73,7 +72,6 @@ function ledgerRow(p: Prediction, verdict: Verification | undefined): string {
     `<th scope="row">${p.id}</th>`,
     `<td>${formatUtc(p.date)}</td>`,
     `<td>${MODEL_NAMES[p.model]}<br><small>${escapeHtml(p.model_version)}</small></td>`,
-    `<td>${escapeHtml(ASSET_NAMES[p.asset])}</td>`,
     `<td>${DIRECTION_NAMES[p.direction]}</td>`,
     `<td class="num">${p.confidence}%</td>`,
     `<td>${formatUtc(p.verify_date)}</td>`,
@@ -92,7 +90,6 @@ function resultCell(verdict: Verification | undefined): string {
 function detailsCell(p: Prediction, verdict: Verification | undefined): string {
   const facts = [
     `<dt>Reasoning</dt><dd>${escapeHtml(p.reasoning)}</dd>`,
-    `<dt>Flat band</dt><dd>±${p.flat_threshold_pct}%</dd>`,
     `<dt>Prompt hash</dt><dd><code>${p.prompt_hash}</code></dd>`,
   ];
   const prices = verdict

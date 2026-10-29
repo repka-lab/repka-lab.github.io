@@ -50,14 +50,14 @@ export function page(options: PageOptions): string {
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${description}">
   <meta name="twitter:card" content="summary">
-  <link rel="icon" href="${root}turnip.svg" type="image/svg+xml">
+  <link rel="icon" href="${root}avatar.svg" type="image/svg+xml">
   <link rel="stylesheet" href="${root}style.css">
 </head>
 <body>
   <header class="site-header">
     <div class="wrap">
       <a class="brand" href="${root}index.html">
-        <img src="${root}turnip.svg" alt="" width="28" height="28">
+        <img src="${root}avatar.svg" alt="" width="28" height="28">
         <span>${SITE_NAME}<small>AI Prediction Lab</small></span>
       </a>
       <nav aria-label="Site">

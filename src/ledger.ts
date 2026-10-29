@@ -1,23 +1,18 @@
 // Append-only ledger of forecasts. Every prediction is written here BEFORE it is published,
 // and the ledger only grows: existing predictions and verifications are never edited or removed.
 //
-// The rules a forecast is judged by are fixed when it is recorded. The recording time is taken
-// from the clock, not from the caller, and the verify date and the "flat" threshold are stored
-// in the prediction itself, so none of them can be chosen after the outcome is known.
+// Every forecast is a call on BTC: does the price end higher or lower than it started?
+// The recording time is taken from the clock, not from the caller, and the verify date is stored
+// in the prediction itself, so neither can be chosen after the outcome is known.
 
 import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 
 export const MODELS = ['chatgpt', 'claude', 'gemini', 'grok'] as const;
-export const ASSETS = ['gold', 'silver', 'sp500', 'nasdaq'] as const;
-export const DIRECTIONS = ['up', 'down', 'flat'] as const;
+export const DIRECTIONS = ['up', 'down'] as const;
 
 export type Model = (typeof MODELS)[number];
-export type Asset = (typeof ASSETS)[number];
 export type Direction = (typeof DIRECTIONS)[number];
 
-// A move of at most this many percent, either way, counts as flat (the boundary is flat too).
-export const DEFAULT_FLAT_THRESHOLD_PCT = 0.5;
-const MAX_FLAT_THRESHOLD_PCT = 5;
 const SCHEMA_VERSION = 1;
 const DECIMALS = 4;
 const PROMPT_HASH = /^[0-9a-f]{64}$/; // sha256 of the exact prompt text, lowercase hex
@@ -28,13 +23,11 @@ export interface Prediction {
   readonly date: string; // ISO 8601, when the forecast was recorded
   readonly model: Model;
   readonly model_version: string; // exact API model id the forecast came from
-  readonly asset: Asset;
   readonly direction: Direction;
   readonly confidence: number; // 0-100
   readonly reasoning: string;
   readonly prompt_hash: string;
   readonly verify_date: string; // ISO 8601, when the outcome is checked
-  readonly flat_threshold_pct: number;
 }
 
 export interface Verification {
@@ -43,8 +36,8 @@ export interface Verification {
   readonly price_source: string;
   readonly price_start: number; // price at the prediction's recording time
   readonly price_end: number; // price at its verify_date
-  readonly change_pct: number; // rounded to 4 decimals; the outcome is read from this value
-  readonly outcome: Direction;
+  readonly change_pct: number; // rounded to 4 decimals, for display
+  readonly outcome: Direction; // read from the raw prices, so a rise too small for change_pct is still up
   readonly hit: boolean;
 }
 
@@ -54,9 +47,7 @@ export interface Ledger {
   readonly verifications: readonly Verification[];
 }
 
-export type NewPrediction = Omit<Prediction, 'id' | 'date' | 'flat_threshold_pct'> & {
-  readonly flat_threshold_pct?: number;
-};
+export type NewPrediction = Omit<Prediction, 'id' | 'date'>;
 
 export type NewVerification = Pick<
   Verification,
@@ -93,19 +84,15 @@ export function emptyLedger(): Ledger {
 export function addPrediction(ledger: Ledger, input: NewPrediction, now: Date = new Date()): Ledger {
   const where = 'new prediction';
   const fields = fieldsOf(input, where);
-  const threshold = { flat_threshold_pct: fields.flat_threshold_pct ?? DEFAULT_FLAT_THRESHOLD_PCT };
   const prediction: Prediction = {
     id: formatId(ledger.predictions.length + 1),
     date: now.toISOString(),
     ...readForecast(fields, where),
     verify_date: isoDate(fields, 'verify_date', where),
-    flat_threshold_pct: number(threshold, 'flat_threshold_pct', where, 0, MAX_FLAT_THRESHOLD_PCT),
   };
   checkDates(prediction, where);
   const taken = ledger.predictions.find((p) => slotOf(p) === slotOf(prediction));
-  if (taken) {
-    fail(where, `${taken.id} already holds ${prediction.model} on ${prediction.asset} for ${prediction.verify_date}`);
-  }
+  if (taken) fail(where, `${taken.id} already holds ${prediction.model} for ${prediction.verify_date}`);
   return { ...ledger, predictions: [...ledger.predictions, prediction] };
 }
 
@@ -120,9 +107,9 @@ export function verifyPrediction(ledger: Ledger, input: NewVerification, now: Da
   return { ...ledger, verifications: [...ledger.verifications, verification] };
 }
 
-export function classifyMove(changePct: number, flatThresholdPct: number): Direction {
-  if (Math.abs(changePct) <= flatThresholdPct) return 'flat';
-  return changePct > 0 ? 'up' : 'down';
+// Up means the end price is strictly above the start price; anything else, unchanged included, is down.
+export function classifyMove(priceStart: number, priceEnd: number): Direction {
+  return priceEnd > priceStart ? 'up' : 'down';
 }
 
 // Predictions whose verify date has passed but which have no verification yet.
@@ -200,7 +187,7 @@ function judge(prediction: Prediction, prices: Prices, verifiedAt: string, where
     fail(where, `${prediction.id} cannot be verified before ${prediction.verify_date}`);
   }
   const change_pct = round(((prices.price_end - prices.price_start) / prices.price_start) * 100);
-  const outcome = classifyMove(change_pct, prediction.flat_threshold_pct);
+  const outcome = classifyMove(prices.price_start, prices.price_end);
   return {
     prediction_id: prediction.id,
     verified_at: verifiedAt,
@@ -226,13 +213,12 @@ function statsFor(predictions: readonly Prediction[], verdicts: ReadonlyMap<stri
   };
 }
 
-function readForecast(fields: Fields, where: string): Omit<NewPrediction, 'verify_date' | 'flat_threshold_pct'> {
+function readForecast(fields: Fields, where: string): Omit<NewPrediction, 'verify_date'> {
   const prompt_hash = text(fields, 'prompt_hash', where);
   if (!PROMPT_HASH.test(prompt_hash)) fail(where, 'prompt_hash must be a lowercase sha256 hex string');
   return {
     model: choice(fields, 'model', MODELS, where),
     model_version: text(fields, 'model_version', where),
-    asset: choice(fields, 'asset', ASSETS, where),
     direction: choice(fields, 'direction', DIRECTIONS, where),
     confidence: number(fields, 'confidence', where, 0, 100),
     reasoning: text(fields, 'reasoning', where),
@@ -250,7 +236,6 @@ function readPrediction(value: unknown, index: number): Prediction {
     date: timestamp(fields, 'date', where),
     ...readForecast(fields, where),
     verify_date: timestamp(fields, 'verify_date', where),
-    flat_threshold_pct: number(fields, 'flat_threshold_pct', where, 0, MAX_FLAT_THRESHOLD_PCT),
   };
   checkDates(prediction, where);
   return prediction;
@@ -368,8 +353,8 @@ function timestamp(fields: Fields, key: string, where: string): string {
   return value;
 }
 
-function slotOf(prediction: Pick<Prediction, 'model' | 'asset' | 'verify_date'>): string {
-  return `${prediction.model} ${prediction.asset} ${prediction.verify_date}`;
+function slotOf(prediction: Pick<Prediction, 'model' | 'verify_date'>): string {
+  return `${prediction.model} ${prediction.verify_date}`;
 }
 
 function firstDuplicate(keys: readonly string[]): string | undefined {

@@ -94,6 +94,11 @@ a:hover {
   line-height: 1.15;
 }
 
+.brand img {
+  flex: none;
+  border-radius: 50%;
+}
+
 .brand small {
   display: block;
   color: var(--muted);
@@ -219,6 +224,7 @@ code {
 
 .host img {
   flex: none;
+  border-radius: 50%;
 }
 
 .host h2 {
