@@ -7,6 +7,7 @@ import { escapeHtml } from './html.ts';
 
 export const MODEL_NAMES: Readonly<Record<Model, string>> = { chatgpt: 'ChatGPT', claude: 'Claude', gemini: 'Gemini', grok: 'Grok' };
 export const DIRECTION_NAMES: Readonly<Record<Direction, string>> = { up: 'Higher', down: 'Lower' };
+export const SIGNS: Readonly<Record<Direction, string>> = { up: '▲', down: '▼' };
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const NONE = '—';
@@ -85,6 +86,11 @@ function ledgerRow(p: Prediction, verdict: Verification | undefined): string {
 export function resultLabel(verdict: Verification | undefined): string {
   if (!verdict) return '<span class="result pending">Pending</span>';
   return verdict.hit ? '<span class="result hit">✓ Hit</span>' : '<span class="result miss">✗ Miss</span>';
+}
+
+// A model's logo on a dark tile, drawn by the stylesheet from logos/<model>.svg. The name beside it carries the meaning.
+export function modelBadge(model: Model): string {
+  return `<span class="badge ${model}" aria-hidden="true"></span>`;
 }
 
 function resultCell(verdict: Verification | undefined): string {

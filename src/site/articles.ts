@@ -14,6 +14,7 @@ import { basename, join } from 'node:path';
 
 import { Marked } from 'marked';
 
+import type { PriceSeries } from '../candles.ts';
 import { emptyLedger } from '../ledger.ts';
 import type { Ledger } from '../ledger.ts';
 import { ChartError, renderChart } from './charts.ts';
@@ -30,6 +31,7 @@ export interface Article {
 export interface LoadOptions {
   readonly includeDrafts: boolean;
   readonly ledger: Ledger; // the charts in the articles are drawn from it
+  readonly prices?: PriceSeries; // BTC candles for the charts; without them the charts leave the candles out
 }
 
 export class SiteError extends Error {
@@ -49,7 +51,12 @@ const HEADER_LINE = /^([a-z_]+):\s*(.*)$/;
 type Field = (typeof FIELDS)[number];
 type Header = Readonly<Record<Field, string>>;
 
-export function parseArticle(fileName: string, source: string, ledger: Ledger = emptyLedger()): Article {
+export function parseArticle(
+  fileName: string,
+  source: string,
+  ledger: Ledger = emptyLedger(),
+  prices?: PriceSeries,
+): Article {
   const slug = basename(fileName, '.md');
   if (!SLUG.test(slug)) fail(fileName, 'file name must be lowercase letters, digits and dashes, ending in .md');
 
@@ -66,7 +73,7 @@ export function parseArticle(fileName: string, source: string, ledger: Ledger = 
     date: checkDay(header.date, fileName),
     summary: header.summary,
     isDraft: checkStatus(header.status, fileName) === 'draft',
-    html: renderBody(body, ledger, fileName),
+    html: renderBody(body, fileName, ledger, prices),
   };
 }
 
@@ -75,16 +82,16 @@ export function loadArticles(dir: string, options: LoadOptions): readonly Articl
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
     .filter((name) => name.endsWith('.md'))
-    .map((name) => parseArticle(name, readFileSync(join(dir, name), 'utf8'), options.ledger))
+    .map((name) => parseArticle(name, readFileSync(join(dir, name), 'utf8'), options.ledger, options.prices))
     .filter((article) => options.includeDrafts || !article.isDraft)
     .toSorted((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug));
 }
 
 // Markdown to HTML. A ```chart block becomes a chart drawn from the ledger; other code blocks stay code.
-function renderBody(body: string, ledger: Ledger, fileName: string): string {
+function renderBody(body: string, fileName: string, ledger: Ledger, prices: PriceSeries | undefined): string {
   const markdown = new Marked({
     gfm: true,
-    renderer: { code: ({ text, lang }) => (lang === 'chart' ? renderChart(text, ledger) : false) },
+    renderer: { code: ({ text, lang }) => (lang === 'chart' ? renderChart(text, ledger, prices) : false) },
   });
   try {
     return markdown.parser(markdown.lexer(body));

@@ -3,13 +3,15 @@
 //   node src/site/build.ts                               public build into docs/ (GitHub Pages)
 //   node src/site/build.ts --drafts --out .preview/site  local preview with draft articles
 //
-// Everything is rendered in memory first, so a bad ledger or article stops the build before
-// the output folder is touched. Drafts never go into docs/.
+// Everything is rendered in memory first, so a bad ledger, price file or article stops the build before
+// the output folder is touched. Drafts never go into docs/. With data/btc-usd-4h.json present the charts
+// draw BTC in candles from it; without it they leave the candles out.
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 
+import { loadCandles, PRICES_FILE } from '../candles.ts';
 import { loadLedger } from '../ledger.ts';
 import { loadArticles, SiteError } from './articles.ts';
 import { renderArticle, renderIndex, renderLedgerPage } from './pages.ts';
@@ -17,7 +19,15 @@ import { renderArticle, renderIndex, renderLedgerPage } from './pages.ts';
 export const MARKER = '.repka-site';
 
 const MARKER_TEXT = 'Built by src/site/build.ts, which deletes and rewrites this folder. Edit the sources instead.\n';
-const ASSETS = ['style.css', 'avatar.svg'] as const;
+const ASSETS = [
+  'style.css',
+  'avatar.svg',
+  'logos/LICENSE.txt',
+  'logos/chatgpt.svg',
+  'logos/claude.svg',
+  'logos/gemini.svg',
+  'logos/grok.svg',
+] as const;
 const PROJECT_ROOT = resolve(import.meta.dirname, '../..');
 const PUBLIC_DIR = join(PROJECT_ROOT, 'docs');
 
@@ -26,6 +36,7 @@ export interface BuildOptions {
   readonly articlesDir: string;
   readonly outDir: string;
   readonly includeDrafts: boolean;
+  readonly pricesPath?: string; // BTC candles for the charts, shipped as they are
 }
 
 interface OutputFile {
@@ -36,13 +47,16 @@ interface OutputFile {
 // Returns the written files, relative to outDir and sorted.
 export function buildSite(options: BuildOptions): readonly string[] {
   const ledger = loadLedger(options.ledgerPath);
-  const articles = loadArticles(options.articlesDir, { includeDrafts: options.includeDrafts, ledger });
+  const { pricesPath } = options;
+  const prices = pricesPath === undefined ? undefined : loadCandles(pricesPath);
+  const articles = loadArticles(options.articlesDir, { includeDrafts: options.includeDrafts, ledger, prices });
   const files: readonly OutputFile[] = [
     { path: 'index.html', content: renderIndex(ledger, articles) },
     { path: 'ledger.html', content: renderLedgerPage(ledger) },
     ...articles.map((article) => ({ path: `articles/${article.slug}.html`, content: renderArticle(article) })),
     ...ASSETS.map((name) => ({ path: name, content: readFileSync(join(import.meta.dirname, name)) })),
     { path: 'data/ledger.json', content: readFileSync(options.ledgerPath) }, // byte for byte, as committed
+    ...(pricesPath === undefined ? [] : [{ path: PRICES_FILE, content: readFileSync(pricesPath) }]),
     { path: '.nojekyll', content: '' }, // serve the files as they are, without Jekyll
     { path: MARKER, content: MARKER_TEXT },
   ];
@@ -78,11 +92,13 @@ function main(): void {
     throw new SiteError('drafts never go into docs/; pass --out with a preview folder');
   }
 
+  const pricesPath = join(PROJECT_ROOT, PRICES_FILE);
   const written = buildSite({
     ledgerPath: join(PROJECT_ROOT, 'data', 'ledger.json'),
     articlesDir: join(PROJECT_ROOT, 'content', 'articles'),
     outDir,
     includeDrafts: values.drafts,
+    ...(existsSync(pricesPath) ? { pricesPath } : {}),
   });
   const drafts = values.drafts ? ', drafts included' : '';
   process.stdout.write(`Built ${written.length} files into ${outDir}${drafts}\n`);

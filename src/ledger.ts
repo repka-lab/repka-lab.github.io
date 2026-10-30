@@ -1,9 +1,10 @@
 // Append-only ledger of forecasts. Every prediction is written here BEFORE it is published,
-// and the ledger only grows: existing predictions and verifications are never edited or removed.
+// and the ledger only grows: existing predictions, verifications and reviews are never edited or removed.
 //
 // Every forecast is a call on BTC: does the price end higher or lower than it started?
 // The recording time is taken from the clock, not from the caller, and the verify date is stored
 // in the prediction itself, so neither can be chosen after the outcome is known.
+// Once a call is checked, its model may add one review: which of its own factors held, and a short note.
 
 import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 
@@ -13,12 +14,18 @@ export const DIRECTIONS = ['up', 'down'] as const;
 export type Model = (typeof MODELS)[number];
 export type Direction = (typeof DIRECTIONS)[number];
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
+const LEGACY_VERSION = 1; // written before reviews existed; read as a ledger with none
+const RESULTS_VERSION = 1;
 const DECIMALS = 4;
 const PROMPT_HASH = /^[0-9a-f]{64}$/; // sha256 of the exact prompt text, lowercase hex
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2}))?$/;
 const MIN_FACTORS = 2;
 const MAX_FACTORS = 3;
+const MAX_NOTE_LENGTH = 280; // room for two sentences
+
+// Published text documents calls and never gives advice, so these words stay out of it.
+export const FORBIDDEN_WORDS = /\b(buy|sell|should|invest|guaranteed|will go up|will go down)\b/i;
 
 // One reason the model weighed, and which way it pulls the price.
 export interface Factor {
@@ -50,10 +57,20 @@ export interface Verification {
   readonly hit: boolean;
 }
 
+// The model's own look back at a checked call, judged against the factors it gave.
+export interface Review {
+  readonly prediction_id: string;
+  readonly reviewed_at: string; // ISO 8601
+  readonly factors_held: readonly boolean[]; // one mark per factor, in the call's order
+  readonly note: string; // one or two sentences
+  readonly prompt_hash: string; // sha256 of the exact review prompt text
+}
+
 export interface Ledger {
   readonly schema_version: typeof SCHEMA_VERSION;
   readonly predictions: readonly Prediction[];
   readonly verifications: readonly Verification[];
+  readonly reviews: readonly Review[];
 }
 
 export type NewPrediction = Omit<Prediction, 'id' | 'date'>;
@@ -62,6 +79,8 @@ export type NewVerification = Pick<
   Verification,
   'prediction_id' | 'price_source' | 'price_start' | 'price_end'
 >;
+
+export type NewReview = Omit<Review, 'reviewed_at'>;
 
 export interface ModelStats {
   readonly predictions: number;
@@ -74,7 +93,7 @@ export interface ModelStats {
 }
 
 export interface Results {
-  readonly schema_version: typeof SCHEMA_VERSION;
+  readonly schema_version: typeof RESULTS_VERSION;
   readonly updated_at: string;
   readonly models: Readonly<Record<Model, ModelStats>>;
 }
@@ -87,7 +106,7 @@ export class LedgerError extends Error {
 }
 
 export function emptyLedger(): Ledger {
-  return { schema_version: SCHEMA_VERSION, predictions: [], verifications: [] };
+  return { schema_version: SCHEMA_VERSION, predictions: [], verifications: [], reviews: [] };
 }
 
 export function addPrediction(ledger: Ledger, input: NewPrediction, now: Date = new Date()): Ledger {
@@ -116,6 +135,15 @@ export function verifyPrediction(ledger: Ledger, input: NewVerification, now: Da
   return { ...ledger, verifications: [...ledger.verifications, verification] };
 }
 
+export function addReview(ledger: Ledger, input: NewReview, now: Date = new Date()): Ledger {
+  const where = 'review';
+  const fields = fieldsOf(input, where);
+  const id = text(fields, 'prediction_id', where);
+  if (ledger.reviews.some((r) => r.prediction_id === id)) fail(where, `${id} is already reviewed`);
+  const review = reviewOf(fields, now.toISOString(), ledger, where);
+  return { ...ledger, reviews: [...ledger.reviews, review] };
+}
+
 // Up means the end price is strictly above the start price; anything else, unchanged included, is down.
 export function classifyMove(priceStart: number, priceEnd: number): Direction {
   return priceEnd > priceStart ? 'up' : 'down';
@@ -139,12 +167,15 @@ export function getStats(ledger: Ledger): Readonly<Record<Model, ModelStats>> {
 }
 
 export function buildResults(ledger: Ledger, now: Date = new Date()): Results {
-  return { schema_version: SCHEMA_VERSION, updated_at: now.toISOString(), models: getStats(ledger) };
+  return { schema_version: RESULTS_VERSION, updated_at: now.toISOString(), models: getStats(ledger) };
 }
 
 export function parseLedger(value: unknown): Ledger {
   const fields = fieldsOf(value, 'ledger');
-  if (fields.schema_version !== SCHEMA_VERSION) fail('ledger', `schema_version must be ${SCHEMA_VERSION}`);
+  const version = fields.schema_version;
+  if (version !== SCHEMA_VERSION && version !== LEGACY_VERSION) {
+    fail('ledger', `schema_version must be ${LEGACY_VERSION} or ${SCHEMA_VERSION}`);
+  }
 
   const predictions = list(fields, 'predictions').map(readPrediction);
   const sharedSlot = firstDuplicate(predictions.map(slotOf));
@@ -152,10 +183,15 @@ export function parseLedger(value: unknown): Ledger {
 
   const byId = new Map(predictions.map((p) => [p.id, p]));
   const verifications = list(fields, 'verifications').map((v, i) => readVerification(v, i, byId));
-  const twice = firstDuplicate(verifications.map((v) => v.prediction_id));
-  if (twice) fail('ledger', `${twice} is verified twice`);
+  const verifiedTwice = firstDuplicate(verifications.map((v) => v.prediction_id));
+  if (verifiedTwice) fail('ledger', `${verifiedTwice} is verified twice`);
 
-  return { schema_version: SCHEMA_VERSION, predictions, verifications };
+  const checked = { predictions, verifications };
+  const reviews = version === LEGACY_VERSION ? [] : list(fields, 'reviews').map((r, i) => readReview(r, i, checked));
+  const reviewedTwice = firstDuplicate(reviews.map((r) => r.prediction_id));
+  if (reviewedTwice) fail('ledger', `${reviewedTwice} is reviewed twice`);
+
+  return { schema_version: SCHEMA_VERSION, predictions, verifications, reviews };
 }
 
 export function assertAppendOnly(previous: Ledger, next: Ledger): void {
@@ -164,6 +200,9 @@ export function assertAppendOnly(previous: Ledger, next: Ledger): void {
   }
   if (!extendsList(previous.verifications, next.verifications)) {
     fail('ledger', 'existing verifications were changed or removed; the ledger is append-only');
+  }
+  if (!extendsList(previous.reviews, next.reviews)) {
+    fail('ledger', 'existing reviews were changed or removed; the ledger is append-only');
   }
 }
 
@@ -190,6 +229,7 @@ export function saveResults(path: string, results: Results): void {
 
 type Fields = Readonly<Record<string, unknown>>;
 type Prices = Pick<Verification, 'price_source' | 'price_start' | 'price_end'>;
+type Checked = Pick<Ledger, 'predictions' | 'verifications'>;
 
 function judge(prediction: Prediction, prices: Prices, verifiedAt: string, where: string): Verification {
   if (verifiedAt < prediction.verify_date) {
@@ -204,6 +244,26 @@ function judge(prediction: Prediction, prices: Prices, verifiedAt: string, where
     change_pct,
     outcome,
     hit: outcome === prediction.direction,
+  };
+}
+
+// A review looks back at a checked call, so it needs the call's factors and its verification first.
+function reviewOf(fields: Fields, reviewedAt: string, ledger: Checked, where: string): Review {
+  const id = text(fields, 'prediction_id', where);
+  const prediction = ledger.predictions.find((p) => p.id === id);
+  if (!prediction) fail(where, `there is no prediction ${id}`);
+  const verification = ledger.verifications.find((v) => v.prediction_id === id);
+  if (!verification) fail(where, `${id} is not verified yet`);
+  if (!prediction.factors) fail(where, `${id} has no factors to review`);
+  if (reviewedAt < verification.verified_at) {
+    fail(where, `${id} cannot be reviewed before it is verified at ${verification.verified_at}`);
+  }
+  return {
+    prediction_id: id,
+    reviewed_at: reviewedAt,
+    factors_held: readMarks(fields, prediction.factors.length, where),
+    note: readNote(fields, where),
+    prompt_hash: readPromptHash(fields, where),
   };
 }
 
@@ -223,8 +283,7 @@ function statsFor(predictions: readonly Prediction[], verdicts: ReadonlyMap<stri
 }
 
 function readForecast(fields: Fields, where: string): Omit<NewPrediction, 'verify_date'> {
-  const prompt_hash = text(fields, 'prompt_hash', where);
-  if (!PROMPT_HASH.test(prompt_hash)) fail(where, 'prompt_hash must be a lowercase sha256 hex string');
+  const prompt_hash = readPromptHash(fields, where);
   const factors = readFactors(fields, where);
   return {
     model: choice(fields, 'model', MODELS, where),
@@ -278,6 +337,34 @@ function readVerification(value: unknown, index: number, predictions: ReadonlyMa
     fail(where, 'change_pct, outcome or hit do not match the prices');
   }
   return expected;
+}
+
+function readReview(value: unknown, index: number, ledger: Checked): Review {
+  const where = `reviews[${index}]`;
+  const fields = fieldsOf(value, where);
+  return reviewOf(fields, timestamp(fields, 'reviewed_at', where), ledger, where);
+}
+
+function readMarks(fields: Fields, count: number, where: string): readonly boolean[] {
+  const value = fields.factors_held;
+  if (!Array.isArray(value) || value.length !== count || !value.every((mark) => typeof mark === 'boolean')) {
+    fail(where, `factors_held must be a list of ${count} true/false marks`);
+  }
+  return [...value];
+}
+
+function readNote(fields: Fields, where: string): string {
+  const note = text(fields, 'note', where);
+  if (note.length > MAX_NOTE_LENGTH) fail(where, `note must be at most ${MAX_NOTE_LENGTH} characters`);
+  const word = FORBIDDEN_WORDS.exec(note);
+  if (word) fail(where, `note must not use the word "${word[0].toLowerCase()}"`);
+  return note;
+}
+
+function readPromptHash(fields: Fields, where: string): string {
+  const prompt_hash = text(fields, 'prompt_hash', where);
+  if (!PROMPT_HASH.test(prompt_hash)) fail(where, 'prompt_hash must be a lowercase sha256 hex string');
+  return prompt_hash;
 }
 
 function readPrices(fields: Fields, where: string): Prices {

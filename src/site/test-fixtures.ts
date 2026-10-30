@@ -1,7 +1,8 @@
 // Shared test data for the site tests.
 
-import { addPrediction, emptyLedger, verifyPrediction } from '../ledger.ts';
-import type { Ledger, NewPrediction } from '../ledger.ts';
+import type { PriceSeries } from '../candles.ts';
+import { addPrediction, addReview, emptyLedger, verifyPrediction } from '../ledger.ts';
+import type { Ledger, NewPrediction, NewReview } from '../ledger.ts';
 
 const RECORDED = new Date('2026-10-25T10:00:00Z');
 const CHECKED = new Date('2026-11-01T12:00:00Z');
@@ -88,6 +89,55 @@ export function weekChecked(): Ledger {
       ),
     calls,
   );
+}
+
+const WEEK_REVIEWED = new Date('2026-11-07T10:00:00Z');
+// Claude has no factors, so it has nothing to review.
+const WEEK_REVIEWS: readonly NewReview[] = [
+  {
+    prediction_id: 'P0001',
+    factors_held: [true, false, true],
+    note: 'The run kept going & the top of the range gave way. Cooling funding did not slow it.',
+    prompt_hash: 'b'.repeat(64),
+  },
+  {
+    prediction_id: 'P0003',
+    factors_held: [false, true],
+    note: 'The pullback I expected did not come. The upward trend I set aside was the stronger signal.',
+    prompt_hash: 'b'.repeat(64),
+  },
+  {
+    prediction_id: 'P0004',
+    factors_held: [true, true],
+    note: 'Both held. Over one week, that may be luck as much as reading.',
+    prompt_hash: 'b'.repeat(64),
+  },
+];
+
+// The checked week, with each model looking back on its own factors.
+export function weekReviewed(): Ledger {
+  return WEEK_REVIEWS.reduce((ledger, input) => addReview(ledger, input, WEEK_REVIEWED), weekChecked());
+}
+
+const FOUR_HOURS = 14400; // seconds
+const CANDLES_FROM = Date.parse('2026-10-25T00:00:00Z');
+const CANDLE_COUNT = 79; // through 2026-11-07 00:00, wider than any window around WEEK
+
+// BTC in 4-hour candles, drifting up through 100,000 near the calls; every third candle falls.
+export function weekPrices(): PriceSeries {
+  const price = (i: number): number => 96000 + i * 80 + ((i % 3) - 1) * 300;
+  const candles = Array.from({ length: CANDLE_COUNT }, (_, i) => {
+    const open = price(i);
+    const close = price(i + 1);
+    return {
+      time: new Date(CANDLES_FROM + i * FOUR_HOURS * 1000).toISOString(),
+      open,
+      high: Math.max(open, close) + 150,
+      low: Math.min(open, close) - 150,
+      close,
+    };
+  });
+  return { source: 'candle feed <y>', granularity_seconds: FOUR_HOURS, candles };
 }
 
 export const NEXT_WEEK = '2026-11-09'; // the Monday after WEEK

@@ -1,38 +1,32 @@
 /* Repka site styles. No scripts and no web fonts: pages stay fast and work everywhere.
-   Text colors are checked for at least 4.5:1 contrast on both surfaces. */
+   The site is always dark. Text colors are checked for at least 4.5:1 contrast on both surfaces.
+   The light set, kept for a possible return: bg #faf8f3, surface #ffffff, ink #1f1d1a, ink-2 #55504a,
+   muted #6b655d, line #e4ded3, accent #6b3fa0, hit #1d7a46, miss #b3261e, up #2a78d6, down #eb6834,
+   track #ece7dd. */
 
 :root {
-  color-scheme: light dark;
-  --bg: #faf8f3;
-  --surface: #ffffff;
-  --ink: #1f1d1a;
-  --ink-2: #55504a;
-  --muted: #6b655d;
-  --line: #e4ded3;
-  --accent: #6b3fa0;
-  --hit: #1d7a46;
-  --miss: #b3261e;
-  --up: #2a78d6; /* chart marks for Higher and Lower, always next to ▲ Higher / ▼ Lower */
-  --down: #eb6834;
-  --track: #ece7dd;
+  color-scheme: dark;
+  --bg: #161412;
+  --surface: #1f1c19;
+  --ink: #f1ece4;
+  --ink-2: #c9c1b5;
+  --muted: #9a9184;
+  --line: #34302b;
+  --accent: #c4a3f0;
+  --hit: #5cc98a;
+  --miss: #f2827a;
+  --up: #3987e5; /* chart marks for Higher and Lower, always next to ▲ Higher / ▼ Lower */
+  --down: #d95926;
+  --track: #2c2824;
+  --logo-tile: #0e0d0c; /* behind the model logos: white, Claude orange and Gemini blue all clear 4.5:1 on it */
+  --btc: #f7931a; /* the coin from the video: a white ₿ on orange */
+  /* One mark color per AI on the candle charts, apart from up and down and from each other with any color vision.
+     Never alone: the logo and the name sit beside it. */
+  --ai-chatgpt: #0fa974;
+  --ai-claude: #b43368;
+  --ai-gemini: #7d4dbe;
+  --ai-grok: #b576af;
   --radius: 10px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #161412;
-    --surface: #1f1c19;
-    --ink: #f1ece4;
-    --ink-2: #c9c1b5;
-    --muted: #9a9184;
-    --line: #34302b;
-    --accent: #c4a3f0;
-    --hit: #5cc98a;
-    --miss: #f2827a;
-    --up: #3987e5;
-    --down: #d95926;
-    --track: #2c2824;
-  }
 }
 
 *,
@@ -643,6 +637,52 @@ dd {
   border-top: 1px solid var(--line);
 }
 
+/* Each model's logo (LobeHub Icons, see logos/LICENSE.txt) on one dark tile. Decoration only: the name beside it
+   carries the meaning. The paths are relative to this file, so they work from every page. */
+.badge {
+  display: inline-block;
+  flex: none;
+  align-self: center; /* an empty tile has no text baseline of its own to line up with the name */
+  vertical-align: middle;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--logo-tile) center / 1.125rem no-repeat;
+  print-color-adjust: exact;
+}
+
+.badge.chatgpt {
+  background-image: url(logos/chatgpt.svg);
+}
+
+.badge.claude {
+  background-image: url(logos/claude.svg);
+}
+
+.badge.gemini {
+  background-image: url(logos/gemini.svg);
+}
+
+.badge.grok {
+  background-image: url(logos/grok.svg);
+}
+
+/* Decoration only: the word BTC next to it carries the meaning. */
+.btc-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.4em;
+  height: 1.4em;
+  border-radius: 50%;
+  background: var(--btc);
+  color: #ffffff;
+  font-size: 0.85em;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: middle;
+}
+
 .reason-head {
   display: flex;
   flex-wrap: wrap;
@@ -750,7 +790,7 @@ dd {
   font-size: 0.85rem;
 }
 
-/* Move: start price, the week's move, end price; the arrow tilts the way the price went */
+/* Move: start price, the week's move, end price, then the candles across the whole row */
 
 .move {
   display: grid;
@@ -768,7 +808,7 @@ dd {
   flex-direction: column;
 }
 
-.move-point:last-child {
+.move-point:last-of-type {
   align-items: flex-end;
   text-align: right;
 }
@@ -796,44 +836,241 @@ dd {
 }
 
 .move-change {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   text-align: center;
 }
 
-.move-word {
+.move .candles {
+  grid-column: 1 / -1;
+}
+
+/* Candles: the price scale on the left, the week's lines named above, the name at each call's arrow on the right,
+   the days below */
+
+.candles {
+  --plot-h: 10rem;
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  grid-template-areas:
+    ". marks edge"
+    "axis plot calls"
+    ". days .";
+  column-gap: 8px;
+  row-gap: 4px;
+}
+
+.candles + .tiles {
+  margin-top: 20px;
+}
+
+.candles-marks,
+.candles-edge {
+  color: var(--ink-2);
+  font-size: 0.75rem;
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.candles-marks {
+  grid-area: marks;
+  position: relative;
+  height: 1.2em;
+  margin: 0;
+}
+
+/* Each name ends at its line, outside the week, so the names frame the week and never run into each other. */
+.candles-marks > span {
+  position: absolute;
+  padding-right: 4px;
+  transform: translateX(-100%);
+}
+
+.candles-edge {
+  grid-area: edge;
+}
+
+.candles-axis,
+.candles-days {
+  position: relative;
+  color: var(--muted);
+  font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
 }
 
-.move-line {
-  position: relative;
-  width: calc(100% - 12px);
-  height: 4px;
-  background: currentColor;
-  border-radius: 2px;
+.candles-axis {
+  grid-area: axis;
 }
 
-.move.up .move-line {
-  color: var(--up);
-  transform: rotate(-8deg);
-}
-
-.move.down .move-line {
-  color: var(--down);
-  transform: rotate(8deg);
-}
-
-.move-line::after {
-  content: "";
+.candles-axis > span {
   position: absolute;
-  top: 50%;
-  right: -10px;
-  border-block: 7px solid transparent;
-  border-left: 12px solid currentColor;
+  right: 0;
   transform: translateY(-50%);
+}
+
+.candles-days {
+  grid-area: days;
+  height: 1.2em;
+  margin: 0;
+}
+
+.candles-days > span {
+  position: absolute;
+  white-space: nowrap;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.candles-plot {
+  grid-area: plot;
+  display: block;
+  width: 100%;
+  height: var(--plot-h);
+  overflow: visible;
+}
+
+.candles-grid {
+  stroke: var(--track);
+}
+
+.candles-start {
+  stroke: var(--muted);
+  stroke-dasharray: 4 4;
+}
+
+.candles-open,
+.candles-close {
+  stroke: var(--ink-2);
+  stroke-width: 1.5px;
+}
+
+/* What the stretched plot would distort sits over it instead: the arrow heads, and the end price on the right
+   edge, ringed in the surface so it stands off the candles under it. The layer is a size container, so a head
+   can turn by the arrow's slant as drawn. */
+.candles-over {
+  grid-area: plot;
+  position: relative;
+  height: var(--plot-h);
+  container-type: size;
+  pointer-events: none;
+}
+
+.candles-end {
+  position: absolute;
+  left: 100%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--surface);
+  transform: translate(-50%, -50%);
+}
+
+/* One arrow per AI from where the week opens to the right edge, in the AI's color. */
+.candles-arrow {
+  stroke: var(--ai);
+  stroke-width: 2px;
+  stroke-dasharray: 5 4;
+}
+
+/* The head's point sits on the arrow's end and turns about it by the slant of the arrow. */
+.candles-head {
+  position: absolute;
+  left: 100%;
+  width: 9px;
+  height: 9px;
+  background: var(--ai);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transform-origin: 100% 50%;
+  translate: -100% -50%;
+  rotate: atan2(calc(var(--dy) * 1cqh), calc(var(--dx) * 1cqw));
+}
+
+/* Each name beside the plot, level with the end of its arrow. */
+.candles-tips {
+  grid-area: calls;
+  display: grid;
+  height: var(--plot-h);
+}
+
+.candles-tip {
+  grid-area: 1 / 1;
+  align-self: start;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  translate: 0 calc(var(--plot-h) * var(--y) / 100 - 50%);
+}
+
+.candles-tip .badge {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 4px;
+  background-size: 0.75rem;
+}
+
+.candles-arrow.chatgpt,
+.candles-head.chatgpt {
+  --ai: var(--ai-chatgpt);
+}
+
+.candles-arrow.claude,
+.candles-head.claude {
+  --ai: var(--ai-claude);
+}
+
+.candles-arrow.gemini,
+.candles-head.gemini {
+  --ai: var(--ai-gemini);
+}
+
+.candles-arrow.grok,
+.candles-head.grok {
+  --ai: var(--ai-grok);
+}
+
+/* The chart around the names may carry the week's own direction, so each sign takes its call's. */
+.chart .candles-tip.up .sign {
+  color: var(--up);
+}
+
+.chart .candles-tip.down .sign {
+  color: var(--down);
+}
+
+/* A rising candle is hollow and a falling one filled, so the two differ without color too. */
+.candle .wick,
+.candle .body {
+  stroke-width: 1px;
+}
+
+.candle.up .wick,
+.candle.up .body {
+  stroke: var(--up);
+}
+
+.candle.up .body {
+  fill: var(--surface);
+}
+
+.candle.down .wick,
+.candle.down .body {
+  stroke: var(--down);
+  fill: var(--down);
+}
+
+/* The full-height strip behind each candle takes the hover, so a thin candle is easy to reach. */
+.candle .hit {
+  fill: transparent;
+  pointer-events: all;
+}
+
+.candle:hover .hit {
+  fill: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
 /* Flow: numbered steps joined by a line; down the page when narrow, across when wide */
@@ -932,6 +1169,58 @@ dd {
   margin-top: 0;
 }
 
+/* Review: each model's call and result, which of its own factors held, then its note.
+   The marks stay in ink: hit and miss colors belong to the result alone. */
+
+.review-move {
+  font-weight: 600;
+}
+
+/* Each model's review is a card of its own. */
+.review-model {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.chart .held-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.chart .held-list > li {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 2px 12px;
+  margin: 0;
+}
+
+.held-mark {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.held-list .not-held {
+  color: var(--muted);
+}
+
+.review-model q {
+  display: block;
+  padding: 10px 12px;
+  color: var(--ink-2);
+  background: var(--track);
+  border-radius: 6px;
+}
+
 @container (min-width: 44rem) {
   .chart .steps {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -980,6 +1269,11 @@ dd {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  /* Some heads fit the result on the same line and some don't; give it its own line in every card. */
+  .review-model .result {
+    flex-basis: 100%;
+  }
+
   .move {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -989,8 +1283,32 @@ dd {
     grid-row: 2;
   }
 
-  .part {
+  .part,
+  .chart .held-list > li {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .chart .held-list {
+    gap: 10px;
+  }
+
+  /* Two weeks of day labels run together this narrow; keep every other day and each month name. */
+  .candles-days > .minor {
+    display: none;
+  }
+
+  /* A month name beside its day runs into the next day this narrow, so it goes under the day. */
+  .candles-days {
+    height: 2.4em;
+  }
+
+  .candles-month {
+    display: block;
+  }
+
+  /* The sign and the slant of each arrow still say which way each call went. */
+  .candles-word {
+    display: none;
   }
 }
 
@@ -998,7 +1316,6 @@ dd {
 @media (forced-colors: active) {
   .bar-fill,
   .meter-fill,
-  .move-line,
   .dumbbell-line,
   .dot.after {
     forced-color-adjust: none;
@@ -1009,6 +1326,52 @@ dd {
     forced-color-adjust: none;
     background: Canvas;
     border-color: CanvasText;
+  }
+
+  /* Keep the dark tile so the logo stays visible; a background shorthand here would drop the image. */
+  .badge {
+    forced-color-adjust: none;
+  }
+
+  .btc-mark {
+    forced-color-adjust: none;
+    background: CanvasText;
+    color: Canvas;
+  }
+
+  .candles-plot {
+    forced-color-adjust: none;
+  }
+
+  .candle .wick,
+  .candle .body,
+  .candles-open,
+  .candles-close {
+    stroke: CanvasText;
+  }
+
+  /* The AI colors stay: each arrow ends beside a logo and a name, so nothing depends on them. */
+  .candles-head {
+    forced-color-adjust: none;
+  }
+
+  .candles-end {
+    forced-color-adjust: none;
+    background: CanvasText;
+    box-shadow: 0 0 0 2px Canvas;
+  }
+
+  .candle.up .body {
+    fill: Canvas;
+  }
+
+  .candle.down .body {
+    fill: CanvasText;
+  }
+
+  .candles-grid,
+  .candles-start {
+    stroke: GrayText;
   }
 }
 

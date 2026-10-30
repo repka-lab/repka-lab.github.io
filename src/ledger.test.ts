@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import {
   addPrediction,
+  addReview,
   buildResults,
   classifyMove,
   dueForVerification,
@@ -19,18 +20,21 @@ import {
   saveResults,
   verifyPrediction,
 } from './ledger.ts';
-import type { Factor, Ledger, NewPrediction, NewVerification } from './ledger.ts';
+import type { Factor, Ledger, NewPrediction, NewReview, NewVerification } from './ledger.ts';
 
 const RECORDED = new Date('2026-10-26T12:00:00Z');
 const VERIFY_DATE = '2026-11-02T21:00:00.000Z';
 const AFTER_VERIFY = new Date('2026-11-02T22:00:00Z');
+const REVIEWED = new Date('2026-11-02T23:00:00Z');
 const EARLIER_VERIFY = '2026-10-30T21:00:00Z'; // also due by AFTER_VERIFY
 const LATER_VERIFY = '2026-11-09T21:00:00Z'; // not yet due at AFTER_VERIFY
 const HASH = 'a'.repeat(64);
+const REVIEW_HASH = 'b'.repeat(64);
 const FACTORS: Factor[] = [
   { text: 'Five higher daily closes in a row.', pulls: 'up' },
   { text: 'Funding rates are cooling.', pulls: 'down' },
 ];
+const NOTE = 'The run of higher closes kept going; funding stayed hot, so that factor did not hold.';
 const REPO_LEDGER = fileURLToPath(new URL('../data/ledger.json', import.meta.url));
 
 type Json = Record<string, unknown>;
@@ -61,7 +65,24 @@ function recorded(...inputs: NewPrediction[]): Ledger {
   return inputs.reduce((ledger, input) => addPrediction(ledger, input, RECORDED), emptyLedger());
 }
 
-function asJson(ledger: Ledger): { predictions: Json[]; verifications: Json[] } & Json {
+// P0001 is checked and can be reviewed; P0002 still waits for its verify date.
+function checked(): Ledger {
+  return verifyPrediction(
+    recorded(forecast({ factors: FACTORS }), forecast({ verify_date: LATER_VERIFY, factors: FACTORS })),
+    prices(2000, 2030),
+    AFTER_VERIFY,
+  );
+}
+
+function review(overrides: Partial<NewReview> = {}): NewReview {
+  return { prediction_id: 'P0001', factors_held: [true, false], note: NOTE, prompt_hash: REVIEW_HASH, ...overrides };
+}
+
+function malformedReview(overrides: Json): NewReview {
+  return { ...review(), ...overrides } as unknown as NewReview;
+}
+
+function asJson(ledger: Ledger): { predictions: Json[]; verifications: Json[]; reviews: Json[] } & Json {
   return JSON.parse(JSON.stringify(ledger));
 }
 
@@ -275,6 +296,70 @@ describe('verifyPrediction', () => {
   });
 });
 
+describe('addReview', () => {
+  test('records which factors held, the note and the clock time', () => {
+    const ledger = addReview(checked(), review(), REVIEWED);
+
+    assert.deepEqual(ledger.reviews, [
+      {
+        prediction_id: 'P0001',
+        reviewed_at: REVIEWED.toISOString(),
+        factors_held: [true, false],
+        note: NOTE,
+        prompt_hash: REVIEW_HASH,
+      },
+    ]);
+  });
+
+  test('ignores a review time supplied by the caller', () => {
+    const ledger = addReview(checked(), malformedReview({ reviewed_at: '2020-01-01' }), REVIEWED);
+
+    assert.equal(ledger.reviews[0]?.reviewed_at, REVIEWED.toISOString());
+  });
+
+  const rejected: [string, NewReview, RegExp][] = [
+    ['an unknown forecast', review({ prediction_id: 'P0009' }), /there is no prediction P0009/],
+    ['a call that is not checked yet', review({ prediction_id: 'P0002' }), /P0002 is not verified yet/],
+    ['a mark missing', review({ factors_held: [true] }), /factors_held must be a list of 2 true\/false marks/],
+    ['a mark that is not true or false', malformedReview({ factors_held: ['yes', false] }), /factors_held must be a list of 2 true\/false marks/],
+    ['a blank note', review({ note: '  ' }), /note must be a non-empty string/],
+    ['a note longer than two sentences need', review({ note: 'x'.repeat(281) }), /note must be at most 280 characters/],
+    ['a forbidden word in the note', review({ note: 'Holders should stay calm.' }), /note must not use the word "should"/],
+    ['a forbidden word in capitals', review({ note: 'Nothing here is GUARANTEED.' }), /note must not use the word "guaranteed"/],
+    ['a prompt hash that is not sha256 hex', review({ prompt_hash: 'ABC' }), /prompt_hash must be a lowercase sha256 hex string/],
+  ];
+
+  for (const [what, input, message] of rejected) {
+    test(`rejects ${what}`, () => {
+      assert.throws(() => addReview(checked(), input, REVIEWED), { ...LEDGER_ERROR, message });
+    });
+  }
+
+  test('refuses a second review of the same call', () => {
+    const once = addReview(checked(), review(), REVIEWED);
+
+    assert.throws(() => addReview(once, review(), REVIEWED), { ...LEDGER_ERROR, message: /P0001 is already reviewed/ });
+  });
+
+  test('refuses a call recorded without factors', () => {
+    const bare = verifyPrediction(recorded(forecast()), prices(2000, 2030), AFTER_VERIFY);
+
+    assert.throws(() => addReview(bare, review(), REVIEWED), { ...LEDGER_ERROR, message: /P0001 has no factors to review/ });
+  });
+
+  test('refuses a review time before the check', () => {
+    assert.throws(() => addReview(checked(), review(), RECORDED), { ...LEDGER_ERROR, message: /cannot be reviewed before/ });
+  });
+
+  test('returns a new ledger and leaves the original untouched', () => {
+    const before = checked();
+    const next = addReview(before, review(), REVIEWED);
+
+    assert.equal(before.reviews.length, 0);
+    assert.equal(next.reviews.length, 1);
+  });
+});
+
 describe('classifyMove', () => {
   const cases: [number, number, string][] = [
     [100, 101, 'up'],
@@ -369,9 +454,13 @@ describe('parseLedger', () => {
   const stored = asJson(verified);
   const [first, second] = stored.predictions as [Json, Json];
   const [verdict] = stored.verifications as [Json];
+  const reviewed = addReview(checked(), review(), REVIEWED);
+  const storedReviewed = asJson(reviewed);
+  const [mark] = storedReviewed.reviews as [Json];
+  const versionOne = { schema_version: 1, predictions: stored.predictions, verifications: stored.verifications };
 
   test('accepts the ledger file in the repository', () => {
-    assert.equal(loadLedger(REPO_LEDGER).schema_version, 1);
+    assert.equal(loadLedger(REPO_LEDGER).schema_version, 2);
   });
 
   test('round-trips a ledger through JSON unchanged', () => {
@@ -384,9 +473,25 @@ describe('parseLedger', () => {
     assert.deepEqual(parseLedger(asJson(withFactors)), withFactors);
   });
 
+  test('round-trips the reviews of checked calls', () => {
+    assert.deepEqual(parseLedger(storedReviewed), reviewed);
+  });
+
+  test('reads a version 1 file, which has no reviews, as version 2', () => {
+    assert.deepEqual(parseLedger(versionOne), verified);
+  });
+
   const rejected: [string, unknown, RegExp][] = [
     ['a value that is not an object', [], /ledger: expected an object/],
-    ['another schema version', { ...stored, schema_version: 2 }, /schema_version must be 1/],
+    ['another schema version', { ...stored, schema_version: 3 }, /schema_version must be 1 or 2/],
+    ['a version 2 file without reviews', { ...versionOne, schema_version: 2 }, /reviews must be an array/],
+    ['a review of an unknown forecast', { ...storedReviewed, reviews: [{ ...mark, prediction_id: 'P0009' }] }, /reviews\[0\]: there is no prediction P0009/],
+    ['a review of a call not checked yet', { ...storedReviewed, reviews: [{ ...mark, prediction_id: 'P0002' }] }, /P0002 is not verified yet/],
+    ['a forecast reviewed twice', { ...storedReviewed, reviews: [mark, mark] }, /P0001 is reviewed twice/],
+    ['a review with a mark missing', { ...storedReviewed, reviews: [{ ...mark, factors_held: [true] }] }, /factors_held must be a list of 2 true\/false marks/],
+    ['a forbidden word in a stored note', { ...storedReviewed, reviews: [{ ...mark, note: 'Funding should cool.' }] }, /note must not use the word "should"/],
+    ['a review time not in canonical form', { ...storedReviewed, reviews: [{ ...mark, reviewed_at: '2026-11-02T23:00:00Z' }] }, /reviewed_at must be stored as 2026-11-02T23:00:00.000Z/],
+    ['a review before the check', { ...storedReviewed, reviews: [{ ...mark, reviewed_at: RECORDED.toISOString() }] }, /cannot be reviewed before/],
     ['predictions that are not a list', { ...stored, predictions: {} }, /predictions must be an array/],
     ['ids out of sequence', { ...stored, predictions: [second, first] }, /id must be P0001, got P0002/],
     ['a date not in canonical form', { ...stored, predictions: [{ ...first, date: '2026-10-26T12:00:00Z' }, second] }, /date must be stored as 2026-10-26T12:00:00.000Z/],
@@ -484,11 +589,48 @@ describe('saveLedger and loadLedger', () => {
     assert.throws(() => saveLedger(path, two), { ...LEDGER_ERROR, message: /verifications were changed or removed/ });
   });
 
+  const unreviewed = checked();
+  const reviewed = addReview(unreviewed, review(), REVIEWED);
+
+  test('appends a review to the file on disk', () => {
+    const path = freshPath();
+
+    saveLedger(path, unreviewed);
+    saveLedger(path, reviewed);
+
+    assert.deepEqual(loadLedger(path), reviewed);
+  });
+
+  const reviewRewrites: [string, Ledger][] = [
+    ['dropping a review', unreviewed],
+    ['editing a review note', { ...reviewed, reviews: [{ ...reviewed.reviews[0]!, note: 'Both factors held.' }] }],
+  ];
+
+  for (const [what, rewrite] of reviewRewrites) {
+    test(`refuses ${what}`, () => {
+      const path = freshPath();
+      saveLedger(path, reviewed);
+
+      assert.throws(() => saveLedger(path, rewrite), { ...LEDGER_ERROR, message: /reviews were changed or removed/ });
+    });
+  }
+
+  test('upgrades a version 1 file to version 2 on the next save', () => {
+    const path = freshPath();
+    const versionOne = { schema_version: 1, predictions: one.predictions, verifications: one.verifications };
+    writeFileSync(path, JSON.stringify(versionOne), 'utf8');
+
+    saveLedger(path, two);
+
+    assert.deepEqual(loadLedger(path), two);
+    assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema_version, 2);
+  });
+
   test('refuses to save an invalid ledger', () => {
     const path = freshPath();
-    const broken = { ...one, schema_version: 2 } as unknown as Ledger;
+    const broken = { ...one, schema_version: 3 } as unknown as Ledger;
 
-    assert.throws(() => saveLedger(path, broken), { ...LEDGER_ERROR, message: /schema_version must be 1/ });
+    assert.throws(() => saveLedger(path, broken), { ...LEDGER_ERROR, message: /schema_version must be 1 or 2/ });
   });
 
   test('reads a file that starts with a byte order mark', () => {

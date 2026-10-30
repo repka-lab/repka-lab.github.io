@@ -4,6 +4,8 @@
 export const DISCLAIMER =
   'This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.';
 export const HOST_NOTE = 'The host is an animated AI character, not a real person.';
+export const TRADEMARK_NOTE =
+  'Logos are trademarks of their owners. This project is not affiliated with or endorsed by OpenAI, Anthropic, Google or xAI.';
 
 const SITE_NAME = 'Repka';
 
@@ -73,6 +75,7 @@ ${options.body}
       <p><strong>${DISCLAIMER}</strong></p>
       <p>${HOST_NOTE}</p>
       <p>The full record is public: <a href="${root}data/ledger.json">ledger.json</a>.</p>
+      <p>${TRADEMARK_NOTE} Icons: <a href="${root}logos/LICENSE.txt">LobeHub Icons</a>, MIT license.</p>
     </div>
   </footer>
 </body>

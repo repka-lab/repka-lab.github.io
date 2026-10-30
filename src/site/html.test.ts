@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 
-import { DISCLAIMER, escapeHtml, HOST_NOTE, page } from './html.ts';
+import { DISCLAIMER, escapeHtml, HOST_NOTE, page, TRADEMARK_NOTE } from './html.ts';
 
 const OPTIONS = { title: 'Ledger', description: 'All forecasts.', root: '../', section: 'ledger', body: '<p>x</p>' } as const;
 
@@ -19,6 +19,14 @@ describe('page', () => {
     assert.ok(html.includes(HOST_NOTE));
     assert.equal(DISCLAIMER, 'This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.');
     assert.equal(HOST_NOTE, 'The host is an animated AI character, not a real person.');
+  });
+
+  test('says whose the logos are and where the icons come from', () => {
+    const html = page(OPTIONS);
+
+    assert.ok(html.includes(TRADEMARK_NOTE));
+    assert.match(TRADEMARK_NOTE, /not affiliated with or endorsed by OpenAI, Anthropic, Google or xAI/);
+    assert.match(html, /<a href="\.\.\/logos\/LICENSE\.txt">LobeHub Icons<\/a>, MIT license/);
   });
 
   test('links everything relative to the site root it is given', () => {

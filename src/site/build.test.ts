@@ -4,10 +4,12 @@ import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { after, describe, test } from 'node:test';
 
+import { CandleError } from '../candles.ts';
+import { MODELS } from '../ledger.ts';
 import { SiteError } from './articles.ts';
 import { buildSite, MARKER } from './build.ts';
 import { DISCLAIMER, HOST_NOTE } from './html.ts';
-import { sampleLedger } from './test-fixtures.ts';
+import { sampleLedger, weekPrices } from './test-fixtures.ts';
 
 // Words the public copy never uses. The disclaimer's "buying or selling" is allowed: only whole words count.
 const FORBIDDEN = /\b(buy|sell|should|invest|guaranteed|will go up|will go down)\b/i;
@@ -56,10 +58,51 @@ describe('buildSite', () => {
       'data/ledger.json',
       'index.html',
       'ledger.html',
+      'logos/LICENSE.txt',
+      'logos/chatgpt.svg',
+      'logos/claude.svg',
+      'logos/gemini.svg',
+      'logos/grok.svg',
       'style.css',
     ]);
     assert.deepEqual(written, filesIn(out));
     assert.equal(readFileSync(join(out, 'data/ledger.json'), 'utf8'), readFileSync(ledgerPath, 'utf8'));
+  });
+
+  test('ships each model logo in fixed colors, with the stylesheet putting it on the tile', () => {
+    const css = readFileSync(join(out, 'style.css'), 'utf8');
+    for (const model of MODELS) {
+      const svg = readFileSync(join(out, `logos/${model}.svg`), 'utf8');
+      assert.match(svg, /^<svg [^>]*viewBox="0 0 24 24"/, `${model} is not a 24px icon`);
+      assert.doesNotMatch(svg, /<script|\son\w+=|href=/i, `${model} carries a script or a link`);
+      // A background image has no text color to inherit, so currentColor would draw black.
+      assert.doesNotMatch(svg, /currentColor/, `${model} depends on the text color`);
+      assert.match(css, new RegExp(`\\.badge\\.${model} \\{[^}]*url\\(logos/${model}\\.svg\\)`), `no tile for ${model}`);
+    }
+    assert.match(readFileSync(join(out, 'logos/LICENSE.txt'), 'utf8'), /Copyright \(c\) 2023 LobeHub/);
+  });
+
+  test('puts every review result on a line of its own in a narrow chart, so the cards match', () => {
+    const css = readFileSync(join(out, 'style.css'), 'utf8');
+    const narrow = css.slice(css.indexOf('@container (max-width: 32rem)'));
+    assert.match(narrow, /\.review-model \.result \{[^}]*flex-basis: 100%/);
+  });
+
+  test('drops the minor day labels in a narrow chart, so the days never run together', () => {
+    const css = readFileSync(join(out, 'style.css'), 'utf8');
+    const narrow = css.slice(css.indexOf('@container (max-width: 32rem)'));
+    assert.match(narrow, /\.candles-days > \.minor \{[^}]*display: none/);
+  });
+
+  test('sets the month under its day in a narrow chart, so a month name never runs into the next day', () => {
+    const css = readFileSync(join(out, 'style.css'), 'utf8');
+    const narrow = css.slice(css.indexOf('@container (max-width: 32rem)'));
+    assert.match(narrow, /\.candles-month \{[^}]*display: block/);
+  });
+
+  test('ends the name of a week line at its line, so the names frame the week and never run together', () => {
+    const css = readFileSync(join(out, 'style.css'), 'utf8');
+    assert.match(css, /\.candles-marks > span \{[^}]*translateX\(-100%\)/);
   });
 
   test('leaves drafts out of a public build', () => {
@@ -98,6 +141,23 @@ describe('buildSite', () => {
 
     assert.equal(html.match(/<figure class="chart/g)?.length, CHARTS.length);
     assert.doesNotMatch(html, /language-chart/);
+  });
+
+  test('leaves the candles out without a price file', () => {
+    assert.ok(!existsSync(join(out, 'data/btc-usd-4h.json')));
+    assert.doesNotMatch(readFileSync(join(out, 'articles/week-one.html'), 'utf8'), /class="candles"/);
+  });
+
+  test('draws the candles from a price file and ships the file as it is', () => {
+    const withPrices = join(work, 'with-prices');
+    const pricesPath = join(work, 'btc.json');
+    writeFileSync(pricesPath, `${JSON.stringify(weekPrices(), null, 2)}\n`);
+
+    const files = buildSite({ ledgerPath, articlesDir, outDir: withPrices, includeDrafts: false, pricesPath });
+
+    assert.ok(files.includes('data/btc-usd-4h.json'));
+    assert.equal(readFileSync(join(withPrices, 'data/btc-usd-4h.json'), 'utf8'), readFileSync(pricesPath, 'utf8'));
+    assert.match(readFileSync(join(withPrices, 'articles/week-one.html'), 'utf8'), /class="candles"/);
   });
 
   test('draws the scoreboard as a chart, with the table one click away', () => {
@@ -144,6 +204,16 @@ describe('buildSite output folder', () => {
     writeFileSync(badLedger, '{"schema_version": 1, "predictions": [{}], "verifications": []}');
 
     assert.throws(() => buildSite({ ledgerPath: badLedger, articlesDir, outDir: out, includeDrafts: false }));
+    assert.ok(existsSync(join(out, 'index.html')));
+  });
+
+  test('touches nothing when the price file is invalid', () => {
+    const out = join(work, 'kept-prices');
+    build(out);
+    const badPrices = join(work, 'bad-prices.json');
+    writeFileSync(badPrices, '{"source": "x", "granularity_seconds": 14400, "candles": [{}]}');
+
+    assert.throws(() => buildSite({ ledgerPath, articlesDir, outDir: out, includeDrafts: false, pricesPath: badPrices }), CandleError);
     assert.ok(existsSync(join(out, 'index.html')));
   });
 });

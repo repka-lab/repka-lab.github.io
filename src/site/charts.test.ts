@@ -3,7 +3,7 @@ import { describe, test } from 'node:test';
 
 import { addPrediction, emptyLedger, verifyPrediction } from '../ledger.ts';
 import { ChartError, renderChart, renderScoreChart } from './charts.ts';
-import { NEXT_WEEK, sampleLedger, twoWeeks, WEEK, weekCalls, weekChecked } from './test-fixtures.ts';
+import { NEXT_WEEK, sampleLedger, twoWeeks, WEEK, weekCalls, weekChecked, weekPrices, weekReviewed } from './test-fixtures.ts';
 
 // The piece of a chart that belongs to one model: from its name to the next item.
 function partOf(html: string, name: string): string {
@@ -18,6 +18,65 @@ function reasonOf(html: string, name: string): string {
   assert.ok(part, `no reasons for ${name}`);
   return part;
 }
+
+// One model's block in the review chart.
+function reviewOf(html: string, name: string): string {
+  const part = html.split('<div class="review-model ').find((piece) => piece.includes(`>${name}<`));
+  assert.ok(part, `no review for ${name}`);
+  return part;
+}
+
+interface Arrow {
+  readonly call: string; // "model direction"
+  readonly x1: number;
+  readonly y1: number;
+  readonly x2: number;
+  readonly y2: number;
+}
+
+// The call arrows over the candles, in the order they are drawn.
+function arrowsOf(html: string): Arrow[] {
+  return [...html.matchAll(/<line class="candles-arrow (\w+) (up|down)" x1="([\d.]+)" y1="([\d.]+)" x2="([\d.]+)" y2="([\d.]+)"/g)].map(
+    ([, model, direction, x1, y1, x2, y2]) => ({ call: `${model} ${direction}`, x1: Number(x1), y1: Number(y1), x2: Number(x2), y2: Number(y2) }),
+  );
+}
+
+// Where the dashed price line starts, and where the line that opens the week stands.
+function levelOf(html: string): { x: number; y: number; open: number } {
+  const [, x, y] = html.match(/<line class="candles-start" x1="([\d.]+)" y1="([\d.]+)"/) ?? [];
+  const [, open] = html.match(/<line class="candles-open" x1="([\d.]+)"/) ?? [];
+  return { x: Number(x), y: Number(y), open: Number(open) };
+}
+
+// One arrow per call, in call order, from where the dashed line starts at the open to the right edge:
+// Higher points up and Lower down, no two tips on one spot, each named at its tip with logo, name and sign.
+function assertCallArrows(html: string): void {
+  const level = levelOf(html);
+  const arrows = arrowsOf(html);
+
+  assert.ok(level.x > 0 && level.x === level.open, `the line starts at ${level.x}, the week opens at ${level.open}`);
+  assert.deepEqual(arrows.map((a) => a.call), ['chatgpt up', 'claude up', 'gemini down', 'grok up']);
+  for (const a of arrows) {
+    assert.deepEqual([a.x1, a.y1, a.x2], [level.x, level.y, 1000], `${a.call} starts or ends off the line`);
+    assert.ok(a.call.endsWith('up') ? a.y2 < level.y : a.y2 > level.y, `${a.call} points the wrong way`);
+    assert.match(html, new RegExp(`<span class="candles-tip ${a.call}" style="--y: ${a.y2}">`), `${a.call} is not named at its tip`);
+  }
+  assert.equal(new Set(arrows.map((a) => a.y2)).size, arrows.length);
+  for (const [name, key] of BADGES) {
+    assert.match(html, new RegExp(`<span class="candles-tip ${key} \\w+"[^>]*><span class="badge ${key}" aria-hidden="true"></span>${name} `));
+  }
+  assert.match(html, /▲<\/span><span class="candles-word"> Higher</);
+  assert.match(html, /▼<\/span><span class="candles-word"> Lower</);
+  assert.doesNotMatch(html, /candles-calls|candles-ai/);
+}
+
+// Each model's name and the key its logo tile is styled by.
+const BADGES = [
+  ['ChatGPT', 'chatgpt'],
+  ['Claude', 'claude'],
+  ['Gemini', 'gemini'],
+  ['Grok', 'grok'],
+] as const;
 
 // The factors on one side of a model's block.
 function sideOf(reason: string, pulls: 'up' | 'down'): string {
@@ -83,6 +142,48 @@ describe('renderChart: calls', () => {
   test('says nothing about results, even after the check', () => {
     assert.doesNotMatch(renderChart(`calls ${WEEK}`, weekChecked()), /Hit|Miss|✓|✗/);
   });
+
+  test('draws BTC in candles for the week up to the calls, and nothing after them', () => {
+    const chart = renderChart(`calls ${WEEK}`, weekCalls(), weekPrices());
+
+    // The calls are recorded at 09:00: the 04:00 candle closed before them, the 08:00 one had not.
+    assert.match(chart, /<title>2026-10-26 08:00 UTC: /);
+    assert.match(
+      chart,
+      /<title>2026-11-02 04:00 UTC: open 99,920\.00, high 100,450\.00, low 99,770\.00, close 100,300\.00<\/title>/,
+    );
+    assert.doesNotMatch(chart, /<title>2026-10-26 04:00 UTC/);
+    assert.doesNotMatch(chart, /<title>2026-11-02 08:00 UTC/);
+    assert.match(chart, /aria-label="BTC in 4-hour candles, 2026-10-26 08:00 UTC to 2026-11-02 09:00 UTC"/);
+    assert.match(chart, /class="candles-open"/);
+    assert.match(chart, />Week opens</);
+    assert.doesNotMatch(chart, /class="candles-end"|After the call/);
+    assert.match(chart, /Candles: candle feed &lt;y&gt;, 4-hour/);
+  });
+
+  test('runs the time on to the check, with the week ahead left open for the calls', () => {
+    const chart = renderChart(`calls ${WEEK}`, weekCalls(), weekPrices());
+    const minor = [...chart.matchAll(/<span class="minor" style="[^"]*">([^<]*)<\/span>/g)].map(([, day]) => day);
+
+    assert.match(chart, /class="candles-close"/);
+    assert.match(chart, />Week closes</);
+    assert.deepEqual(minor, ['27', '29', '31', '2', '4', '6']);
+  });
+
+  test('draws each call as an arrow from the price the week opens at, in the color of its model', () => {
+    const chart = renderChart(`calls ${WEEK}`, weekCalls(), weekPrices());
+
+    // The last close before the calls is the 04:00 candle's; it rose, so its close is the top of its body.
+    const [, lastClose] = chart.match(/<title>2026-11-02 04:00 UTC[^<]*<\/title>.*?<rect class="body" x="[\d.]+" y="([\d.]+)"/) ?? [];
+    assertCallArrows(chart);
+    assert.equal(levelOf(chart).y, Number(lastClose));
+    assert.match(chart, /The dashed line is the last close before the calls;/);
+  });
+
+  test('draws no candles without prices', () => {
+    assert.doesNotMatch(html, /class="candles"/);
+    assert.doesNotMatch(html, /Candles:/);
+  });
 });
 
 describe('renderChart: factors', () => {
@@ -95,6 +196,12 @@ describe('renderChart: factors', () => {
     assert.match(html, /What each model weighed, week of 2 November 2026/);
     assert.match(reasonOf(html, 'ChatGPT'), /▲<\/span> Higher · 64%/);
     assert.match(reasonOf(html, 'Gemini'), /▼<\/span> Lower · 55%/);
+  });
+
+  test('puts a logo tile next to each model name', () => {
+    for (const [name, model] of BADGES) {
+      assert.match(reasonOf(html, name), new RegExp(`<span class="badge ${model}" aria-hidden="true"></span>`));
+    }
   });
 
   test('puts each factor on the side it pulls, in the order given', () => {
@@ -145,6 +252,22 @@ describe('renderChart: check', () => {
     assert.match(html, /\+2\.48%/);
   });
 
+  test('names a lower week with a sign and a word', () => {
+    const lower = verifyPrediction(
+      weekCalls(),
+      { prediction_id: 'P0001', price_source: 'feed', price_start: 100000, price_end: 93000 },
+      new Date('2026-11-06T20:00:00Z'),
+    );
+    const chart = renderChart(`check ${WEEK}`, lower);
+
+    assert.match(chart, /class="move-change">[^<]*<span class="sign"[^>]*>▼<\/span> Lower <span class="move-pct">−7\.00%/);
+  });
+
+  test('draws no candles without prices', () => {
+    assert.doesNotMatch(html, /class="candles"/);
+    assert.doesNotMatch(html, /dashed line/);
+  });
+
   test('marks every call as a hit or a miss with a sign and a word', () => {
     assert.match(partOf(html, 'Claude'), /✓ Hit/);
     assert.match(partOf(html, 'Gemini'), /✗ Miss/);
@@ -180,6 +303,148 @@ describe('renderChart: check', () => {
     );
 
     assert.throws(() => renderChart(`check ${WEEK}`, mixed), chartError(/different prices/));
+  });
+});
+
+describe('renderChart: check, in candles', () => {
+  const html = renderChart(`check ${WEEK}`, weekChecked(), weekPrices());
+
+  test('draws BTC from a week before the call to the check', () => {
+    assert.match(html, /<title>2026-10-26 08:00 UTC: /);
+    assert.match(html, /<title>2026-11-06 16:00 UTC: open 102,080\.00, high 102,610\.00, low 101,930\.00, close 102,460\.00<\/title>/);
+    assert.doesNotMatch(html, /<title>2026-10-26 04:00 UTC/);
+    assert.doesNotMatch(html, /<title>2026-11-06 20:00 UTC/);
+    assert.match(html, /aria-label="BTC in 4-hour candles, 2026-10-26 08:00 UTC to 2026-11-06 20:00 UTC"/);
+  });
+
+  test('tells a candle that rose from one that fell by its shape, and says which is which', () => {
+    assert.match(html, /<g class="candle up">/);
+    assert.match(html, /<g class="candle down">/);
+    assert.match(html, /hollow: rose, filled: fell/);
+  });
+
+  test('marks where the week opens and closes, and the start and end prices', () => {
+    assert.match(html, /class="candles-open"/);
+    assert.match(html, /class="candles-close"/);
+    assert.match(html, />Week opens</);
+    assert.match(html, />Week closes</);
+    assert.match(html, /class="candles-start"/);
+    assert.match(html, /class="candles-end"/);
+    assert.doesNotMatch(html, /Before the call|After the call/);
+    assert.match(html, /The dashed line is the start price, from where the week opens, and the dot the end price;/);
+  });
+
+  test('draws each call as an arrow from the start price at the open, in the color of its model', () => {
+    assertCallArrows(html);
+  });
+
+  test('puts the end price dot above the start line when BTC rose', () => {
+    const end = Number(html.match(/class="candles-end" style="top: ([\d.]+)%"/)?.[1]);
+
+    assert.ok(end < levelOf(html).y, `end ${end} should sit above the start ${levelOf(html).y}`);
+  });
+
+  test('labels the price scale in dollars', () => {
+    assert.match(html, />\$100K</);
+  });
+
+  test('marks every other day to drop in a narrow chart, never a month name or its neighbours', () => {
+    const minor = [...html.matchAll(/<span class="minor" style="[^"]*">([^<]*)<\/span>/g)].map(([, day]) => day);
+
+    // 26 Oct to 6 Nov: kept are 26 Oct, 28, 30, 1 Nov, 3 and 5.
+    assert.deepEqual(minor, ['27', '29', '31', '2', '4', '6']);
+  });
+
+  test('names the candle feed apart from the check prices, escaped', () => {
+    assert.match(html, /Prices: feed &lt;x&gt;\. Candles: candle feed &lt;y&gt;, 4-hour/);
+  });
+
+  test('keeps the prices and the calls when no candle falls in the week', () => {
+    const chart = renderChart(`check ${WEEK}`, weekChecked(), { ...weekPrices(), candles: [] });
+
+    assert.doesNotMatch(chart, /class="candles"/);
+    assert.doesNotMatch(chart, /candles-arrow|candles-tip/);
+    assert.match(chart, /102,480\.00/);
+    assert.match(chart, /3 of 4 calls came true/);
+  });
+
+  test('draws no candles for a week that is not checked yet', () => {
+    const pending = renderChart(`check ${WEEK}`, weekCalls(), weekPrices());
+
+    assert.match(pending, /Not checked yet/);
+    assert.doesNotMatch(pending, /class="candles"/);
+  });
+});
+
+describe('renderChart: review', () => {
+  const html = renderChart(`review ${WEEK}`, weekReviewed());
+
+  test('shows each model with its call and its result, in model order', () => {
+    const order = ['ChatGPT', 'Claude', 'Gemini', 'Grok'].map((name) => html.indexOf(`>${name}<`));
+
+    assert.ok(order.every((at, i) => at > 0 && (i === 0 || at > (order[i - 1] ?? 0))));
+    assert.match(html, /How each model looks back on its call, week of 2 November 2026/);
+    assert.match(reviewOf(html, 'ChatGPT'), /▲<\/span> Higher · 64%/);
+    assert.match(reviewOf(html, 'ChatGPT'), /✓ Hit/);
+    assert.match(reviewOf(html, 'Gemini'), /▼<\/span> Lower · 55%/);
+    assert.match(reviewOf(html, 'Gemini'), /✗ Miss/);
+  });
+
+  test('puts a logo tile next to each model name', () => {
+    for (const [name, model] of BADGES) {
+      assert.match(reviewOf(html, name), new RegExp(`<span class="badge ${model}" aria-hidden="true"></span>`));
+    }
+  });
+
+  test('says how BTC actually moved that week, next to the coin mark', () => {
+    assert.match(html, /<span class="btc-mark" aria-hidden="true">₿<\/span> BTC ended the week/);
+    assert.match(html, /\+2\.48%/);
+  });
+
+  test('marks each factor as held or not, in the order of the call', () => {
+    const items = reviewOf(html, 'ChatGPT').split('<li').slice(1);
+
+    assert.equal(items.length, 3);
+    assert.match(items[0] ?? '', /✓ Held.*Five higher daily closes in a row\./s);
+    assert.match(items[1] ?? '', /✗ Did not hold.*Funding rates &amp; fees are cooling\./s);
+    assert.match(items[2] ?? '', /✓ Held.*Last week closed near the top of its range\./s);
+  });
+
+  test('quotes the note in the model’s own words, escaped', () => {
+    assert.match(
+      reviewOf(html, 'ChatGPT'),
+      /<q>The run kept going &amp; the top of the range gave way\. Cooling funding did not slow it\.<\/q>/,
+    );
+  });
+
+  test('says so when a model gave no factors to look back on', () => {
+    const claude = reviewOf(html, 'Claude');
+
+    assert.match(claude, /✓ Hit/);
+    assert.match(claude, /No factors recorded/);
+    assert.doesNotMatch(claude, /<ul|<q>/);
+  });
+
+  test('says so when a checked call has no review yet', () => {
+    const unreviewed = renderChart(`review ${WEEK}`, weekChecked());
+
+    assert.match(reviewOf(unreviewed, 'ChatGPT'), /✓ Hit/);
+    assert.match(reviewOf(unreviewed, 'ChatGPT'), /No review yet/);
+    assert.doesNotMatch(unreviewed, /Held|Did not hold|<q>/);
+  });
+
+  test('shows a week that is not checked yet as pending', () => {
+    const pending = renderChart(`review ${WEEK}`, weekCalls());
+
+    assert.match(pending, /Not checked yet/);
+    assert.match(pending, /2026-11-06 20:00 UTC/);
+    assert.match(reviewOf(pending, 'Grok'), /Pending/);
+    assert.match(reviewOf(pending, 'Grok'), /No review yet/);
+    assert.doesNotMatch(pending, /✓|✗/);
+  });
+
+  test('says that one week is mostly noise', () => {
+    assert.match(html, /One week is mostly noise/);
   });
 });
 
@@ -298,7 +563,7 @@ describe('renderChart: mistakes', () => {
   test('rejects an unknown chart', () => {
     assert.throws(() => renderChart('pie', ledger), chartError(/unknown chart "pie"/));
     assert.throws(() => renderChart('', ledger), chartError(/unknown chart ""/));
-    assert.throws(() => renderChart('pie', ledger), chartError(/use calls, factors, check, score, score-change, flow or example-call$/));
+    assert.throws(() => renderChart('pie', ledger), chartError(/use calls, factors, check, review, score, score-change, flow or example-call$/));
   });
 
   test('needs the Monday of the week for a weekly chart', () => {
@@ -312,6 +577,7 @@ describe('renderChart: mistakes', () => {
     assert.throws(() => renderChart('check 2026-11-09', ledger), chartError(/no calls recorded in the week of 2026-11-09/));
     assert.throws(() => renderChart('factors 2026-11-09', ledger), chartError(/no calls recorded/));
     assert.throws(() => renderChart('score-change 2026-11-09', ledger), chartError(/no calls recorded/));
+    assert.throws(() => renderChart('review 2026-11-09', ledger), chartError(/no calls recorded/));
   });
 
   test('rejects extra words', () => {
