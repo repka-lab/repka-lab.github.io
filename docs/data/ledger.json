@@ -1,5 +1,91 @@
 {
   "schema_version": 1,
-  "predictions": [],
-  "verifications": []
+  "predictions": [
+    {
+      "id": "P0001",
+      "date": "2026-11-02T09:00:00.000Z",
+      "model": "chatgpt",
+      "model_version": "chatgpt-example",
+      "direction": "up",
+      "confidence": 64,
+      "reasoning": "BTC closed last week near the top of its range, and each of the past five daily closes was above the one before. Short runs like this often carry on for a few more days, but the evidence is thin, so the confidence is moderate.",
+      "prompt_hash": "96334cd951ff6c71c97a8b8d5787123ccd54699ae4520c03fe6a4198de3cf891",
+      "verify_date": "2026-11-06T20:00:00.000Z"
+    },
+    {
+      "id": "P0002",
+      "date": "2026-11-02T09:00:00.000Z",
+      "model": "claude",
+      "model_version": "claude-example",
+      "direction": "up",
+      "confidence": 58,
+      "reasoning": "The recent trend is mildly upward, but weekly moves in BTC are close to a coin flip. I lean higher on momentum alone and keep the confidence near the middle.",
+      "prompt_hash": "96334cd951ff6c71c97a8b8d5787123ccd54699ae4520c03fe6a4198de3cf891",
+      "verify_date": "2026-11-06T20:00:00.000Z"
+    },
+    {
+      "id": "P0003",
+      "date": "2026-11-02T09:00:00.000Z",
+      "model": "gemini",
+      "model_version": "gemini-example",
+      "direction": "down",
+      "confidence": 55,
+      "reasoning": "After a strong run, a pullback within a week is common. The signal is weak either way; I lean lower with low confidence.",
+      "prompt_hash": "96334cd951ff6c71c97a8b8d5787123ccd54699ae4520c03fe6a4198de3cf891",
+      "verify_date": "2026-11-06T20:00:00.000Z"
+    },
+    {
+      "id": "P0004",
+      "date": "2026-11-02T09:00:00.000Z",
+      "model": "grok",
+      "model_version": "grok-example",
+      "direction": "up",
+      "confidence": 71,
+      "reasoning": "Momentum and last week's close both point the same way. I lean higher, and fairly firmly.",
+      "prompt_hash": "96334cd951ff6c71c97a8b8d5787123ccd54699ae4520c03fe6a4198de3cf891",
+      "verify_date": "2026-11-06T20:00:00.000Z"
+    }
+  ],
+  "verifications": [
+    {
+      "prediction_id": "P0001",
+      "verified_at": "2026-11-06T20:00:00.000Z",
+      "price_source": "EXAMPLE feed, made-up prices",
+      "price_start": 100000,
+      "price_end": 102480,
+      "change_pct": 2.48,
+      "outcome": "up",
+      "hit": true
+    },
+    {
+      "prediction_id": "P0002",
+      "verified_at": "2026-11-06T20:00:00.000Z",
+      "price_source": "EXAMPLE feed, made-up prices",
+      "price_start": 100000,
+      "price_end": 102480,
+      "change_pct": 2.48,
+      "outcome": "up",
+      "hit": true
+    },
+    {
+      "prediction_id": "P0003",
+      "verified_at": "2026-11-06T20:00:00.000Z",
+      "price_source": "EXAMPLE feed, made-up prices",
+      "price_start": 100000,
+      "price_end": 102480,
+      "change_pct": 2.48,
+      "outcome": "up",
+      "hit": false
+    },
+    {
+      "prediction_id": "P0004",
+      "verified_at": "2026-11-06T20:00:00.000Z",
+      "price_source": "EXAMPLE feed, made-up prices",
+      "price_start": 100000,
+      "price_end": 102480,
+      "change_pct": 2.48,
+      "outcome": "up",
+      "hit": true
+    }
+  ]
 }

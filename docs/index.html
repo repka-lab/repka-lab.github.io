@@ -12,6 +12,7 @@
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="avatar.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+<meta name="robots" content="noindex">
 </head>
 <body>
   <header class="site-header">
@@ -28,6 +29,7 @@
     </div>
   </header>
   <main class="wrap">
+<p class="draft-banner"><strong>Example site.</strong> The calls, prices and results here are made up to show how the site will look. None of it is real.</p>
 <section class="hero">
   <h1>Four AI models call Bitcoin every week. Every call is logged before anyone sees it.</h1>
   <p class="lede">On Monday, ChatGPT, Claude, Gemini and Grok each answer one question: does BTC end the week higher or lower than it started? The call goes into a public ledger first; only then does a video or post about it go out. On Friday it is checked, and misses stay on the record next to the hits.</p>
@@ -47,10 +49,10 @@
   <table class="scoreboard">
     <thead><tr><th scope="col">Model</th><th scope="col" class="num">Forecasts</th><th scope="col" class="num">Checked</th><th scope="col" class="num">Pending</th><th scope="col" class="num">Hits</th><th scope="col" class="num">Misses</th><th scope="col" class="num">Hit rate</th><th scope="col" class="num">Avg. confidence</th></tr></thead>
     <tbody>
-      <tr><th scope="row">ChatGPT</th><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td class="num">—</td></tr>
-      <tr><th scope="row">Claude</th><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td class="num">—</td></tr>
-      <tr><th scope="row">Gemini</th><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td class="num">—</td></tr>
-      <tr><th scope="row">Grok</th><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td class="num">—</td></tr>
+      <tr><th scope="row">ChatGPT</th><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">100%</td><td class="num">64%</td></tr>
+      <tr><th scope="row">Claude</th><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">100%</td><td class="num">58%</td></tr>
+      <tr><th scope="row">Gemini</th><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">0%</td><td class="num">55%</td></tr>
+      <tr><th scope="row">Grok</th><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">100%</td><td class="num">71%</td></tr>
     </tbody>
   </table>
 </div>
@@ -60,7 +62,23 @@
 
 <section id="articles">
   <h2>Articles</h2>
-  <p class="empty">No articles yet.</p>
+  <ul class="article-list">
+    <li>
+      <time datetime="2026-11-06">2026-11-06</time>
+      <a href="articles/week-1-check.html">Week 1 checked: three hits, one miss</a>
+      <p>BTC ended the week of 2 November 2.48% above where it started. ChatGPT, Claude and Grok called it; Gemini did not.</p>
+    </li>
+    <li>
+      <time datetime="2026-11-02">2026-11-02</time>
+      <a href="articles/week-1-calls.html">Week 1: four calls on Bitcoin</a>
+      <p>ChatGPT, Claude, Gemini and Grok each called whether BTC ends the week of 2 November higher or lower. The calls are in the ledger; the check comes on Friday.</p>
+    </li>
+    <li>
+      <time datetime="2026-10-25">2026-10-25</time>
+      <a href="articles/how-it-works.html">How the experiment works</a>
+      <p>What goes into each weekly BTC call, why it is logged before anything is posted, and how a hit or a miss is decided.</p>
+    </li>
+  </ul>
 </section>
   </main>
   <footer class="site-footer">

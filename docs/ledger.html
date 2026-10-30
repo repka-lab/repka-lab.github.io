@@ -12,6 +12,7 @@
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="avatar.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+<meta name="robots" content="noindex">
 </head>
 <body>
   <header class="site-header">
@@ -28,6 +29,7 @@
     </div>
   </header>
   <main class="wrap">
+<p class="draft-banner"><strong>Example site.</strong> The calls, prices and results here are made up to show how the site will look. None of it is real.</p>
 <section class="hero">
   <h1>The ledger</h1>
   <p class="lede">Every call the models have made, newest first. Nothing is edited or removed once it is recorded.</p>
@@ -49,7 +51,17 @@
 
 <section>
   <h2>All calls</h2>
-  <p class="empty">No forecasts recorded yet. The first ones appear here before any video or post about them goes out.</p>
+  <div class="table-wrap">
+  <table class="ledger">
+    <thead><tr><th scope="col">ID</th><th scope="col">Recorded</th><th scope="col">Model</th><th scope="col">BTC call</th><th scope="col" class="num">Confidence</th><th scope="col">Check date</th><th scope="col">Result</th><th scope="col">Details</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">P0004</th><td>2026-11-02 09:00 UTC</td><td>Grok<br><small>grok-example</small></td><td>Higher</td><td class="num">71%</td><td>2026-11-06 20:00 UTC</td><td><span class="result hit">✓ Hit</span><br><small>Higher, +2.48%</small></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>Momentum and last week&#39;s close both point the same way. I lean higher, and fairly firmly.</dd><dt>Prompt hash</dt><dd><code>96334cd951ff6c71c97a8b8d5787123ccd54699ae4520c03fe6a4198de3cf891</code></dd><dt>Prices</dt><dd>100000 → 102480 (EXAMPLE feed, made-up prices)</dd><dt>Checked</dt><dd>2026-11-06 20:00 UTC</dd></dl></details></td></tr>
+      <tr><th scope="row">P0003</th><td>2026-11-02 09:00 UTC</td><td>Gemini<br><small>gemini-example</small></td><td>Lower</td><td class="num">55%</td><td>2026-11-06 20:00 UTC</td><td><span class="result miss">✗ Miss</span><br><small>Higher, +2.48%</small></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>After a strong run, a pullback within a week is common. The signal is weak either way; I lean lower with low confidence.</dd><dt>Prompt hash</dt><dd><code>96334cd951ff6c71c97a8b8d5787123ccd54699ae4520c03fe6a4198de3cf891</code></dd><dt>Prices</dt><dd>100000 → 102480 (EXAMPLE feed, made-up prices)</dd><dt>Checked</dt><dd>2026-11-06 20:00 UTC</dd></dl></details></td></tr>
+      <tr><th scope="row">P0002</th><td>2026-11-02 09:00 UTC</td><td>Claude<br><small>claude-example</small></td><td>Higher</td><td class="num">58%</td><td>2026-11-06 20:00 UTC</td><td><span class="result hit">✓ Hit</span><br><small>Higher, +2.48%</small></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>The recent trend is mildly upward, but weekly moves in BTC are close to a coin flip. I lean higher on momentum alone and keep the confidence near the middle.</dd><dt>Prompt hash</dt><dd><code>96334cd951ff6c71c97a8b8d5787123ccd54699ae4520c03fe6a4198de3cf891</code></dd><dt>Prices</dt><dd>100000 → 102480 (EXAMPLE feed, made-up prices)</dd><dt>Checked</dt><dd>2026-11-06 20:00 UTC</dd></dl></details></td></tr>
+      <tr><th scope="row">P0001</th><td>2026-11-02 09:00 UTC</td><td>ChatGPT<br><small>chatgpt-example</small></td><td>Higher</td><td class="num">64%</td><td>2026-11-06 20:00 UTC</td><td><span class="result hit">✓ Hit</span><br><small>Higher, +2.48%</small></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>BTC closed last week near the top of its range, and each of the past five daily closes was above the one before. Short runs like this often carry on for a few more days, but the evidence is thin, so the confidence is moderate.</dd><dt>Prompt hash</dt><dd><code>96334cd951ff6c71c97a8b8d5787123ccd54699ae4520c03fe6a4198de3cf891</code></dd><dt>Prices</dt><dd>100000 → 102480 (EXAMPLE feed, made-up prices)</dd><dt>Checked</dt><dd>2026-11-06 20:00 UTC</dd></dl></details></td></tr>
+    </tbody>
+  </table>
+</div>
 </section>
   </main>
   <footer class="site-footer">

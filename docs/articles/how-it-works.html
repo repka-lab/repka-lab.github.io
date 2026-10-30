@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="script-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>How the experiment works · Repka</title>
+  <meta name="description" content="What goes into each weekly BTC call, why it is logged before anything is posted, and how a hit or a miss is decided.">
+  <meta property="og:site_name" content="Repka">
+  <meta property="og:title" content="How the experiment works · Repka">
+  <meta property="og:description" content="What goes into each weekly BTC call, why it is logged before anything is posted, and how a hit or a miss is decided.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../avatar.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../style.css">
+<meta name="robots" content="noindex">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../avatar.svg" alt="" width="28" height="28">
+        <span>Repka<small>AI Prediction Lab</small></span>
+      </a>
+      <nav aria-label="Site">
+        <a href="../index.html">Forecasts</a>
+        <a href="../ledger.html">Ledger</a>
+        <a href="../index.html#articles" aria-current="page">Articles</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+<p class="draft-banner"><strong>Example site.</strong> The calls, prices and results here are made up to show how the site will look. None of it is real.</p>
+<article>
+  <p class="back"><a href="../index.html#articles">&larr; All articles</a></p>
+  
+  <h1>How the experiment works</h1>
+  <p class="meta"><time datetime="2026-10-25">2026-10-25</time></p>
+  <div class="prose">
+<p>Every week, four AI models, ChatGPT, Claude, Gemini and Grok, answer one question: does Bitcoin (BTC) end the week higher or lower than it started? This page explains how a call is made, recorded and checked.</p>
+<h2>The week</h2>
+<ul>
+<li><strong>Monday:</strong> each model gets the same written prompt and makes its call.</li>
+<li><strong>Before anything is posted:</strong> the calls go into the ledger.</li>
+<li><strong>Friday:</strong> the week closes and every call is checked.</li>
+</ul>
+<h2>What a call contains</h2>
+<p>Each call is one entry in the <a href="../ledger.html">ledger</a>:</p>
+<ul>
+<li>the model and the exact version it ran on;</li>
+<li>the direction: higher or lower;</li>
+<li>the confidence, from 0 to 100%;</li>
+<li>the date the call is checked;</li>
+<li>the model&#39;s own reasoning, in its own words;</li>
+<li>a fingerprint of the prompt (more on that below).</li>
+</ul>
+<p>There is no &quot;flat&quot; option. Every model has to pick a side.</p>
+<h2>Ledger first, video second</h2>
+<p>A call is written to the ledger before any video or post about it goes out. The ledger is append-only: entries are never edited or deleted. When a call is checked, the result is added as a new entry next to it. Misses stay on the record, and they get posts too.</p>
+<p>The ledger is a plain JSON file published with this site, so anyone can download it and count the results themselves.</p>
+<h2>The prompt hash</h2>
+<p>Every model gets a written prompt. Before the call is recorded, the exact prompt text is run through SHA-256, and the resulting hash is stored with the call. Anyone holding the prompt text can recompute the hash and compare. If the prompt had been changed afterwards, the two hashes would not match.</p>
+<h2>Hit or miss</h2>
+<p>When the week closes, the BTC price at the start of the week is compared with the price at the end.</p>
+<ul>
+<li>If the end price is above the start price, BTC ended <strong>higher</strong>.</li>
+<li>Anything else, an unchanged price included, counts as <strong>lower</strong>.</li>
+<li>The call is a hit if the model named the same direction.</li>
+</ul>
+<p>The check adds the price source, both prices and the change in percent to the ledger, so anyone can redo the sum.</p>
+<h2>Hit rate and confidence</h2>
+<p>The scoreboard shows two numbers per model. Hit rate is the share of checked calls that came true. A coin flip is right about half the time, so the bar for each model is 50%, held over many weeks; one good week proves nothing.</p>
+<p>Average confidence is how sure the model said it was on those same calls. A model that says 80% and is right half the time is overconfident. The gap between the two numbers is part of what this experiment measures.</p>
+<h2>Still open</h2>
+<p>Two things are not settled yet. Both will be written here before the first call goes into the ledger:</p>
+<ul>
+<li><strong>The exact times:</strong> when the week starts and ends, in UTC.</li>
+<li><strong>The price source:</strong> which public BTC price feed sets the start and end prices.</li>
+</ul>
+<hr>
+<p><em>This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.</em></p>
+
+  </div>
+</article>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p><strong>This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.</strong></p>
+      <p>The host is an animated AI character, not a real person.</p>
+      <p>The full record is public: <a href="../data/ledger.json">ledger.json</a>.</p>
+    </div>
+  </footer>
+</body>
+</html>
