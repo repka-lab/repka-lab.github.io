@@ -13,7 +13,9 @@
 //   score [<Monday>]       hit rate per model against a coin flip; with a Monday, only the weeks up to that one
 //   score-change <Monday>  hit rate per model before that week and after it
 //   flow                   the four steps of a week
+//   example-call           one made-up call taken apart, with what each part means
 
+import { createHash } from 'node:crypto';
 import { getStats, MODELS } from '../ledger.ts';
 import type { Direction, Factor, Ledger, ModelStats, Prediction, Verification } from '../ledger.ts';
 import { escapeHtml } from './html.ts';
@@ -60,6 +62,28 @@ const FLOW_STEPS: readonly (readonly [when: string, what: string, detail: string
   ['Every week', 'The scoreboard adds up', 'A coin flip is right about half the time, so 50% is the bar to beat.'],
 ];
 
+// The example call is fixed here rather than read from the ledger, so it stays the same and never passes for a real one.
+// The check time is not settled yet, so it shows the day only.
+const CHECK_DAY = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const SHORT_HASH = 16; // hex digits of the prompt hash shown in the example
+const EXAMPLE_CALL: Prediction = {
+  id: 'example',
+  date: '2026-11-02T09:00:00Z',
+  model: 'chatgpt',
+  model_version: 'chatgpt-example',
+  direction: 'up',
+  confidence: 64,
+  reasoning:
+    'Each of the past five daily closes was above the one before, and last week closed near the top of its range. Short runs like this often fade, so the confidence is moderate.',
+  factors: [
+    { text: 'Five higher daily closes in a row.', pulls: 'up' },
+    { text: 'Last week closed near the top of its range.', pulls: 'up' },
+    { text: 'Short runs like this often fade.', pulls: 'down' },
+  ],
+  prompt_hash: createHash('sha256').update('EXAMPLE PROMPT, not the real one').digest('hex'),
+  verify_date: '2026-11-06T20:00:00Z',
+};
+
 export function renderChart(spec: string, ledger: Ledger): string {
   const [kind = '', ...args] = spec.trim().split(/\s+/);
   switch (kind) {
@@ -74,10 +98,13 @@ export function renderChart(spec: string, ledger: Ledger): string {
     case 'score-change':
       return renderScoreChange(readWeek(kind, args, ledger), ledger);
     case 'flow':
-      if (args.length > 0) throw new ChartError('chart "flow" takes nothing after it');
+      readNothing(kind, args);
       return renderFlow();
+    case 'example-call':
+      readNothing(kind, args);
+      return renderExampleCall();
     default:
-      throw new ChartError(`unknown chart "${kind}"; use calls, factors, check, score, score-change or flow`);
+      throw new ChartError(`unknown chart "${kind}"; use calls, factors, check, score, score-change, flow or example-call`);
   }
 }
 
@@ -154,7 +181,7 @@ function ledgerBefore(ledger: Ledger, time: number): Ledger {
 
 function renderCalls(week: Week): string {
   const tiles = week.calls.map((p) =>
-    tile(p, '', `<span class="meter" aria-hidden="true"><span class="meter-fill" style="width: ${p.confidence}%"></span></span>
+    tile(p, '', `${meter(p.confidence)}
       <span class="tile-note">Confidence ${p.confidence}%</span>`),
   );
   return figure('calls', `The calls for the week of ${LONG_DATE.format(week.monday)}`, `${tileList(tiles)}
@@ -250,6 +277,33 @@ function renderFlow(): string {
   </ol>`);
 }
 
+// The parts of one call, top to bottom, each with a line on what it means.
+function renderExampleCall(): string {
+  const p = EXAMPLE_CALL;
+  const factors = p.factors ?? [];
+  const parts = [
+    part('Model', `${MODEL_NAMES[p.model]} <code>${p.model_version}</code>`, 'Which AI made the call, and the exact version.'),
+    part('Call', callLabel(p.direction), 'Where BTC ends the week: higher or lower.', p.direction),
+    part('Confidence', `<span class="part-meter">${meter(p.confidence)}<span>${p.confidence}%</span></span>`, 'How sure it says it is. 50% is a coin flip.', p.direction),
+    part('Factors', `${PULLS_HEAD}<div class="pulls">${pullList(factors, 'down')}${pullList(factors, 'up')}</div>`, 'Two or three things it weighed, each on the side it pulls.'),
+    part('Reasoning', `<q>${escapeHtml(p.reasoning)}</q>`, 'Why, in its own words.'),
+    part('Checked on', CHECK_DAY.format(new Date(p.verify_date)), 'The day the end price is compared with the start price.'),
+    part('Prompt hash', `<code>${p.prompt_hash.slice(0, SHORT_HASH)}…</code>`, 'A fingerprint of the prompt it got. Change one letter and it changes.'),
+  ];
+  return figure('example-call', 'One call, part by part <span class="tag">Example</span>', `<dl class="parts">
+    ${parts.join('\n    ')}
+  </dl>
+  <p class="chart-note">Made up to show the parts. Real calls are in the ledger.</p>`);
+}
+
+function part(label: string, value: string, note: string, direction?: Direction): string {
+  return `<div class="${['part', direction].filter(Boolean).join(' ')}"><dt>${label}</dt><dd><div class="part-value">${value}</div><p class="part-note">${note}</p></dd></div>`;
+}
+
+function meter(confidence: number): string {
+  return `<span class="meter" aria-hidden="true"><span class="meter-fill" style="width: ${confidence}%"></span></span>`;
+}
+
 function tile(p: Prediction, state: string, detail: string): string {
   return `<li class="tile ${[p.direction, state].filter(Boolean).join(' ')}">
       <span class="tile-model">${MODEL_NAMES[p.model]}</span>
@@ -273,6 +327,10 @@ function figure(kind: string, caption: string, content: string): string {
   <figcaption>${caption}</figcaption>
   ${content}
 </figure>`;
+}
+
+function readNothing(kind: string, args: readonly string[]): void {
+  if (args.length > 0) throw new ChartError(`chart "${kind}" takes nothing after it`);
 }
 
 // The calls recorded from Monday 00:00 UTC up to the next Monday.

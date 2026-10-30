@@ -15,14 +15,11 @@ flow
 
 ## What a call contains
 
-Each call is one entry in the [ledger](../ledger.html):
+Each call is one entry in the [ledger](../ledger.html). Here is a made-up one, taken apart:
 
-- the model and the exact version it ran on;
-- the direction: higher or lower;
-- the confidence, from 0 to 100%;
-- the date the call is checked;
-- the model's own reasoning, in its own words;
-- a fingerprint of the prompt (more on that below).
+```chart
+example-call
+```
 
 There is no "flat" option. Every model has to pick a side.
 

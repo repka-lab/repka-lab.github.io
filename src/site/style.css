@@ -890,6 +890,48 @@ dd {
   font-size: 0.85rem;
 }
 
+/* Example call: one call taken apart; the name of each part on the left, the part and what it means on the right */
+
+.chart .parts {
+  margin: 0;
+}
+
+.part {
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 4px 16px;
+  padding-block: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.part dt {
+  margin-top: 0;
+}
+
+.chart .part dd {
+  display: grid;
+  gap: 6px;
+}
+
+.part-note {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.85rem;
+}
+
+.part-meter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.part-meter .meter {
+  flex: 0 1 16rem;
+  margin-top: 0;
+}
+
 @container (min-width: 44rem) {
   .chart .steps {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -945,6 +987,10 @@ dd {
   .move-change {
     grid-column: 1 / -1;
     grid-row: 2;
+  }
+
+  .part {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

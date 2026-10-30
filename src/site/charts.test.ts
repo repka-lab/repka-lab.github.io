@@ -257,13 +257,48 @@ describe('renderChart: flow', () => {
   });
 });
 
+describe('renderChart: example-call', () => {
+  const html = renderChart('example-call', emptyLedger());
+
+  test('says it is an example', () => {
+    assert.match(html, /<figure class="chart example-call">/);
+    assert.match(html, /<figcaption>[^<]*<span class="tag">Example<\/span><\/figcaption>/);
+    assert.match(html, /made up/i);
+  });
+
+  test('names every part of a call', () => {
+    for (const part of ['Model', 'Call', 'Confidence', 'Factors', 'Reasoning', 'Checked on', 'Prompt hash']) {
+      assert.match(html, new RegExp(`<dt>${part}</dt>`));
+    }
+    assert.match(html, /ChatGPT/);
+    assert.match(html, /▲<\/span> Higher/);
+    assert.match(html, /64%/);
+    assert.match(html, /<code>[0-9a-f]{16}…<\/code>/);
+  });
+
+  test('puts each factor on the side it pulls', () => {
+    assert.match(sideOf(html, 'up'), /Five higher daily closes/);
+    assert.match(sideOf(html, 'down'), /often fade/);
+    assert.doesNotMatch(sideOf(html, 'down'), /Five higher daily closes/);
+  });
+
+  test('gives the check day but no time, since the check time is not fixed yet', () => {
+    assert.match(html, /Friday, 6 November 2026/);
+    assert.doesNotMatch(html, /UTC/);
+  });
+
+  test('is the same whatever the ledger holds', () => {
+    assert.equal(renderChart('example-call', weekChecked()), html);
+  });
+});
+
 describe('renderChart: mistakes', () => {
   const ledger = weekChecked();
 
   test('rejects an unknown chart', () => {
     assert.throws(() => renderChart('pie', ledger), chartError(/unknown chart "pie"/));
     assert.throws(() => renderChart('', ledger), chartError(/unknown chart ""/));
-    assert.throws(() => renderChart('pie', ledger), chartError(/use calls, factors, check, score, score-change or flow$/));
+    assert.throws(() => renderChart('pie', ledger), chartError(/use calls, factors, check, score, score-change, flow or example-call$/));
   });
 
   test('needs the Monday of the week for a weekly chart', () => {
@@ -282,5 +317,6 @@ describe('renderChart: mistakes', () => {
   test('rejects extra words', () => {
     assert.throws(() => renderChart(`calls ${WEEK} please`, ledger), ChartError);
     assert.throws(() => renderChart(`flow ${WEEK}`, ledger), chartError(/"flow" takes nothing after it/));
+    assert.throws(() => renderChart(`example-call ${WEEK}`, ledger), chartError(/"example-call" takes nothing after it/));
   });
 });
