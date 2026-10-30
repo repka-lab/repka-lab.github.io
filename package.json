@@ -10,6 +10,7 @@
     "test": "node --test \"src/**/*.test.ts\"",
     "test:coverage": "node --test --experimental-test-coverage \"src/**/*.test.ts\"",
     "typecheck": "tsc",
+    "candles": "node src/fetch-candles.ts",
     "site": "node src/site/build.ts",
     "site:preview": "node src/site/build.ts --drafts --out .preview/site"
   },
