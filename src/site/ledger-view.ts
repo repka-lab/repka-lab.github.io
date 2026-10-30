@@ -5,8 +5,8 @@ import { getStats, MODELS } from '../ledger.ts';
 import type { Direction, Ledger, Model, Prediction, Verification } from '../ledger.ts';
 import { escapeHtml } from './html.ts';
 
-const MODEL_NAMES: Readonly<Record<Model, string>> = { chatgpt: 'ChatGPT', claude: 'Claude', gemini: 'Gemini', grok: 'Grok' };
-const DIRECTION_NAMES: Readonly<Record<Direction, string>> = { up: 'Higher', down: 'Lower' };
+export const MODEL_NAMES: Readonly<Record<Model, string>> = { chatgpt: 'ChatGPT', claude: 'Claude', gemini: 'Gemini', grok: 'Grok' };
+export const DIRECTION_NAMES: Readonly<Record<Direction, string>> = { up: 'Higher', down: 'Lower' };
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const NONE = '—';
@@ -81,10 +81,15 @@ function ledgerRow(p: Prediction, verdict: Verification | undefined): string {
   return `<tr>${cells.join('')}</tr>`;
 }
 
-function resultCell(verdict: Verification | undefined): string {
+// ✓ Hit, ✗ Miss or Pending: a sign and a word, never color alone.
+export function resultLabel(verdict: Verification | undefined): string {
   if (!verdict) return '<span class="result pending">Pending</span>';
-  const label = verdict.hit ? '<span class="result hit">✓ Hit</span>' : '<span class="result miss">✗ Miss</span>';
-  return `${label}<br><small>${DIRECTION_NAMES[verdict.outcome]}, ${formatChange(verdict.change_pct)}</small>`;
+  return verdict.hit ? '<span class="result hit">✓ Hit</span>' : '<span class="result miss">✗ Miss</span>';
+}
+
+function resultCell(verdict: Verification | undefined): string {
+  if (!verdict) return resultLabel(verdict);
+  return `${resultLabel(verdict)}<br><small>${DIRECTION_NAMES[verdict.outcome]}, ${formatChange(verdict.change_pct)}</small>`;
 }
 
 function detailsCell(p: Prediction, verdict: Verification | undefined): string {

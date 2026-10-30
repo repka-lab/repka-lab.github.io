@@ -19,7 +19,12 @@ const ledgerPath = join(work, 'ledger.json');
 const articlesDir = join(work, 'articles');
 writeFileSync(ledgerPath, `${JSON.stringify(sampleLedger(), null, 2)}\n`);
 mkdirSync(articlesDir);
-writeFileSync(join(articlesDir, 'week-one.md'), article('Week <one>', 'published', 'See [the ledger](../ledger.html).'));
+// Every chart kind, so the page checks below cover chart output too. The sample week starts on 2026-10-19.
+const CHARTS = ['flow', 'calls 2026-10-19', 'check 2026-10-19', 'score 2026-10-19'].map((spec) => `\`\`\`chart\n${spec}\n\`\`\``);
+writeFileSync(
+  join(articlesDir, 'week-one.md'),
+  article('Week <one>', 'published', ['See [the ledger](../ledger.html).', ...CHARTS].join('\n\n')),
+);
 writeFileSync(join(articlesDir, 'secret-plan.md'), article('Unfinished', 'draft', 'Not ready.'));
 
 function article(title: string, status: string, body: string): string {
@@ -86,6 +91,20 @@ describe('buildSite', () => {
         assert.ok(existsSync(path), `${file} links to missing ${target}`);
       }
     }
+  });
+
+  test('draws the chart blocks in articles from the ledger', () => {
+    const html = readFileSync(join(out, 'articles/week-one.html'), 'utf8');
+
+    assert.equal(html.match(/<figure class="chart/g)?.length, CHARTS.length);
+    assert.doesNotMatch(html, /language-chart/);
+  });
+
+  test('draws the scoreboard as a chart, with the table one click away', () => {
+    const html = readFileSync(join(out, 'index.html'), 'utf8');
+
+    assert.match(html, /<figure class="chart score"/);
+    assert.match(html, /<details[^>]*>\s*<summary>Show as a table<\/summary>[\s\S]*class="scoreboard"/);
   });
 
   test('escapes article titles in the article list', () => {

@@ -36,7 +36,7 @@ interface OutputFile {
 // Returns the written files, relative to outDir and sorted.
 export function buildSite(options: BuildOptions): readonly string[] {
   const ledger = loadLedger(options.ledgerPath);
-  const articles = loadArticles(options.articlesDir, { includeDrafts: options.includeDrafts });
+  const articles = loadArticles(options.articlesDir, { includeDrafts: options.includeDrafts, ledger });
   const files: readonly OutputFile[] = [
     { path: 'index.html', content: renderIndex(ledger, articles) },
     { path: 'ledger.html', content: renderLedgerPage(ledger) },

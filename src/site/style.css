@@ -12,6 +12,9 @@
   --accent: #6b3fa0;
   --hit: #1d7a46;
   --miss: #b3261e;
+  --up: #2a78d6; /* chart marks for Higher and Lower, always next to ▲ Higher / ▼ Lower */
+  --down: #eb6834;
+  --track: #ece7dd;
   --radius: 10px;
 }
 
@@ -26,6 +29,9 @@
     --accent: #c4a3f0;
     --hit: #5cc98a;
     --miss: #f2827a;
+    --up: #3987e5;
+    --down: #d95926;
+    --track: #2c2824;
   }
 }
 
@@ -406,6 +412,566 @@ dd {
   margin: 32px 0;
   border: 0;
   border-top: 1px solid var(--line);
+}
+
+/* Charts: plain HTML drawn at build time (src/site/charts.ts). Text keeps the ink colors;
+   only marks and the ▲ ▼ signs carry color, and each mark has its word or number beside it.
+   A chart lays itself out by its own width, so it fits an article column and the front page alike. */
+
+.chart {
+  container-type: inline-size;
+  margin: 24px 0;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.chart figcaption {
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.chart-note {
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.chart-status {
+  color: var(--ink-2);
+}
+
+.chart-tally {
+  margin: 20px 0 16px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.chart .up .sign {
+  color: var(--up);
+}
+
+.chart .down .sign {
+  color: var(--down);
+}
+
+/* Score: one bar per model, a line at 50% for the coin flip */
+
+.bars {
+  display: grid;
+  gap: 12px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr) 8.5rem;
+  align-items: center;
+  gap: 12px;
+}
+
+.bar-model {
+  font-weight: 600;
+}
+
+.bar,
+.meter {
+  position: relative;
+  background: var(--track);
+  border-radius: 0 4px 4px 0;
+}
+
+.bar {
+  height: 14px;
+}
+
+.bar-fill,
+.meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+}
+
+.bar-fill {
+  background: var(--accent);
+}
+
+.bar::after,
+.meter::after,
+.dumbbell::after {
+  content: "";
+  position: absolute;
+  inset-block: -4px;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ink-2);
+}
+
+.bar-value,
+.bar-none {
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar-value {
+  color: var(--ink-2);
+}
+
+.bar-none {
+  grid-column: 2 / -1;
+  color: var(--muted);
+}
+
+.bar-axis {
+  margin-top: -6px;
+}
+
+.axis {
+  position: relative;
+  grid-column: 2;
+  height: 1.4em;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.axis > span {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+
+.axis > span:first-child {
+  left: 0;
+}
+
+.axis > span:last-child {
+  right: 0;
+}
+
+.axis .axis-mid {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Score change: a hollow dot before the week, a filled dot after it, a line between them */
+
+.score-change .bar-row {
+  grid-template-columns: 6rem minmax(0, 1fr) 13rem;
+}
+
+/* Inset by half the before dot, so a dot at 0% or 100% stays clear of the name and the value */
+.dumbbell,
+.score-change .axis {
+  margin-inline: 9px;
+}
+
+.dumbbell {
+  position: relative;
+  height: 18px;
+  background: linear-gradient(var(--track), var(--track)) center / 100% 2px no-repeat;
+}
+
+.dumbbell-line {
+  position: absolute;
+  top: 50%;
+  height: 3px;
+  background: var(--ink-2);
+  transform: translateY(-50%);
+}
+
+.dumbbell .dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.dot {
+  box-sizing: border-box;
+  border-radius: 50%;
+}
+
+.dot.before {
+  width: 18px;
+  height: 18px;
+  background: var(--surface);
+  border: 2px solid var(--ink-2);
+}
+
+.dot.after {
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+.chart-note .dot {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Factors: each model's call, then what it weighed; lower on the left, higher on the right */
+
+.pulls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 2px;
+}
+
+.pulls-head {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pulls-head > span:first-child {
+  padding-right: 12px;
+  text-align: right;
+}
+
+.pulls-head > span:last-child {
+  padding-left: 12px;
+}
+
+.reason {
+  display: grid;
+  gap: 8px;
+  padding-block: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.reason-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+}
+
+.reason-call {
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart .pull {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  margin: 0;
+  padding: 0 12px;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.chart .pull > li {
+  margin: 0;
+}
+
+.chart .pull.down {
+  text-align: right;
+  border-right: 3px solid var(--down);
+}
+
+.chart .pull.up {
+  border-left: 3px solid var(--up);
+}
+
+.pull-none,
+.reason-none {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Tiles: one card per model, topped with the color of its call */
+
+.chart .tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chart .tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--line);
+  border-radius: 6px;
+}
+
+.chart .tile.up {
+  border-top-color: var(--up);
+}
+
+.chart .tile.down {
+  border-top-color: var(--down);
+}
+
+.chart .tile.hit {
+  background: color-mix(in srgb, var(--hit) 8%, var(--bg));
+}
+
+.chart .tile.miss {
+  background: color-mix(in srgb, var(--miss) 8%, var(--bg));
+}
+
+.tile-model {
+  font-weight: 600;
+}
+
+.tile-call {
+  font-size: 1.05rem;
+}
+
+.meter {
+  height: 8px;
+  margin-top: 4px;
+}
+
+.up .meter-fill {
+  background: var(--up);
+}
+
+.down .meter-fill {
+  background: var(--down);
+}
+
+.tile-note {
+  color: var(--ink-2);
+  font-size: 0.85rem;
+}
+
+/* Move: start price, the week's move, end price; the arrow tilts the way the price went */
+
+.move {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(8rem, 1.2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+}
+
+.move p {
+  margin: 0;
+}
+
+.move-point {
+  display: flex;
+  flex-direction: column;
+}
+
+.move-point:last-child {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.move-label,
+.step-when {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.move-price {
+  font-size: clamp(1.15rem, 0.9rem + 1.2vw, 1.5rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+
+.move-time {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.move-change {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.move-word {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.move-line {
+  position: relative;
+  width: calc(100% - 12px);
+  height: 4px;
+  background: currentColor;
+  border-radius: 2px;
+}
+
+.move.up .move-line {
+  color: var(--up);
+  transform: rotate(-8deg);
+}
+
+.move.down .move-line {
+  color: var(--down);
+  transform: rotate(8deg);
+}
+
+.move-line::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  border-block: 7px solid transparent;
+  border-left: 12px solid currentColor;
+  transform: translateY(-50%);
+}
+
+/* Flow: numbered steps joined by a line; down the page when narrow, across when wide */
+
+.chart .steps {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.chart .steps > li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 2px 0 20px 44px;
+  counter-increment: step;
+}
+
+.chart .steps > li:last-child {
+  padding-bottom: 0;
+}
+
+.chart .steps > li::before {
+  content: counter(step);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--surface);
+  background: var(--accent);
+  border-radius: 50%;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.chart .steps > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 32px;
+  bottom: 4px;
+  left: 13px;
+  width: 2px;
+  background: var(--line);
+}
+
+.step-detail {
+  color: var(--ink-2);
+  font-size: 0.85rem;
+}
+
+@container (min-width: 44rem) {
+  .chart .steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .chart .steps > li {
+    padding: 40px 0 0;
+  }
+
+  .chart .steps > li:not(:last-child)::after {
+    top: 13px;
+    right: -12px;
+    bottom: auto;
+    left: 36px;
+    width: auto;
+    height: 2px;
+  }
+}
+
+@container (max-width: 32rem) {
+  .bar-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 6px;
+  }
+
+  .bar,
+  .dumbbell {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .score-change .bar-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .bar-none {
+    grid-column: 2;
+  }
+
+  .axis {
+    grid-column: 1 / -1;
+  }
+
+  .chart .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .move {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .move-change {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+/* High-contrast mode drops background colors; keep the marks visible. */
+@media (forced-colors: active) {
+  .bar-fill,
+  .meter-fill,
+  .move-line,
+  .dumbbell-line,
+  .dot.after {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  .dot.before {
+    forced-color-adjust: none;
+    background: Canvas;
+    border-color: CanvasText;
+  }
+}
+
+.table-toggle {
+  margin-top: 12px;
+}
+
+.table-toggle .table-wrap {
+  margin-top: 8px;
 }
 
 /* Footer */

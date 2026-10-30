@@ -19,7 +19,7 @@ import {
   saveResults,
   verifyPrediction,
 } from './ledger.ts';
-import type { Ledger, NewPrediction, NewVerification } from './ledger.ts';
+import type { Factor, Ledger, NewPrediction, NewVerification } from './ledger.ts';
 
 const RECORDED = new Date('2026-10-26T12:00:00Z');
 const VERIFY_DATE = '2026-11-02T21:00:00.000Z';
@@ -27,6 +27,10 @@ const AFTER_VERIFY = new Date('2026-11-02T22:00:00Z');
 const EARLIER_VERIFY = '2026-10-30T21:00:00Z'; // also due by AFTER_VERIFY
 const LATER_VERIFY = '2026-11-09T21:00:00Z'; // not yet due at AFTER_VERIFY
 const HASH = 'a'.repeat(64);
+const FACTORS: Factor[] = [
+  { text: 'Five higher daily closes in a row.', pulls: 'up' },
+  { text: 'Funding rates are cooling.', pulls: 'down' },
+];
 const REPO_LEDGER = fileURLToPath(new URL('../data/ledger.json', import.meta.url));
 
 type Json = Record<string, unknown>;
@@ -94,6 +98,26 @@ describe('addPrediction', () => {
     assert.equal(next.predictions.length, 1);
   });
 
+  test('keeps the factors behind a call, in the order given', () => {
+    const ledger = recorded(forecast({ factors: FACTORS }));
+
+    assert.deepEqual(ledger.predictions[0]?.factors, FACTORS);
+  });
+
+  test('stores only the text and pull of each factor', () => {
+    const extra = [{ ...FACTORS[0], weight: 9 }, FACTORS[1]];
+
+    const ledger = addPrediction(emptyLedger(), malformed({ factors: extra }), RECORDED);
+
+    assert.deepEqual(ledger.predictions[0]?.factors, FACTORS);
+  });
+
+  test('leaves the factors out of a call that has none', () => {
+    const ledger = recorded(forecast());
+
+    assert.equal('factors' in ledger.predictions[0]!, false);
+  });
+
   const rejected: [string, Json, RegExp][] = [
     ['an unknown model', { model: 'llama' }, /model must be one of chatgpt, claude, gemini, grok/],
     ['an unknown direction', { direction: 'sideways' }, /direction must be one of up, down$/],
@@ -110,6 +134,13 @@ describe('addPrediction', () => {
     ['a verify date without a time zone', { verify_date: '2026-11-02T21:00' }, /verify_date must be an ISO 8601/],
     ['a verify date in the past', { verify_date: '2026-10-20' }, /must be after the recording time/],
     ['a verify date equal to the recording time', { verify_date: RECORDED.toISOString() }, /must be after/],
+    ['factors that are not a list', { factors: 'momentum' }, /factors must be a list of 2 to 3 factors/],
+    ['a null list of factors', { factors: null }, /factors must be a list of 2 to 3 factors/],
+    ['a single factor', { factors: FACTORS.slice(0, 1) }, /factors must be a list of 2 to 3 factors/],
+    ['four factors', { factors: [...FACTORS, ...FACTORS] }, /factors must be a list of 2 to 3 factors/],
+    ['a factor that is not an object', { factors: ['momentum', FACTORS[1]] }, /factors\[0\]: expected an object/],
+    ['a blank factor', { factors: [FACTORS[0], { text: ' ', pulls: 'up' }] }, /factors\[1\]: text must be a non-empty string/],
+    ['a factor that pulls sideways', { factors: [FACTORS[0], { text: 'Flat volume.', pulls: 'flat' }] }, /factors\[1\]: pulls must be one of up, down$/],
   ];
 
   for (const [what, overrides, message] of rejected) {
@@ -347,6 +378,12 @@ describe('parseLedger', () => {
     assert.deepEqual(parseLedger(stored), verified);
   });
 
+  test('round-trips the factors of a call', () => {
+    const withFactors = recorded(forecast({ factors: FACTORS }));
+
+    assert.deepEqual(parseLedger(asJson(withFactors)), withFactors);
+  });
+
   const rejected: [string, unknown, RegExp][] = [
     ['a value that is not an object', [], /ledger: expected an object/],
     ['another schema version', { ...stored, schema_version: 2 }, /schema_version must be 1/],
@@ -359,6 +396,7 @@ describe('parseLedger', () => {
     ['a verification of an unknown forecast', { ...stored, verifications: [{ ...verdict, prediction_id: 'P0009' }] }, /there is no prediction P0009/],
     ['a forecast verified twice', { ...stored, verifications: [verdict, verdict] }, /P0001 is verified twice/],
     ['a verification before the verify date', { ...stored, verifications: [{ ...verdict, verified_at: RECORDED.toISOString() }] }, /cannot be verified before/],
+    ['a stored factor that pulls sideways', { ...stored, predictions: [{ ...first, factors: [FACTORS[0], { text: 'Flat volume.', pulls: 'flat' }] }, second] }, /predictions\[0\], factors\[1\]: pulls must be one of up, down/],
   ];
 
   for (const [what, value, message] of rejected) {
@@ -416,6 +454,28 @@ describe('saveLedger and loadLedger', () => {
       assert.equal(readFileSync(path, 'utf8'), before);
     });
   }
+
+  const withFactors = recorded(forecast({ factors: FACTORS }));
+
+  test('appends after a forecast that has factors', () => {
+    const path = freshPath();
+    const next = addPrediction(withFactors, forecast({ verify_date: LATER_VERIFY }), RECORDED);
+
+    saveLedger(path, withFactors);
+    saveLedger(path, next);
+
+    assert.deepEqual(loadLedger(path), next);
+  });
+
+  test('refuses editing a factor of a recorded forecast', () => {
+    const path = freshPath();
+    saveLedger(path, withFactors);
+    const [call] = withFactors.predictions;
+    const flipped: Factor[] = [FACTORS[0]!, { ...FACTORS[1]!, pulls: 'up' }];
+    const edited: Ledger = { ...withFactors, predictions: [{ ...call!, factors: flipped }] };
+
+    assert.throws(() => saveLedger(path, edited), { ...LEDGER_ERROR, message: /predictions were changed or removed/ });
+  });
 
   test('refuses dropping a verification', () => {
     const path = freshPath();

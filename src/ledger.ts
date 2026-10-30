@@ -17,6 +17,14 @@ const SCHEMA_VERSION = 1;
 const DECIMALS = 4;
 const PROMPT_HASH = /^[0-9a-f]{64}$/; // sha256 of the exact prompt text, lowercase hex
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2}))?$/;
+const MIN_FACTORS = 2;
+const MAX_FACTORS = 3;
+
+// One reason the model weighed, and which way it pulls the price.
+export interface Factor {
+  readonly text: string;
+  readonly pulls: Direction;
+}
 
 export interface Prediction {
   readonly id: string; // P0001, P0002, ... in recording order
@@ -26,6 +34,7 @@ export interface Prediction {
   readonly direction: Direction;
   readonly confidence: number; // 0-100
   readonly reasoning: string;
+  readonly factors?: readonly Factor[]; // 2-3, both sides allowed; absent on calls made without them
   readonly prompt_hash: string;
   readonly verify_date: string; // ISO 8601, when the outcome is checked
 }
@@ -216,14 +225,30 @@ function statsFor(predictions: readonly Prediction[], verdicts: ReadonlyMap<stri
 function readForecast(fields: Fields, where: string): Omit<NewPrediction, 'verify_date'> {
   const prompt_hash = text(fields, 'prompt_hash', where);
   if (!PROMPT_HASH.test(prompt_hash)) fail(where, 'prompt_hash must be a lowercase sha256 hex string');
+  const factors = readFactors(fields, where);
   return {
     model: choice(fields, 'model', MODELS, where),
     model_version: text(fields, 'model_version', where),
     direction: choice(fields, 'direction', DIRECTIONS, where),
     confidence: number(fields, 'confidence', where, 0, 100),
     reasoning: text(fields, 'reasoning', where),
+    ...(factors ? { factors } : {}),
     prompt_hash,
   };
+}
+
+// Optional: calls recorded before factors existed have none, and must keep canonicalising the same.
+function readFactors(fields: Fields, where: string): readonly Factor[] | undefined {
+  const value = fields.factors;
+  if (value === undefined) return undefined;
+  if (!Array.isArray(value) || value.length < MIN_FACTORS || value.length > MAX_FACTORS) {
+    fail(where, `factors must be a list of ${MIN_FACTORS} to ${MAX_FACTORS} factors`);
+  }
+  return value.map((item, i) => {
+    const at = `${where}, factors[${i}]`;
+    const factor = fieldsOf(item, at);
+    return { text: text(factor, 'text', at), pulls: choice(factor, 'pulls', DIRECTIONS, at) };
+  });
 }
 
 function readPrediction(value: unknown, index: number): Prediction {
@@ -276,9 +301,16 @@ function extendsList(before: readonly object[], after: readonly object[]): boole
   });
 }
 
-// Records are flat, so sorting the top-level keys is enough to ignore key order.
+// Key order is ignored at every depth: a replacer key list would apply to nested factors too and drop their keys.
 function canonical(record: object): string {
-  return JSON.stringify(record, Object.keys(record).sort());
+  return JSON.stringify(sortKeys(record));
+}
+
+function sortKeys(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sortKeys);
+  if (typeof value !== 'object' || value === null) return value;
+  const entries = Object.entries(value).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+  return Object.fromEntries(entries.map(([key, inner]) => [key, sortKeys(inner)]));
 }
 
 function writeJson(path: string, data: unknown): void {

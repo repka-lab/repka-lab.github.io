@@ -9,9 +9,9 @@ Every week, four AI models, ChatGPT, Claude, Gemini and Grok, answer one questio
 
 ## The week
 
-- **Monday:** each model gets the same written prompt and makes its call.
-- **Before anything is posted:** the calls go into the ledger.
-- **Friday:** the week closes and every call is checked.
+```chart
+flow
+```
 
 ## What a call contains
 

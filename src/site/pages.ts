@@ -3,6 +3,7 @@
 
 import type { Ledger } from '../ledger.ts';
 import type { Article } from './articles.ts';
+import { renderScoreChart } from './charts.ts';
 import { escapeHtml, page } from './html.ts';
 import { renderLedgerTable, renderScoreboard } from './ledger-view.ts';
 
@@ -24,7 +25,11 @@ export function renderIndex(ledger: Ledger, articles: readonly Article[]): strin
 
 <section>
   <h2>Scoreboard</h2>
-  ${renderScoreboard(ledger)}
+  ${renderScoreChart(ledger)}
+  <details class="table-toggle">
+    <summary>Show as a table</summary>
+    ${renderScoreboard(ledger)}
+  </details>
   <p class="note">Hit rate is the share of checked calls that came true. A coin flip is right about half the time, so the bar is 50% over many weeks. Average confidence is how sure the model said it was on those same calls; the gap between the two shows how well a model knows its own limits.</p>
   <p><a href="ledger.html">Every call, with reasoning and prices</a> · <a href="data/ledger.json">Raw data (JSON)</a></p>
 </section>

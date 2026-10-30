@@ -4,7 +4,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, describe, test } from 'node:test';
 
+import { emptyLedger } from '../ledger.ts';
 import { loadArticles, parseArticle, SiteError } from './articles.ts';
+import { WEEK, weekChecked } from './test-fixtures.ts';
 
 const HEADER = ['---', 'title: How it works', 'date: 2026-10-25', 'summary: The short version.', 'status: published', '---'];
 
@@ -74,6 +76,27 @@ describe('parseArticle', () => {
   test('rejects a file name that is not a clean URL slug', () => {
     assert.throws(() => parseArticle('How It Works.md', source()), /file name/);
   });
+
+  test('draws a chart block from the ledger instead of showing it as code', () => {
+    const body = `The week in one picture:\n\n\`\`\`chart\ncheck ${WEEK}\n\`\`\``;
+    const article = parseArticle('a.md', source(HEADER, body), weekChecked());
+
+    assert.match(article.html, /3 of 4 calls came true/);
+    assert.doesNotMatch(article.html, /<pre>/);
+  });
+
+  test('leaves other code blocks as code', () => {
+    const article = parseArticle('a.md', source(HEADER, '```js\nconst a = 1;\n```'));
+
+    assert.match(article.html, /<pre><code class="language-js">const a = 1;/);
+  });
+
+  test('names the file when a chart block is wrong', () => {
+    assert.throws(() => parseArticle('week.md', source(HEADER, '```chart\npie\n```'), weekChecked()), {
+      name: 'SiteError',
+      message: /^week\.md: unknown chart "pie"/,
+    });
+  });
 });
 
 describe('loadArticles', () => {
@@ -86,18 +109,18 @@ describe('loadArticles', () => {
   writeFileSync(join(dir, 'notes.txt'), 'not an article');
 
   test('returns published articles, newest first', () => {
-    const slugs = loadArticles(dir, { includeDrafts: false }).map((a) => a.slug);
+    const slugs = loadArticles(dir, { includeDrafts: false, ledger: emptyLedger() }).map((a) => a.slug);
 
     assert.deepEqual(slugs, ['newer', 'older']);
   });
 
   test('includes drafts only when asked', () => {
-    const slugs = loadArticles(dir, { includeDrafts: true }).map((a) => a.slug);
+    const slugs = loadArticles(dir, { includeDrafts: true, ledger: emptyLedger() }).map((a) => a.slug);
 
     assert.deepEqual(slugs, ['unfinished', 'newer', 'older']);
   });
 
   test('returns nothing for a missing folder', () => {
-    assert.deepEqual(loadArticles(join(dir, 'missing'), { includeDrafts: true }), []);
+    assert.deepEqual(loadArticles(join(dir, 'missing'), { includeDrafts: true, ledger: emptyLedger() }), []);
   });
 });
