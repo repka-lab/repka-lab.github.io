@@ -23,6 +23,7 @@
       <nav aria-label="Site">
         <a href="index.html" aria-current="page">Forecasts</a>
         <a href="ledger.html">Ledger</a>
+        <a href="news.html">News</a>
         <a href="index.html#articles">Articles</a>
       </nav>
     </div>
@@ -43,7 +44,18 @@
 
 <section>
   <h2>Scoreboard</h2>
-  <div class="table-wrap">
+  <figure class="chart score">
+  <figcaption>Hit rate per model, all weeks so far</figcaption>
+  <div class="bars">
+    <div class="bar-row"><span class="bar-model">ChatGPT</span><span class="bar-none">No checked calls yet</span></div>
+    <div class="bar-row"><span class="bar-model">Claude</span><span class="bar-none">No checked calls yet</span></div>
+    <div class="bar-row"><span class="bar-model">Gemini</span><span class="bar-none">No checked calls yet</span></div>
+    <div class="bar-row"><span class="bar-model">Grok</span><span class="bar-none">No checked calls yet</span></div>
+  </div>
+</figure>
+  <details class="table-toggle">
+    <summary>Show as a table</summary>
+    <div class="table-wrap">
   <table class="scoreboard">
     <thead><tr><th scope="col">Model</th><th scope="col" class="num">Forecasts</th><th scope="col" class="num">Checked</th><th scope="col" class="num">Pending</th><th scope="col" class="num">Hits</th><th scope="col" class="num">Misses</th><th scope="col" class="num">Hit rate</th><th scope="col" class="num">Avg. confidence</th></tr></thead>
     <tbody>
@@ -54,8 +66,21 @@
     </tbody>
   </table>
 </div>
+  </details>
   <p class="note">Hit rate is the share of checked calls that came true. A coin flip is right about half the time, so the bar is 50% over many weeks. Average confidence is how sure the model said it was on those same calls; the gap between the two shows how well a model knows its own limits.</p>
   <p><a href="ledger.html">Every call, with reasoning and prices</a> · <a href="data/ledger.json">Raw data (JSON)</a></p>
+</section>
+
+<section id="news">
+  <h2>News</h2>
+  <ul class="article-list">
+    <li>
+      <time datetime="2026-10-31">2026-10-31</time>
+      <a href="articles/binance-hack.html">The $6.36B Binance hack, in charts and wallets</a>
+      <p>On October 29, about $6.36 billion left Binance hot wallets on ten chains in under four hours. What analysts found, where the money went, what was frozen, and the wallets anyone can check.</p>
+    </li>
+  </ul>
+  
 </section>
 
 <section id="articles">
@@ -68,6 +93,7 @@
       <p><strong>This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.</strong></p>
       <p>The host is an animated AI character, not a real person.</p>
       <p>The full record is public: <a href="data/ledger.json">ledger.json</a>.</p>
+      <p>Logos are trademarks of their owners. This project is not affiliated with or endorsed by OpenAI, Anthropic, Google or xAI. Icons: <a href="logos/LICENSE.txt">LobeHub Icons</a>, MIT license.</p>
     </div>
   </footer>
 </body>
