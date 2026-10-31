@@ -9,7 +9,7 @@ export const TRADEMARK_NOTE =
 
 const SITE_NAME = 'Repka';
 
-export type Section = 'home' | 'ledger' | 'articles';
+export type Section = 'home' | 'ledger' | 'news' | 'articles';
 
 export interface PageOptions {
   readonly title: string;
@@ -22,6 +22,7 @@ export interface PageOptions {
 const NAV: readonly { readonly section: Section; readonly href: string; readonly label: string }[] = [
   { section: 'home', href: 'index.html', label: 'Forecasts' },
   { section: 'ledger', href: 'ledger.html', label: 'Ledger' },
+  { section: 'news', href: 'news.html', label: 'News' },
   { section: 'articles', href: 'index.html#articles', label: 'Articles' },
 ];
 

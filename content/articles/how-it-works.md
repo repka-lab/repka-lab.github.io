@@ -2,6 +2,7 @@
 title: How the experiment works
 date: 2026-10-25
 summary: What goes into each weekly BTC call, why it is logged before anything is posted, and how a hit or a miss is decided.
+section: articles
 status: draft
 ---
 

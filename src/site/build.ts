@@ -5,16 +5,18 @@
 //
 // Everything is rendered in memory first, so a bad ledger, price file or article stops the build before
 // the output folder is touched. Drafts never go into docs/. With data/btc-usd-4h.json present the charts
-// draw BTC in candles from it; without it they leave the candles out.
+// draw BTC in candles from it; without it they leave the candles out. With data/bnb-usdt-4h.json present
+// the market charts can draw BNB as well.
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 
 import { loadCandles, PRICES_FILE } from '../candles.ts';
+import { DEFAULT_SYMBOL, defaultOut } from '../fetch-binance-candles.ts';
 import { loadLedger } from '../ledger.ts';
 import { loadArticles, SiteError } from './articles.ts';
-import { renderArticle, renderIndex, renderLedgerPage } from './pages.ts';
+import { renderArticle, renderIndex, renderLedgerPage, renderNewsPage } from './pages.ts';
 
 export const MARKER = '.repka-site';
 
@@ -27,6 +29,12 @@ const ASSETS = [
   'logos/claude.svg',
   'logos/gemini.svg',
   'logos/grok.svg',
+  'img/binance-hack-setup.jpg',
+  'img/binance-hack-drain.jpg',
+  'img/binance-hack-who.jpg',
+  'img/binance-hack-launder.jpg',
+  'img/binance-hack-video.jpg',
+  'video/binance-hack.mp4',
 ] as const;
 const PROJECT_ROOT = resolve(import.meta.dirname, '../..');
 const PUBLIC_DIR = join(PROJECT_ROOT, 'docs');
@@ -37,6 +45,7 @@ export interface BuildOptions {
   readonly outDir: string;
   readonly includeDrafts: boolean;
   readonly pricesPath?: string; // BTC candles for the charts, shipped as they are
+  readonly marketPaths?: Readonly<Record<string, string>>; // other coins' candles by coin, like bnb; shipped under data/
 }
 
 interface OutputFile {
@@ -49,14 +58,18 @@ export function buildSite(options: BuildOptions): readonly string[] {
   const ledger = loadLedger(options.ledgerPath);
   const { pricesPath } = options;
   const prices = pricesPath === undefined ? undefined : loadCandles(pricesPath);
-  const articles = loadArticles(options.articlesDir, { includeDrafts: options.includeDrafts, ledger, prices });
+  const marketPaths = Object.entries(options.marketPaths ?? {});
+  const markets = Object.fromEntries(marketPaths.map(([coin, path]) => [coin, loadCandles(path)]));
+  const articles = loadArticles(options.articlesDir, { includeDrafts: options.includeDrafts, ledger, prices, markets });
   const files: readonly OutputFile[] = [
     { path: 'index.html', content: renderIndex(ledger, articles) },
     { path: 'ledger.html', content: renderLedgerPage(ledger) },
+    { path: 'news.html', content: renderNewsPage(articles) },
     ...articles.map((article) => ({ path: `articles/${article.slug}.html`, content: renderArticle(article) })),
     ...ASSETS.map((name) => ({ path: name, content: readFileSync(join(import.meta.dirname, name)) })),
     { path: 'data/ledger.json', content: readFileSync(options.ledgerPath) }, // byte for byte, as committed
     ...(pricesPath === undefined ? [] : [{ path: PRICES_FILE, content: readFileSync(pricesPath) }]),
+    ...marketPaths.map(([, path]) => ({ path: `data/${basename(path)}`, content: readFileSync(path) })),
     { path: '.nojekyll', content: '' }, // serve the files as they are, without Jekyll
     { path: MARKER, content: MARKER_TEXT },
   ];
@@ -93,12 +106,14 @@ function main(): void {
   }
 
   const pricesPath = join(PROJECT_ROOT, PRICES_FILE);
+  const bnbPath = join(PROJECT_ROOT, defaultOut(DEFAULT_SYMBOL));
   const written = buildSite({
     ledgerPath: join(PROJECT_ROOT, 'data', 'ledger.json'),
     articlesDir: join(PROJECT_ROOT, 'content', 'articles'),
     outDir,
     includeDrafts: values.drafts,
     ...(existsSync(pricesPath) ? { pricesPath } : {}),
+    ...(existsSync(bnbPath) ? { marketPaths: { bnb: bnbPath } } : {}),
   });
   const drafts = values.drafts ? ', drafts included' : '';
   process.stdout.write(`Built ${written.length} files into ${outDir}${drafts}\n`);

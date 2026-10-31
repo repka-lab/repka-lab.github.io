@@ -8,7 +8,15 @@ import { emptyLedger } from '../ledger.ts';
 import { loadArticles, parseArticle, SiteError } from './articles.ts';
 import { WEEK, weekChecked } from './test-fixtures.ts';
 
-const HEADER = ['---', 'title: How it works', 'date: 2026-10-25', 'summary: The short version.', 'status: published', '---'];
+const HEADER = [
+  '---',
+  'title: How it works',
+  'date: 2026-10-25',
+  'summary: The short version.',
+  'section: articles',
+  'status: published',
+  '---',
+];
 
 function source(header: readonly string[] = HEADER, body = 'Some **bold** text.'): string {
   return [...header, '', body, ''].join('\n');
@@ -27,6 +35,7 @@ describe('parseArticle', () => {
     assert.equal(article.title, 'How it works');
     assert.equal(article.date, '2026-10-25');
     assert.equal(article.summary, 'The short version.');
+    assert.equal(article.section, 'articles');
     assert.equal(article.isDraft, false);
     assert.equal(article.html.trim(), '<p>Some <strong>bold</strong> text.</p>');
   });
@@ -48,8 +57,16 @@ describe('parseArticle', () => {
     assert.equal(parseArticle('a.md', source(withField('status', 'draft'))).isDraft, true);
   });
 
+  test('reads a news story', () => {
+    assert.equal(parseArticle('a.md', source(withField('section', 'news'))).section, 'news');
+  });
+
+  test('rejects an unknown section', () => {
+    assert.throws(() => parseArticle('a.md', source(withField('section', 'blog'))), /section must be news or articles, got "blog"/);
+  });
+
   test('requires every header field', () => {
-    for (const key of ['title', 'date', 'summary', 'status']) {
+    for (const key of ['title', 'date', 'summary', 'section', 'status']) {
       assert.throws(() => parseArticle('a.md', source(withField(key, null))), new RegExp(`a\\.md.*${key}`));
     }
   });

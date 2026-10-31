@@ -1,15 +1,22 @@
-// The site's pages: the front page, the ledger page and one page per article.
+// The site's pages: the front page, the ledger page, the news page and one page per article.
 // Wording here is public copy, so it follows the content rules: no advice, no promises about prices.
 
 import type { Ledger } from '../ledger.ts';
-import type { Article } from './articles.ts';
+import type { Article, ArticleSection } from './articles.ts';
 import { renderScoreChart } from './charts.ts';
 import { escapeHtml, page } from './html.ts';
 import { renderLedgerTable, renderScoreboard } from './ledger-view.ts';
 
 const DRAFT_TAG = '<span class="tag">Draft</span>';
+const HOME_NEWS = 3; // the newest news stories on the front page; the rest are on the News page
+const BACK: Readonly<Record<ArticleSection, { readonly href: string; readonly label: string }>> = {
+  news: { href: 'news.html', label: 'All news' },
+  articles: { href: 'index.html#articles', label: 'All articles' },
+};
 
 export function renderIndex(ledger: Ledger, articles: readonly Article[]): string {
+  const news = inSection(articles, 'news');
+  const moreNews = news.length > HOME_NEWS ? '<p><a href="news.html">All news</a></p>' : '';
   const body = `<section class="hero">
   <h1>Four AI models call Bitcoin every week. Every call is logged before anyone sees it.</h1>
   <p class="lede">On Monday, ChatGPT, Claude, Gemini and Grok each answer one question: does BTC end the week higher or lower than it started? The call goes into a public ledger first; only then does a video or post about it go out. On Friday it is checked, and misses stay on the record next to the hits.</p>
@@ -34,9 +41,15 @@ export function renderIndex(ledger: Ledger, articles: readonly Article[]): strin
   <p><a href="ledger.html">Every call, with reasoning and prices</a> · <a href="data/ledger.json">Raw data (JSON)</a></p>
 </section>
 
+<section id="news">
+  <h2>News</h2>
+  ${articleList(news.slice(0, HOME_NEWS), 'No news yet.')}
+  ${moreNews}
+</section>
+
 <section id="articles">
   <h2>Articles</h2>
-  ${articleList(articles)}
+  ${articleList(inSection(articles, 'articles'), 'No articles yet.')}
 </section>`;
 
   return page({
@@ -82,12 +95,32 @@ export function renderLedgerPage(ledger: Ledger): string {
   });
 }
 
+export function renderNewsPage(articles: readonly Article[]): string {
+  const body = `<section class="hero">
+  <h1>News</h1>
+  <p class="lede">Crypto stories from the weekly videos, told with charts, on-chain data and a link to every source.</p>
+</section>
+
+<section>
+  ${articleList(inSection(articles, 'news'), 'No news yet.')}
+</section>`;
+
+  return page({
+    title: 'News',
+    description: 'Crypto stories from the Repka videos, with charts, on-chain data and every source linked.',
+    root: '',
+    section: 'news',
+    body,
+  });
+}
+
 export function renderArticle(article: Article): string {
   const banner = article.isDraft
     ? '<p class="draft-banner"><strong>Draft.</strong> Local preview only; this article is not published.</p>'
     : '';
+  const back = BACK[article.section];
   const body = `<article>
-  <p class="back"><a href="../index.html#articles">&larr; All articles</a></p>
+  <p class="back"><a href="../${back.href}">&larr; ${back.label}</a></p>
   ${banner}
   <h1>${escapeHtml(article.title)}</h1>
   <p class="meta"><time datetime="${article.date}">${article.date}</time></p>
@@ -96,11 +129,15 @@ ${article.html}
   </div>
 </article>`;
 
-  return page({ title: article.title, description: article.summary, root: '../', section: 'articles', body });
+  return page({ title: article.title, description: article.summary, root: '../', section: article.section, body });
 }
 
-function articleList(articles: readonly Article[]): string {
-  if (articles.length === 0) return '<p class="empty">No articles yet.</p>';
+function inSection(articles: readonly Article[], section: ArticleSection): readonly Article[] {
+  return articles.filter((article) => article.section === section);
+}
+
+function articleList(articles: readonly Article[], empty: string): string {
+  if (articles.length === 0) return `<p class="empty">${empty}</p>`;
   const items = articles.map(
     (a) => `<li>
       <time datetime="${a.date}">${a.date}</time>${a.isDraft ? ` ${DRAFT_TAG}` : ''}

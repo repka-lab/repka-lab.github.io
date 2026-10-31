@@ -17,21 +17,22 @@
 //   score-change <Monday>  hit rate per model before that week and after it
 //   flow                   the four steps of a week
 //   example-call           one made-up call taken apart, with what each part means
+//
+// A news article draws its own figures with the story charts (story-charts.ts): stats, chains, timeline, split,
+// analysts, wallets and market, each with its rows on the lines below its name.
 
 import { createHash } from 'node:crypto';
 import type { PriceSeries } from '../candles.ts';
 import { getStats, MODELS } from '../ledger.ts';
 import type { Direction, Factor, Ledger, ModelStats, Prediction, Review, Verification } from '../ledger.ts';
 import { candlePlot } from './candle-chart.ts';
+import { ChartError, figure } from './chart-figure.ts';
 import { escapeHtml } from './html.ts';
 import { DIRECTION_NAMES, formatChange, formatUtc, MODEL_NAMES, modelBadge, resultLabel, SIGNS } from './ledger-view.ts';
+import { isStoryKind, renderStoryChart } from './story-charts.ts';
+import type { Markets } from './story-charts.ts';
 
-export class ChartError extends Error {
-  constructor(message: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = 'ChartError';
-  }
-}
+export { ChartError };
 
 interface Week {
   readonly day: string; // the Monday, YYYY-MM-DD
@@ -95,8 +96,10 @@ const EXAMPLE_CALL: Prediction = {
   verify_date: '2026-11-06T20:00:00Z',
 };
 
-export function renderChart(spec: string, ledger: Ledger, prices?: PriceSeries): string {
+// `markets` are price series by coin for the story charts; `prices` stands in for btc there too.
+export function renderChart(spec: string, ledger: Ledger, prices?: PriceSeries, markets: Markets = {}): string {
   const [kind = '', ...args] = spec.trim().split(/\s+/);
+  if (isStoryKind(kind)) return renderStoryChart(spec, { btc: prices, ...markets });
   switch (kind) {
     case 'calls':
       return renderCalls(readWeek(kind, args, ledger), prices);
@@ -117,7 +120,9 @@ export function renderChart(spec: string, ledger: Ledger, prices?: PriceSeries):
       readNothing(kind, args);
       return renderExampleCall();
     default:
-      throw new ChartError(`unknown chart "${kind}"; use calls, factors, check, review, score, score-change, flow or example-call`);
+      throw new ChartError(
+        `unknown chart "${kind}"; use calls, factors, check, review, score, score-change, flow, example-call, stats, chains, timeline, split, analysts, wallets or market`,
+      );
   }
 }
 
@@ -412,13 +417,6 @@ function tileList(tiles: readonly string[]): string {
 
 function callLabel(direction: Direction): string {
   return `<span class="sign" aria-hidden="true">${SIGNS[direction]}</span> ${DIRECTION_NAMES[direction]}`;
-}
-
-function figure(kind: string, caption: string, content: string): string {
-  return `<figure class="chart ${kind}">
-  <figcaption>${caption}</figcaption>
-  ${content}
-</figure>`;
 }
 
 function readNothing(kind: string, args: readonly string[]): void {

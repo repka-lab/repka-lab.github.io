@@ -1,4 +1,5 @@
-// BTC in candles for the weekly charts: one candle per time step, drawn as inline SVG with the price scale beside it.
+// BTC in candles for the weekly charts, or any coin around an event in an article: one candle per time step,
+// drawn as inline SVG with the price scale beside it.
 // A candle that rose is hollow and one that fell is filled, so the two differ by shape as well as color.
 // Time runs left to right at an even pace, so a step with no trades shows as a gap.
 
@@ -13,6 +14,8 @@ import { formatUtc } from './ledger-view.ts';
 // line named above the plot. `start` is the price the week opens at, a dashed line from `open` on; with `calls` and
 // no `start`, the last close drawn stands in. `end` is the end price, a dot at the right edge.
 // `calls` are arrows from that price at the open, one per AI.
+// `label` names the coin for screen readers, BTC by default. `marks` are more solid lines like the open and close,
+// each named above the plot, and `low` is a price drawn as a dashed line right across.
 export interface CandleWindow {
   readonly from: number;
   readonly to: number;
@@ -22,6 +25,16 @@ export interface CandleWindow {
   readonly start?: number;
   readonly end?: number;
   readonly calls?: readonly CandleCall[];
+  readonly label?: string;
+  readonly marks?: readonly CandleMark[];
+  readonly low?: number;
+}
+
+// A moment to mark on the time axis, in ms.
+export interface CandleMark {
+  readonly kind: string;
+  readonly name: string;
+  readonly at: number;
 }
 
 interface WeekMark {
@@ -90,8 +103,10 @@ function plotHtml(candles: readonly Candle[], stepMs: number, step: string, from
   };
   const ticks = priceTicks(low, high);
   const until = window.until ?? window.to;
-  const label = `BTC in ${step} candles, ${formatUtc(new Date(from).toISOString())} to ${formatUtc(new Date(until).toISOString())}`;
-  const grid = ticks.map((t) => hLine('candles-grid', scale.y(t)));
+  const coin = escapeHtml(window.label ?? 'BTC');
+  const label = `${coin} in ${step} candles, ${formatUtc(new Date(from).toISOString())} to ${formatUtc(new Date(until).toISOString())}`;
+  const lowLine = window.low === undefined ? [] : [hLine('candles-low', scale.y(window.low))];
+  const grid = [...ticks.map((t) => hLine('candles-grid', scale.y(t))), ...lowLine];
   const origin = level === undefined ? undefined : { x: scale.x(window.open ?? from), y: scale.y(level) };
   const start = origin === undefined ? [] : [startLine(origin)];
   const arrows = origin === undefined || calls.length === 0 ? undefined : callArrows(calls, origin, WIDTH);
@@ -111,7 +126,7 @@ function plotHtml(candles: readonly Candle[], stepMs: number, step: string, from
 
 // Every candle, the start and end prices, and room for the calls to fan out from `level` without leaving the plot.
 function priceRange(candles: readonly Candle[], window: CandleWindow, level: number | undefined): readonly [number, number] {
-  const marked = [window.start, window.end].filter((price) => price !== undefined);
+  const marked = [window.start, window.end, window.low].filter((price) => price !== undefined);
   const prices = [...candles.flatMap((c) => [c.low, c.high]), ...marked];
   const range = padded(Math.min(...prices), Math.max(...prices));
   const calls = window.calls ?? [];
@@ -148,6 +163,7 @@ function weekMarks(window: CandleWindow, scale: Scale): readonly WeekMark[] {
   const marks = [
     { kind: 'candles-open', name: 'Week opens', at: window.open },
     { kind: 'candles-close', name: 'Week closes', at: window.close },
+    ...(window.marks ?? []),
   ];
   return marks.flatMap(({ kind, name, at }) => (at === undefined ? [] : [{ kind, name, x: scale.x(at) }]));
 }

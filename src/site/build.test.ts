@@ -28,9 +28,11 @@ writeFileSync(
   article('Week <one>', 'published', ['See [the ledger](../ledger.html).', ...CHARTS].join('\n\n')),
 );
 writeFileSync(join(articlesDir, 'secret-plan.md'), article('Unfinished', 'draft', 'Not ready.'));
+writeFileSync(join(articlesDir, 'big-news.md'), article('Big news', 'published', 'Something happened.', 'news'));
 
-function article(title: string, status: string, body: string): string {
-  return ['---', `title: ${title}`, 'date: 2026-10-25', 'summary: A short summary.', `status: ${status}`, '---', '', body, ''].join('\n');
+function article(title: string, status: string, body: string, section = 'articles'): string {
+  const header = [`title: ${title}`, 'date: 2026-10-25', 'summary: A short summary.', `section: ${section}`, `status: ${status}`];
+  return ['---', ...header, '---', '', body, ''].join('\n');
 }
 
 function build(outDir: string, includeDrafts = false): readonly string[] {
@@ -53,9 +55,15 @@ describe('buildSite', () => {
     assert.deepEqual(filesIn(out), [
       '.nojekyll',
       MARKER,
+      'articles/big-news.html',
       'articles/week-one.html',
       'avatar.svg',
       'data/ledger.json',
+      'img/binance-hack-drain.jpg',
+      'img/binance-hack-launder.jpg',
+      'img/binance-hack-setup.jpg',
+      'img/binance-hack-video.jpg',
+      'img/binance-hack-who.jpg',
       'index.html',
       'ledger.html',
       'logos/LICENSE.txt',
@@ -63,7 +71,9 @@ describe('buildSite', () => {
       'logos/claude.svg',
       'logos/gemini.svg',
       'logos/grok.svg',
+      'news.html',
       'style.css',
+      'video/binance-hack.mp4',
     ]);
     assert.deepEqual(written, filesIn(out));
     assert.equal(readFileSync(join(out, 'data/ledger.json'), 'utf8'), readFileSync(ledgerPath, 'utf8'));
@@ -160,11 +170,52 @@ describe('buildSite', () => {
     assert.match(readFileSync(join(withPrices, 'articles/week-one.html'), 'utf8'), /class="candles"/);
   });
 
+  test('draws a market chart from another coin\'s file, ships the file, and stops the build without it', () => {
+    const marketArticles = join(work, 'market-articles');
+    const withMarket = join(work, 'with-market');
+    const bnbPath = join(work, 'bnb-usdt-4h.json');
+    mkdirSync(marketArticles);
+    const chart = '```chart\nmarket bnb 2026-10-29T20:00:00Z BNB around the hack\nHack\n```';
+    writeFileSync(join(marketArticles, 'hack.md'), article('Hack', 'published', chart));
+    writeFileSync(bnbPath, `${JSON.stringify(weekPrices(), null, 2)}\n`);
+
+    const files = buildSite({ ledgerPath, articlesDir: marketArticles, outDir: withMarket, includeDrafts: false, marketPaths: { bnb: bnbPath } });
+
+    assert.ok(files.includes('data/bnb-usdt-4h.json'));
+    assert.equal(readFileSync(join(withMarket, 'data/bnb-usdt-4h.json'), 'utf8'), readFileSync(bnbPath, 'utf8'));
+    assert.match(readFileSync(join(withMarket, 'articles/hack.html'), 'utf8'), /<figure class="chart market">[\s\S]*BNB at its lowest/);
+    assert.throws(
+      () => buildSite({ ledgerPath, articlesDir: marketArticles, outDir: join(work, 'no-market'), includeDrafts: false }),
+      { name: 'SiteError', message: /hack\.md: chart "market" has no price series for "bnb"/ },
+    );
+  });
+
   test('draws the scoreboard as a chart, with the table one click away', () => {
     const html = readFileSync(join(out, 'index.html'), 'utf8');
 
     assert.match(html, /<figure class="chart score"/);
     assert.match(html, /<details[^>]*>\s*<summary>Show as a table<\/summary>[\s\S]*class="scoreboard"/);
+  });
+
+  test('lists news on the News page and the front page, and articles only under Articles', () => {
+    const news = readFileSync(join(out, 'news.html'), 'utf8');
+    const index = readFileSync(join(out, 'index.html'), 'utf8');
+    const newsBlock = index.slice(index.indexOf('<section id="news">'), index.indexOf('<section id="articles">'));
+    const articlesBlock = index.slice(index.indexOf('<section id="articles">'));
+
+    assert.match(news, /href="articles\/big-news\.html"/);
+    assert.doesNotMatch(news, /week-one/);
+    assert.match(newsBlock, /href="articles\/big-news\.html"/);
+    assert.doesNotMatch(newsBlock, /week-one/);
+    assert.match(articlesBlock, /href="articles\/week-one\.html"/);
+    assert.doesNotMatch(articlesBlock, /big-news/);
+  });
+
+  test('links a news story back to the News page and marks News in the menu', () => {
+    const html = readFileSync(join(out, 'articles/big-news.html'), 'utf8');
+
+    assert.match(html, /<p class="back"><a href="\.\.\/news\.html">&larr; All news<\/a>/);
+    assert.match(html, /<a href="\.\.\/news\.html" aria-current="page">News<\/a>/);
   });
 
   test('escapes article titles in the article list', () => {

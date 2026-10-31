@@ -377,8 +377,13 @@ dd {
   border-radius: 4px;
 }
 
-.prose {
+/* Text keeps a readable measure; charts, stills and the video take the full column. */
+.prose > * {
   max-width: 68ch;
+}
+
+.prose > figure {
+  max-width: none;
 }
 
 .prose h2 {
@@ -944,6 +949,18 @@ dd {
   stroke-width: 1.5px;
 }
 
+/* A market chart: a solid line at the event, a dashed one at the lowest price after it. */
+.candles-event {
+  stroke: var(--accent);
+  stroke-width: 1.5px;
+}
+
+.candles-low {
+  stroke: var(--miss);
+  stroke-width: 1.5px;
+  stroke-dasharray: 4 4;
+}
+
 /* What the stretched plot would distort sits over it instead: the arrow heads, and the end price on the right
    edge, ringed in the surface so it stands off the candles under it. The layer is a size container, so a head
    can turn by the arrow's slant as drawn. */
@@ -1221,6 +1238,359 @@ dd {
   border-radius: 6px;
 }
 
+/* Story charts: the figures a news article draws from its own numbers. A tone colors only the mark; the words
+   and numbers beside it stay in the text colors. */
+
+.tone-accent {
+  --tone: var(--accent);
+}
+
+.tone-hit {
+  --tone: var(--hit);
+}
+
+.tone-miss {
+  --tone: var(--miss);
+}
+
+.tone-btc {
+  --tone: var(--btc);
+}
+
+.tone-muted {
+  --tone: var(--muted);
+}
+
+/* Wide enough that four numbers sit two by two in the article column, never three and one. */
+.chart .stat-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chart .stat {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "shape value"
+    "label label";
+  align-items: center;
+  gap: 8px 10px;
+  margin: 0;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.stat-shape {
+  grid-area: shape;
+  width: 28px;
+  height: 28px;
+  fill: var(--tone);
+}
+
+.stat-value {
+  grid-area: value;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  grid-area: label;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.chart .chain-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chart .chain-list > li {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr) 4.5rem;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 0;
+}
+
+.chain-name {
+  font-weight: 600;
+}
+
+.chain-track {
+  height: 14px;
+  background: var(--track);
+  border-radius: 0 4px 4px 0;
+}
+
+.chain-fill {
+  display: block;
+  min-width: 2px;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 0 4px 4px 0;
+}
+
+.chain-value {
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.chain-detail {
+  grid-column: 2 / -1;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Timeline: the time, a diamond on a line running down, then what happened */
+
+.chart .timeline-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chart .timeline-list > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 7rem 16px minmax(0, 1fr);
+  column-gap: 14px;
+  margin: 0;
+  padding: 0 0 16px;
+}
+
+.chart .timeline-list > li:last-child {
+  padding-bottom: 0;
+}
+
+/* From under one diamond to the top of the next. */
+.chart .timeline-list > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 22px;
+  bottom: -2px;
+  left: calc(7rem + 21px);
+  width: 2px;
+  background: var(--line);
+}
+
+.timeline-when {
+  color: var(--ink-2);
+  font-size: 0.85rem;
+  line-height: 1.6rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline-mark {
+  width: 12px;
+  height: 12px;
+  margin: 6px 2px 0;
+  background: var(--tone);
+  transform: rotate(45deg);
+}
+
+.timeline-what {
+  margin: 0;
+}
+
+.timeline-what span {
+  color: var(--ink-2);
+}
+
+/* Split: one bar cut into the parts of a whole, with a 2px gap between parts */
+
+.split-bar {
+  display: flex;
+  gap: 2px;
+  height: 24px;
+  margin: 0 0 14px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.split-bar > span {
+  flex-basis: 0;
+  min-width: 2px;
+  background: var(--tone);
+}
+
+.chart .split-legend {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chart .split-legend > li {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto 3rem;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.split-key {
+  width: 12px;
+  height: 12px;
+  background: var(--tone);
+  border-radius: 2px;
+}
+
+.split-legend strong,
+.split-share {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.split-share {
+  color: var(--ink-2);
+}
+
+/* Narrow enough that three firms share one row in the article column. */
+.chart .analyst-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chart .analyst {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--accent);
+  border-radius: 8px;
+}
+
+.analyst-name {
+  font-weight: 600;
+}
+
+.analyst-total {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.analyst-finding {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+
+/* Wallets: a card per wallet, joined by an arrow down in the order the money moved */
+
+.chart .wallet-list {
+  display: grid;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chart .wallet {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+}
+
+.chart .wallet:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 27px;
+  width: 2px;
+  height: 20px;
+  background: var(--muted);
+}
+
+.chart .wallet:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: calc(100% + 19px);
+  left: 22px;
+  border: 6px solid transparent;
+  border-top: 7px solid var(--muted);
+}
+
+.wallet-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0;
+}
+
+.wallet-role {
+  padding: 0 8px;
+  color: var(--ink-2);
+  font-size: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+/* Shown whole, so a reader can check it letter by letter on the explorer. */
+.wallet-address {
+  justify-self: start;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.wallet-detail {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+
+/* Stills in an article, framed like the charts */
+
+.prose .shot {
+  margin: 24px 0;
+}
+
+.prose .shot img,
+.prose .shot video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.prose .shot figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 @container (min-width: 44rem) {
   .chart .steps {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1310,16 +1680,76 @@ dd {
   .candles-word {
     display: none;
   }
+
+  .chart .stat-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chart .stat {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "shape"
+      "value"
+      "label";
+    align-items: start;
+  }
+
+  .chart .chain-list > li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .chain-track {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .chain-detail {
+    grid-column: 1 / -1;
+  }
+
+  /* The time goes over what happened, and the line runs down the diamonds on the left. */
+  .chart .timeline-list > li {
+    grid-template-columns: 16px minmax(0, 1fr);
+  }
+
+  .timeline-mark {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .timeline-when,
+  .timeline-what {
+    grid-column: 2;
+  }
+
+  .chart .timeline-list > li:not(:last-child)::after {
+    left: 7px;
+  }
 }
 
 /* High-contrast mode drops background colors; keep the marks visible. */
 @media (forced-colors: active) {
   .bar-fill,
   .meter-fill,
+  .chain-fill,
   .dumbbell-line,
-  .dot.after {
+  .dot.after,
+  .chart .wallet:not(:last-child)::before {
     forced-color-adjust: none;
     background: CanvasText;
+  }
+
+  .chart .wallet:not(:last-child)::after {
+    forced-color-adjust: none;
+    border-top-color: CanvasText;
+  }
+
+  /* The tones stay: each shape, diamond and part has its words beside it, so nothing depends on them. */
+  .stat-shape,
+  .timeline-mark,
+  .split-bar > span,
+  .split-key {
+    forced-color-adjust: none;
   }
 
   .dot.before {
@@ -1346,7 +1776,9 @@ dd {
   .candle .wick,
   .candle .body,
   .candles-open,
-  .candles-close {
+  .candles-close,
+  .candles-event,
+  .candles-low {
     stroke: CanvasText;
   }
 

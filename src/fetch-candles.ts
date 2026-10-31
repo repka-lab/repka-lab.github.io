@@ -102,12 +102,12 @@ export function fetchRange(
 }
 
 // The stored candles as they are, and the fetched ones at times the file does not hold yet, oldest first.
-export function mergeSeries(stored: PriceSeries | undefined, fetched: readonly Candle[]): PriceSeries {
-  if (stored !== undefined) checkFeed(stored);
+export function mergeSeries(stored: PriceSeries | undefined, fetched: readonly Candle[], source = SOURCE): PriceSeries {
+  if (stored !== undefined) checkFeed(stored, source);
   const kept = stored?.candles ?? [];
   const known = new Set(kept.map((c) => c.time));
   const candles = [...kept, ...fetched.filter((c) => !known.has(c.time))].toSorted(byTime);
-  return { source: SOURCE, granularity_seconds: STEP_SECONDS, candles };
+  return { source, granularity_seconds: STEP_SECONDS, candles };
 }
 
 function toCandle(row: unknown, index: number): Candle {
@@ -126,27 +126,32 @@ function afterLast(stored: PriceSeries | undefined): number {
   return Date.parse(last.time) + STEP_MS;
 }
 
-function utcDay(text: string, flag: string): number {
+export function utcDay(text: string, flag: string): number {
   const ms = DAY.test(text) ? Date.parse(`${text}T00:00:00Z`) : Number.NaN;
   if (Number.isNaN(ms) || iso(ms).slice(0, 10) !== text) throw new CandleError(`${flag} must be a UTC day like 2026-10-19, not ${text}`);
   return ms;
 }
 
 // Candles from another feed or step never go into the same file.
-function checkFeed(series: PriceSeries): void {
-  if (series.source !== SOURCE || series.granularity_seconds !== STEP_SECONDS) {
-    throw new CandleError(`the file holds ${series.source} every ${series.granularity_seconds} s, not ${SOURCE} every ${STEP_SECONDS} s`);
+function checkFeed(series: PriceSeries, source = SOURCE): void {
+  if (series.source !== source || series.granularity_seconds !== STEP_SECONDS) {
+    throw new CandleError(`the file holds ${series.source} every ${series.granularity_seconds} s, not ${source} every ${STEP_SECONDS} s`);
   }
 }
 
-async function getFromFeed(url: string): Promise<unknown> {
+function getFromFeed(url: string): Promise<unknown> {
+  return getJsonFrom(FEED, url);
+}
+
+// One GET to a public feed, named in the error when it cannot be reached or refuses.
+export async function getJsonFrom(feed: string, url: string): Promise<unknown> {
   let response: Response;
   try {
     response = await fetch(url, { headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' }, signal: AbortSignal.timeout(TIMEOUT_MS) });
   } catch (error) {
-    throw new CandleError(`Cannot reach ${FEED}: ${reason(error)}`, { cause: error });
+    throw new CandleError(`Cannot reach ${feed}: ${reason(error)}`, { cause: error });
   }
-  if (!response.ok) throw new CandleError(`${FEED} answered ${response.status} ${response.statusText}`);
+  if (!response.ok) throw new CandleError(`${feed} answered ${response.status} ${response.statusText}`);
   return response.json();
 }
 
@@ -158,7 +163,7 @@ function iso(ms: number): string {
   return new Date(ms).toISOString();
 }
 
-function preview(value: unknown): string {
+export function preview(value: unknown): string {
   const text = JSON.stringify(value) ?? String(value);
   return text.length > PREVIEW_CHARS ? `${text.slice(0, PREVIEW_CHARS)}...` : text;
 }

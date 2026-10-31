@@ -563,7 +563,7 @@ describe('renderChart: mistakes', () => {
   test('rejects an unknown chart', () => {
     assert.throws(() => renderChart('pie', ledger), chartError(/unknown chart "pie"/));
     assert.throws(() => renderChart('', ledger), chartError(/unknown chart ""/));
-    assert.throws(() => renderChart('pie', ledger), chartError(/use calls, factors, check, review, score, score-change, flow or example-call$/));
+    assert.throws(() => renderChart('pie', ledger), chartError(/use calls, factors, check, review, score, score-change, flow, example-call, stats, chains, timeline, split, analysts, wallets or market$/));
   });
 
   test('needs the Monday of the week for a weekly chart', () => {
