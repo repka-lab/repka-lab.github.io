@@ -9,7 +9,8 @@
 //   ---
 //
 // Every field is required and status is spelled out, so a typo can't publish an unfinished article.
-// Section is news or articles: news goes on the News page, articles in the list on the front page.
+// Section is forecasts, news or articles: the weekly calls go on the Forecasts page, crypto stories on the News page,
+// articles in the list on the front page.
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
@@ -48,7 +49,7 @@ export class SiteError extends Error {
 
 const FIELDS = ['title', 'date', 'summary', 'section', 'status'] as const;
 const STATUSES = ['draft', 'published'] as const;
-const SECTIONS = ['news', 'articles'] as const;
+const SECTIONS = ['forecasts', 'news', 'articles'] as const;
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const HEADER = /^---\n([\s\S]*?)\n---(?:\n|$)([\s\S]*)$/;
@@ -147,8 +148,14 @@ function checkDay(value: string, fileName: string): string {
 
 function oneOf<T extends string>(field: Field, value: string, choices: readonly T[], fileName: string): T {
   const choice = choices.find((c) => c === value);
-  if (!choice) fail(fileName, `${field} must be ${choices.join(' or ')}, got "${value}"`);
+  if (!choice) fail(fileName, `${field} must be ${listChoices(choices)}, got "${value}"`);
   return choice;
+}
+
+// "a or b", "a, b or c"
+function listChoices(choices: readonly string[]): string {
+  const last = choices.at(-1) ?? '';
+  return choices.length < 2 ? last : `${choices.slice(0, -1).join(', ')} or ${last}`;
 }
 
 function fail(fileName: string, message: string): never {

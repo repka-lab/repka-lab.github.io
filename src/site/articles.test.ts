@@ -61,8 +61,15 @@ describe('parseArticle', () => {
     assert.equal(parseArticle('a.md', source(withField('section', 'news'))).section, 'news');
   });
 
+  test('reads a forecast story', () => {
+    assert.equal(parseArticle('a.md', source(withField('section', 'forecasts'))).section, 'forecasts');
+  });
+
   test('rejects an unknown section', () => {
-    assert.throws(() => parseArticle('a.md', source(withField('section', 'blog'))), /section must be news or articles, got "blog"/);
+    assert.throws(
+      () => parseArticle('a.md', source(withField('section', 'blog'))),
+      /section must be forecasts, news or articles, got "blog"/,
+    );
   });
 
   test('requires every header field', () => {

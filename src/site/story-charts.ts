@@ -1,4 +1,4 @@
-// The figures a news article draws for itself. Their numbers come from the chart block, not from the ledger, so each
+// The figures a forecast or news article draws for itself. Their numbers come from the chart block, not from the ledger, so each
 // one sits in the article next to the source it is taken from.
 //
 // The first line names the chart and gives its caption. Each line after it is one row, its fields split by "|",

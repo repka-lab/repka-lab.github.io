@@ -1238,7 +1238,7 @@ dd {
   border-radius: 6px;
 }
 
-/* Story charts: the figures a news article draws from its own numbers. A tone colors only the mark; the words
+/* Story charts: the figures a forecast or news article draws from its own numbers. A tone colors only the mark; the words
    and numbers beside it stay in the text colors. */
 
 .tone-accent {

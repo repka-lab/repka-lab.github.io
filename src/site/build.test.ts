@@ -30,6 +30,7 @@ writeFileSync(
 );
 writeFileSync(join(articlesDir, 'secret-plan.md'), article('Unfinished', 'draft', 'Not ready.'));
 writeFileSync(join(articlesDir, 'big-news.md'), article('Big news', 'published', 'Something happened.', 'news'));
+writeFileSync(join(articlesDir, 'week-calls.md'), article('Week calls', 'published', 'Four calls.', 'forecasts'));
 
 function article(title: string, status: string, body: string, section = 'articles'): string {
   const header = [`title: ${title}`, 'date: 2026-10-25', 'summary: A short summary.', `section: ${section}`, `status: ${status}`];
@@ -57,9 +58,11 @@ describe('buildSite', () => {
       '.nojekyll',
       MARKER,
       'articles/big-news.html',
+      'articles/week-calls.html',
       'articles/week-one.html',
       'avatar.svg',
       'data/ledger.json',
+      'forecasts.html',
       'img/binance-hack-drain.jpg',
       'img/binance-hack-launder.jpg',
       'img/binance-hack-setup.jpg',
@@ -221,6 +224,27 @@ describe('buildSite', () => {
 
     assert.match(html, /<p class="back"><a href="\.\.\/news\.html">&larr; All news<\/a>/);
     assert.match(html, /<a href="\.\.\/news\.html" aria-current="page">News<\/a>/);
+  });
+
+  test('lists forecasts on the Forecasts page and the front page, apart from news and articles', () => {
+    const forecasts = readFileSync(join(out, 'forecasts.html'), 'utf8');
+    const index = readFileSync(join(out, 'index.html'), 'utf8');
+    const forecastsBlock = index.slice(index.indexOf('<section id="forecasts">'), index.indexOf('<section id="news">'));
+    const otherBlocks = index.slice(index.indexOf('<section id="news">'));
+
+    assert.match(forecasts, /<h1>Forecasts<\/h1>/);
+    assert.match(forecasts, /href="articles\/week-calls\.html"/);
+    assert.doesNotMatch(forecasts, /big-news|week-one/);
+    assert.match(forecastsBlock, /href="articles\/week-calls\.html"/);
+    assert.doesNotMatch(forecastsBlock, /big-news|week-one/);
+    assert.doesNotMatch(otherBlocks, /week-calls/);
+  });
+
+  test('links a forecast story back to the Forecasts page and marks Forecasts in the menu', () => {
+    const html = readFileSync(join(out, 'articles/week-calls.html'), 'utf8');
+
+    assert.match(html, /<p class="back"><a href="\.\.\/forecasts\.html">&larr; All forecasts<\/a>/);
+    assert.match(html, /<a href="\.\.\/forecasts\.html" aria-current="page">Forecasts<\/a>/);
   });
 
   test('escapes article titles in the article list', () => {

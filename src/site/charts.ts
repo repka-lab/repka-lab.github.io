@@ -18,7 +18,7 @@
 //   flow                   the four steps of a week
 //   example-call           one made-up call taken apart, with what each part means
 //
-// A news article draws its own figures with the story charts (story-charts.ts): stats, chains, timeline, split,
+// A forecast or news article draws its own figures with the story charts (story-charts.ts): stats, chains, timeline, split,
 // analysts, wallets and market, each with its rows on the lines below its name.
 
 import { createHash } from 'node:crypto';

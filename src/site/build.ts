@@ -16,7 +16,7 @@ import { loadCandles, PRICES_FILE } from '../candles.ts';
 import { DEFAULT_SYMBOL, defaultOut } from '../fetch-binance-candles.ts';
 import { loadLedger } from '../ledger.ts';
 import { loadArticles, SiteError } from './articles.ts';
-import { renderArticle, renderIndex, renderLedgerPage, renderNewsPage } from './pages.ts';
+import { renderArticle, renderIndex, renderLedgerPage, renderListPage } from './pages.ts';
 
 export const MARKER = '.repka-site';
 
@@ -68,7 +68,8 @@ export function buildSite(options: BuildOptions): readonly string[] {
   const files: readonly OutputFile[] = [
     { path: 'index.html', content: renderIndex(ledger, articles) },
     { path: 'ledger.html', content: renderLedgerPage(ledger) },
-    { path: 'news.html', content: renderNewsPage(articles) },
+    { path: 'forecasts.html', content: renderListPage(articles, 'forecasts') },
+    { path: 'news.html', content: renderListPage(articles, 'news') },
     ...articles.map((article) => ({ path: `articles/${article.slug}.html`, content: renderArticle(article) })),
     ...ASSETS.map((name) => ({ path: name, content: readFileSync(join(import.meta.dirname, name)) })),
     { path: 'data/ledger.json', content: readFileSync(options.ledgerPath) }, // byte for byte, as committed

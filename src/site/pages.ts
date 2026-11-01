@@ -1,4 +1,4 @@
-// The site's pages: the front page, the ledger page, the news page and one page per article.
+// The site's pages: the front page, the ledger page, the Forecasts and News pages and one page per article.
 // Wording here is public copy, so it follows the content rules: no advice, no promises about prices.
 
 import type { Ledger } from '../ledger.ts';
@@ -7,16 +7,39 @@ import { renderScoreChart } from './charts.ts';
 import { escapeHtml, page } from './html.ts';
 import { renderLedgerTable, renderScoreboard } from './ledger-view.ts';
 
+// The sections with a page of their own; the front page shows the newest few of each.
+export type ListSection = 'forecasts' | 'news';
+
+interface ListPage {
+  readonly title: string;
+  readonly lede: string;
+  readonly description: string;
+  readonly empty: string;
+}
+
 const DRAFT_TAG = '<span class="tag">Draft</span>';
-const HOME_NEWS = 3; // the newest news stories on the front page; the rest are on the News page
+const HOME_STORIES = 3; // the newest stories of a list section on the front page; the rest are on its own page
 const BACK: Readonly<Record<ArticleSection, { readonly href: string; readonly label: string }>> = {
+  forecasts: { href: 'forecasts.html', label: 'All forecasts' },
   news: { href: 'news.html', label: 'All news' },
   articles: { href: 'index.html#articles', label: 'All articles' },
 };
+const LIST_PAGES: Readonly<Record<ListSection, ListPage>> = {
+  forecasts: {
+    title: 'Forecasts',
+    lede: 'Every week, four AIs call Bitcoin up or down. Here are their calls, the reasons in their own words, and the check when the week ends.',
+    description: 'The weekly BTC calls from ChatGPT, Claude, Gemini and Grok Bot, with their reasons and the check at the end of each week.',
+    empty: 'No forecasts yet.',
+  },
+  news: {
+    title: 'News',
+    lede: 'Crypto stories from the weekly videos, told with charts, on-chain data and a link to every source.',
+    description: 'Crypto stories from the Repka videos, with charts, on-chain data and every source linked.',
+    empty: 'No news yet.',
+  },
+};
 
 export function renderIndex(ledger: Ledger, articles: readonly Article[]): string {
-  const news = inSection(articles, 'news');
-  const moreNews = news.length > HOME_NEWS ? '<p><a href="news.html">All news</a></p>' : '';
   const body = `<section class="hero">
   <h1>Four AI models call Bitcoin every week. Every call is logged before anyone sees it.</h1>
   <p class="lede">On Monday, ChatGPT, Claude, Gemini and Grok each answer one question: does BTC end the week higher or lower than it started? The call goes into a public ledger first; only then does a video or post about it go out. On Friday it is checked, and misses stay on the record next to the hits.</p>
@@ -41,11 +64,9 @@ export function renderIndex(ledger: Ledger, articles: readonly Article[]): strin
   <p><a href="ledger.html">Every call, with reasoning and prices</a> · <a href="data/ledger.json">Raw data (JSON)</a></p>
 </section>
 
-<section id="news">
-  <h2>News</h2>
-  ${articleList(news.slice(0, HOME_NEWS), 'No news yet.')}
-  ${moreNews}
-</section>
+${homeList(articles, 'forecasts')}
+
+${homeList(articles, 'news')}
 
 <section id="articles">
   <h2>Articles</h2>
@@ -95,23 +116,18 @@ export function renderLedgerPage(ledger: Ledger): string {
   });
 }
 
-export function renderNewsPage(articles: readonly Article[]): string {
+export function renderListPage(articles: readonly Article[], section: ListSection): string {
+  const list = LIST_PAGES[section];
   const body = `<section class="hero">
-  <h1>News</h1>
-  <p class="lede">Crypto stories from the weekly videos, told with charts, on-chain data and a link to every source.</p>
+  <h1>${list.title}</h1>
+  <p class="lede">${list.lede}</p>
 </section>
 
 <section>
-  ${articleList(inSection(articles, 'news'), 'No news yet.')}
+  ${articleList(inSection(articles, section), list.empty)}
 </section>`;
 
-  return page({
-    title: 'News',
-    description: 'Crypto stories from the Repka videos, with charts, on-chain data and every source linked.',
-    root: '',
-    section: 'news',
-    body,
-  });
+  return page({ title: list.title, description: list.description, root: '', section, body });
 }
 
 export function renderArticle(article: Article): string {
@@ -134,6 +150,17 @@ ${article.html}
 
 function inSection(articles: readonly Article[], section: ArticleSection): readonly Article[] {
   return articles.filter((article) => article.section === section);
+}
+
+// A front-page block: the newest stories of a section, and a link to its page when there are more.
+function homeList(articles: readonly Article[], section: ListSection): string {
+  const list = LIST_PAGES[section];
+  const stories = inSection(articles, section);
+  const more = stories.length > HOME_STORIES ? `\n  <p><a href="${BACK[section].href}">${BACK[section].label}</a></p>` : '';
+  return `<section id="${section}">
+  <h2>${list.title}</h2>
+  ${articleList(stories.slice(0, HOME_STORIES), list.empty)}${more}
+</section>`;
 }
 
 function articleList(articles: readonly Article[], empty: string): string {
