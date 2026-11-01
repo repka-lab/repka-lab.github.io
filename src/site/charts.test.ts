@@ -75,7 +75,7 @@ const BADGES = [
   ['ChatGPT', 'chatgpt'],
   ['Claude', 'claude'],
   ['Gemini', 'gemini'],
-  ['Grok', 'grok'],
+  ['Grok Bot', 'grok'],
 ] as const;
 
 // The factors on one side of a model's block.
@@ -96,7 +96,7 @@ describe('renderScoreChart', () => {
   test('draws one bar per model against the 50% coin-flip line', () => {
     const html = renderScoreChart(weekChecked());
 
-    for (const name of ['ChatGPT', 'Claude', 'Gemini', 'Grok']) assert.match(partOf(html, name), /class="bar"/);
+    for (const name of ['ChatGPT', 'Claude', 'Gemini', 'Grok Bot']) assert.match(partOf(html, name), /class="bar"/);
     assert.match(html, /50% · coin flip/);
   });
 
@@ -110,7 +110,7 @@ describe('renderScoreChart', () => {
   });
 
   test('says so when a model has nothing checked yet, instead of drawing a bar', () => {
-    const grok = partOf(renderScoreChart(sampleLedger()), 'Grok');
+    const grok = partOf(renderScoreChart(sampleLedger()), 'Grok Bot');
 
     assert.match(grok, /No checked calls yet/);
     assert.doesNotMatch(grok, /class="bar"/);
@@ -121,7 +121,7 @@ describe('renderChart: calls', () => {
   const html = renderChart(`calls ${WEEK}`, weekCalls());
 
   test('shows every call of the week in model order', () => {
-    const order = ['ChatGPT', 'Claude', 'Gemini', 'Grok'].map((name) => html.indexOf(`>${name}<`));
+    const order = ['ChatGPT', 'Claude', 'Gemini', 'Grok Bot'].map((name) => html.indexOf(`>${name}<`));
 
     assert.ok(order.every((at, i) => at > 0 && (i === 0 || at > (order[i - 1] ?? 0))));
     assert.match(html, /week of 2 November 2026/);
@@ -190,7 +190,7 @@ describe('renderChart: factors', () => {
   const html = renderChart(`factors ${WEEK}`, weekCalls());
 
   test('shows each model with its call and how sure it was, in model order', () => {
-    const order = ['ChatGPT', 'Claude', 'Gemini', 'Grok'].map((name) => html.indexOf(`>${name}<`));
+    const order = ['ChatGPT', 'Claude', 'Gemini', 'Grok Bot'].map((name) => html.indexOf(`>${name}<`));
 
     assert.ok(order.every((at, i) => at > 0 && (i === 0 || at > (order[i - 1] ?? 0))));
     assert.match(html, /What each model weighed, week of 2 November 2026/);
@@ -229,7 +229,7 @@ describe('renderChart: factors', () => {
   });
 
   test('says so when a side has no factors', () => {
-    assert.match(sideOf(reasonOf(html, 'Grok'), 'down'), /None given/);
+    assert.match(sideOf(reasonOf(html, 'Grok Bot'), 'down'), /None given/);
   });
 
   test('says so when a model gave no factors, instead of drawing empty sides', () => {
@@ -286,7 +286,7 @@ describe('renderChart: check', () => {
 
     assert.match(pending, /Not checked yet/);
     assert.match(pending, /2026-11-06 20:00 UTC/);
-    assert.match(partOf(pending, 'Grok'), /Pending/);
+    assert.match(partOf(pending, 'Grok Bot'), /Pending/);
     assert.doesNotMatch(pending, /✓|✗/);
   });
 
@@ -380,7 +380,7 @@ describe('renderChart: review', () => {
   const html = renderChart(`review ${WEEK}`, weekReviewed());
 
   test('shows each model with its call and its result, in model order', () => {
-    const order = ['ChatGPT', 'Claude', 'Gemini', 'Grok'].map((name) => html.indexOf(`>${name}<`));
+    const order = ['ChatGPT', 'Claude', 'Gemini', 'Grok Bot'].map((name) => html.indexOf(`>${name}<`));
 
     assert.ok(order.every((at, i) => at > 0 && (i === 0 || at > (order[i - 1] ?? 0))));
     assert.match(html, /How each model looks back on its call, week of 2 November 2026/);
@@ -438,8 +438,8 @@ describe('renderChart: review', () => {
 
     assert.match(pending, /Not checked yet/);
     assert.match(pending, /2026-11-06 20:00 UTC/);
-    assert.match(reviewOf(pending, 'Grok'), /Pending/);
-    assert.match(reviewOf(pending, 'Grok'), /No review yet/);
+    assert.match(reviewOf(pending, 'Grok Bot'), /Pending/);
+    assert.match(reviewOf(pending, 'Grok Bot'), /No review yet/);
     assert.doesNotMatch(pending, /✓|✗/);
   });
 
@@ -490,7 +490,7 @@ describe('renderChart: score-change', () => {
   });
 
   test('says so when the week added no check for a model', () => {
-    const grok = partOf(html, 'Grok');
+    const grok = partOf(html, 'Grok Bot');
 
     assert.match(grok, /100% · no new check/);
     assert.doesNotMatch(grok, /dot before/);
@@ -509,6 +509,35 @@ describe('renderChart: score-change', () => {
 
     assert.match(partOf(pending, 'Claude'), /No checked calls yet/);
     assert.doesNotMatch(pending, /class="dot|coin flip/);
+  });
+});
+
+describe('renderChart: calls logged before the week opens', () => {
+  // Logged on the Sunday before WEEK and checked at the end of its Friday, as the weekly calls are now.
+  const ledger = addPrediction(
+    emptyLedger(),
+    {
+      model: 'claude',
+      model_version: 'claude-test-1',
+      direction: 'down',
+      confidence: 54,
+      reasoning: 'Logged the day before.',
+      prompt_hash: 'a'.repeat(64),
+      verify_date: '2026-11-06T23:59:59.000Z',
+    },
+    new Date('2026-11-01T16:59:00Z'),
+  );
+
+  test('belong to the week they are checked in, not the week they were logged in', () => {
+    assert.match(renderChart(`calls ${WEEK}`, ledger), /The calls for the week of 2 November 2026/);
+    assert.throws(() => renderChart('calls 2026-10-26', ledger), chartError(/no calls recorded/));
+  });
+
+  test('count toward the score from the week they are checked in', () => {
+    const prices = { prediction_id: 'P0001', price_source: 'feed', price_start: 100, price_end: 99 };
+    const checked = verifyPrediction(ledger, prices, new Date('2026-11-07T00:10:00Z'));
+
+    assert.match(partOf(renderChart(`score-change ${WEEK}`, checked), 'Claude'), /First check: 100% · 1 of 1/);
   });
 });
 

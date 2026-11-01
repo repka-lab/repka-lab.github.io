@@ -1,5 +1,6 @@
 /*
- * Grandpa episode preview: hook -> board -> desk -> monitor -> end card.
+ * Grandpa episode preview: hook -> board -> desk -> monitor -> end card. A story page may leave the
+ * board or the desk out, run its own hook length and lay a question over the cut from its hook to the monitor.
  * renderFrame(f) is pure in f, so any frame renders the same on its own. It stands in for the
  * Task 6 Remotion composition; the same logic ports to useCurrentFrame().
  * Units: scene px (640x360 viewBox) unless a name says "local" (grandpa.svg px).
@@ -9,6 +10,7 @@
 const POSES = JSON.parse(document.getElementById('poses').textContent);
 const BTC = JSON.parse(document.getElementById('btc').textContent);
 const IDEAS = JSON.parse(document.getElementById('ideas').textContent);
+const LOGOS = JSON.parse(document.getElementById('logos').textContent); // the site's model logos, by file name
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const FULL_VIEW = [0, 0, 640, 360];
 
@@ -52,12 +54,13 @@ const POINTER_LENGTH = 110; // local px, from the middle of the fist on along th
 // Before and after, the arm hangs loose and the fist tips the pointer down to the floor, degrees.
 const POINTER_REST_ARM = { 'arm-left': 6, 'arm-left-forearm': -4 };
 const POINTER_REST_WRIST = 30;
-const POINT_HOLD = 4;
-const POINT_RAISE = 14; // frames to raise the pointer from the rest pose, and to lower it back
-const POINT_TRAVEL = 14; // frames from one point to the next
-const POINT_TAP = 16; // two soft taps
-const POINT_DWELL = 6;
-const POINT_OUTRO = 12; // frames he holds the lowered pointer, facing the viewer, before the cut
+// Kept short: the board is a quick beat between the hook and the calls, about 2 s with three points.
+const POINT_HOLD = 0;
+const POINT_RAISE = 6; // frames to raise the pointer from the rest pose, and to lower it back; at least 1
+const POINT_TRAVEL = 6; // frames from one point to the next
+const POINT_TAP = 8; // two quick taps
+const POINT_DWELL = 2;
+const POINT_OUTRO = 4; // frames he holds the lowered pointer, facing the viewer, before the cut
 const POINTER_KNOCK = 4; // a tap pulls the tip back this far toward the shoulder
 
 // Scene 2: the desk.
@@ -75,77 +78,98 @@ const WALK_FROM = -130;
 const SCREEN_ON = 6; // frames for the screen to light up as he starts typing
 const TYPING = { 'arm-left-forearm': 1, 'arm-right-forearm': -1 };
 
-// Scene 3: the monitor. A real BTC daily chart, laid out like a trading screen, then each AI's idea
-// for next week drawn over it. It starts with the desk camera's flight in.
-const MONITOR = 216;
-const PLOT = { x: 44, y: 94, width: 444, height: 111 }; // the day slots: the candles, the gap days, next week
-const PANE_RIGHT = 554; // the pane runs on under the model names up to the price scale
-const SCALE_X = 559;
+// Scene 3: the monitor. A real BTC daily chart full screen, laid out like a trading screen, the cards in a
+// column on the right, then each AI's call for the week drawn over it one at a time, 1.5 s apart.
+// The chart builds under the hook, so the monitor starts complete; with a desk it starts with the desk camera's
+// flight in. The last card is in on frame 169; the screen holds over 2 s after it so it can be read.
+const MONITOR = 250;
+const CHART_DAYS = 30; // the last days of the candles file, so each slot is wide enough to read as a candle
+const PLOT = { x: 12, y: 50, width: 270, height: 250 }; // the day slots: the candles, the gap days, next week
+const NAME_LANE = 54; // the pane runs on past next week, where each arrow's model name sits at its tip
+const PANE_RIGHT = PLOT.x + PLOT.width + NAME_LANE;
+const SCALE_X = PANE_RIGHT + 5;
 const PRICE_PAD = 0.06; // share of the price range kept free above and below the candles
-const VOLUME_ROOM = 14; // px at the bottom of the pane kept below the lowest candle, where the volume bars mostly sit
-const VOLUME_HEIGHT = 22;
+const VOLUME_ROOM = 30; // px at the bottom of the pane kept below the lowest candle, where the volume bars mostly sit
+const VOLUME_HEIGHT = 44;
 const TICK_STEPS = [500, 1000, 2000, 2500, 5000, 10000]; // dollars between price grid lines
 const MAX_TICKS = 6;
 const BODY = 0.7; // candle body width, share of a day slot
-const TAG = { height: 13, pad: 4 }; // the last price, on the price scale
+const TAG = { height: 15, pad: 4 }; // the last price, on the price scale
 const DATE_ROOM = 16; // half a date label: a Monday closer than this to the pane's left edge goes unlabelled
 const WEEK_DAYS = 5; // Mon-Fri
 const DAY_MS = 86400000;
-const TOOLBAR_Y = 73;
-const LEGEND_Y = 87;
-const DATE_Y = 216;
-const TIMEFRAMES = ['1H', '4H', '1D', '1W', '1M'];
+const TOOLBAR_Y = 25;
+const DATE_Y = 316;
 const TIMEFRAME = '1D'; // the candles are UTC days
-const PILL = { width: 20, height: 13, step: 22, right: 596 };
-const COIN = { x: 50, y: 69, r: 6.5, tilt: 14 }; // the orange bitcoin mark before the pair
-const FAN = 20; // px between arrow tips with the same call; the angle is not a size of move
-const ARROW_HEAD = 7;
-const HEAD_SCALE = 0.42; // robot head from the header, 34 px wide at scale 1
-const CARD = { x: 44, y: 223, width: 132, height: 67, gap: 8 };
-const REASON_LINES = 3;
+const COIN = { x: 22, y: 20, r: 8, tilt: 14 }; // the orange bitcoin mark before the pair
+const FAN = 28; // px between arrow tips with the same call; the angle is not a size of move
+const ARROW_HEAD = 9;
+const CARD = { x: 392, y: 47, width: 234, height: 65, gap: 5 }; // stacked down the right of the screen
+// The logo sits on a dark tile before the name, as on the site: the logo about two thirds of the tile.
+const CARD_LOGO = { x: 11, y: 9, tile: 22, size: 14 };
+// The name, the call and the confidence share the top row with at least this much between the name and the call;
+// the reason gets the rows under them, its baselines by line count.
+const CARD_LABEL_GAP = 6;
+const REASON_BASELINES = [[48], [44, 59]];
+const REASON_LINES = REASON_BASELINES.length;
+const REASON_WORDS = 10; // what two rows hold at the smallest size; the card stays up after its 1.5 s
+const CARD_TEXT_ROOM = CARD.width - 28; // the reason rows, inside the card's padding
+// Every card reads its reason at one size: the largest of these that keeps each reason in its rows.
+const REASON_SIZES = [14, 13, 12, 11];
 const MODEL_COLORS = { ChatGPT: '#199e70', Claude: '#d95926', Gemini: '#3987e5', Grok: '#c98500' };
 const CALL_LABELS = { up: '↑ up', down: '↓ down' };
-const FRAME_START = 18;
 const FADE = 10;
-const CANDLES_START = 26;
+// The chart build, in hook frames.
+const CANDLES_START = 4;
 const CANDLES_SWEEP = 28; // frames from the first candle rising to the last
 const CANDLE_RISE = 8;
-const WEEK_START = 56;
-const IDEAS_START = 64;
-const IDEA_STEP = 20;
-const ARROW_FRAMES = 16;
+const WEEK_START = 44;
+// The calls, in monitor frames: each arrow draws, then its card pops in as the name lands at the tip.
+const IDEAS_START = 14;
+const IDEA_STEP = 45;
+const ARROW_FRAMES = 12;
 const POP = 6;
-const CARD_SLIDE = 10;
+const CARD_POP = 8;
+// Where the board cuts to the monitor: a story episode with a board lands 28 frames into its monitor.
+const MONITOR_SKIP = 28;
 
-// Hook: the cold open, for a feed that plays muted. The finished monitor held close while the AI arrows
-// shoot out again under two big captions, then the camera pulls back to the whole monitor in its navy
-// room and that dissolves into the board, which has the same wall.
-const HOOK = 102;
-const HOOK_VIEW = [272, 26, 330, 185.625]; // 16:9; the left edge falls between legend fields, before "C"
-const HOOK_PULL_START = 52;
-const HOOK_PULL = 42;
-const HOOK_DISSOLVE = 16; // the last frames of the hook, fading over the board as the pull-back settles
-const HOOK_ARROWS = 8; // the first arrow leaves here...
-const HOOK_ARROW_STEP = 5; // ...and each next one this much later
-const HOOK_ARROW_FRAMES = 12;
-const BEAT_SWAP = 42; // the second caption replaces the first
+// Hook: the cold open, for a feed that plays muted. It only asks the question: one caption at a time over
+// the chart building full screen, its week still empty, so the calls show first on the monitor.
+// Then the captions dissolve and the same screen carries on as the monitor. The first caption stays up 2 s.
+const HOOK = 116;
+const HOOK_DISSOLVE = 16; // the last frames of the hook, fading over the board, else the desk, else the monitor
+const BEAT_SWAP = 60; // the second caption replaces the first
 const BEAT_OUT = 3;
 const BEAT_IN = 5;
 const BEAT_POP = 0.12; // the second caption lands from this much larger
-const CAPTION = { x: 320, y: 50, subY: 74, coinY: 38 };
+const CAPTION = { x: 320, y: 50, coinY: 39, maxWidth: 600 };
 const CALL_CLASSES = { up: 'hook-up', down: 'hook-down' };
-const COIN_R = 17;
+const COIN_R = 24; // as drawn in the hook layer
 const COIN_GAP = 10;
-const COIN_FLIGHT = 30; // the toss, then it rests face up until the caption goes
+const COIN_FLIGHT = 30; // the toss as its caption lands, then it rests face up
 const COIN_TURNS = 2; // whole turns, so it lands on the 50% side
 const COIN_TOSS = 10; // px the coin rises and falls
 const COIN_EDGE = 0.06; // the thinnest the coin gets edge-on, share of its width
 const COIN_FACES = { front: '#f2c14e', back: '#d9a33a' };
 
+// Story question, on a page built with one: its plate fades in as the hook starts to dissolve, quicker than
+// the screen lights up behind it, so the screen's header never shows through; its words come in once the
+// plate is solid and go before it fades, so nothing shows through them; its answers land a beat later about
+// (x, y), and it clears as the story gets going.
+const QUESTION = { lead: HOOK_DISSOLVE, fade: 4, answers: 24, length: 70, x: 320, y: 68 };
+
 // End card.
 const END = 105;
 const END_FADE = 12;
-const CTA = { x: 200, y: 150, start: 10 }; // the question lands after the rest of the card, from BEAT_POP larger
+// Grandpa and the words come in only once the card is solid, so nothing of them shows over the monitor.
+const END_IN = 6;
+const CTA = { x: 200, y: 150, start: END_FADE + 6 }; // the question lands after the rest of the card, from BEAT_POP larger
+// The call episode's card builds line by line after it is solid, in frames from the card starting to fade in:
+// the question pops, the reply rises, the arrow draws down to the reply button and keeps nodding on the beat.
+const END_STEPS = { ask: END_FADE + 4, reply: END_FADE + 14, arrow: END_FADE + 20, lead: END_FADE + 30, ledger: END_FADE + 38 };
+const END_RISE = 8;
+const END_ARROW_DRAW = 10;
+const ARROW_NOD = { depth: 3, ramp: 6, beat: 18 }; // px down, frames to reach it, frames per beat at 100 bpm
 const END_SLOT = { x: 30, scale: 0.85 };
 const END_FLOOR = 312;
 const FLASH = 6;
@@ -679,8 +703,7 @@ function renderDesk(plan, k) {
 const dayOf = (iso) => new Date(`${iso}T00:00:00Z`);
 const addDays = (date, days) => new Date(date.getTime() + days * DAY_MS);
 const shortDay = (date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
-const fullDay = (date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-const cents = (price) => price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const dollars = (price) => Math.round(price).toLocaleString('en-US');
 const signed = (value, text) => `${value < 0 ? '−' : '+'}${text}`;
 // The CSS class that colours a mark like a candle that closed higher or lower.
 const toneOf = (isUp) => (isUp ? 'candle-up' : 'candle-down');
@@ -689,6 +712,9 @@ function dayRange(first, last) {
   if (first.getUTCMonth() === last.getUTCMonth()) return `${shortDay(first)}–${last.getUTCDate()}`;
   return `${shortDay(first)} – ${shortDay(last)}`;
 }
+
+// The Mon-Fri the calls cover, as every scene writes it, e.g. "Nov 2–6".
+const weekLabel = (scale) => dayRange(scale.monday, addDays(scale.monday, WEEK_DAYS - 1));
 
 function textEl(text, attrs, tag = 'text') {
   const node = svgEl(tag, attrs);
@@ -714,16 +740,22 @@ function checkMonitorData() {
   const { ideas } = IDEAS;
   if (!Array.isArray(ideas) || !ideas.length || ideas.length > 4) throw new Error('ideas: the cards fit 1 to 4 models');
   if (new Set(ideas.map((idea) => idea.model)).size !== ideas.length) throw new Error('ideas: one idea per model');
-  for (const { model, call, reason } of ideas) {
+  for (const { model, name, call, confidence, reason } of ideas) {
     if (!Object.hasOwn(MODEL_COLORS, model)) throw new Error(`ideas: unknown model ${model}`);
+    if (!Object.hasOwn(LOGOS, model.toLowerCase())) throw new Error(`ideas: no logo for ${model}`);
+    if (name !== undefined && (typeof name !== 'string' || !name.trim())) throw new Error(`ideas: ${model} name must be a non-empty line`);
     if (!Object.hasOwn(CALL_LABELS, call)) throw new Error(`ideas: ${model} call must be up or down, got ${call}`);
+    // The same range as the ledger's confidence.
+    if (!Number.isFinite(confidence) || confidence < 0 || confidence > 100) throw new Error(`ideas: ${model} confidence must be a number from 0 to 100`);
     if (typeof reason !== 'string' || !reason.trim()) throw new Error(`ideas: ${model} has no reason`);
+    const words = reason.trim().split(/\s+/).length;
+    if (words > REASON_WORDS) throw new Error(`ideas: ${model} reason has ${words} words, the card reads ${REASON_WORDS}`);
   }
 }
 
-// Slots are whole UTC days: the candles, the days still to come before Monday, then Mon-Fri.
+// Slots are whole UTC days: the last CHART_DAYS candles, the days still to come before Monday, then Mon-Fri.
 function chartScale() {
-  const { candles } = BTC;
+  const candles = BTC.candles.slice(-CHART_DAYS);
   const last = dayOf(candles.at(-1).day);
   const toMonday = (8 - last.getUTCDay()) % 7 || 7;
   const weekStart = candles.length + toMonday - 1;
@@ -747,7 +779,7 @@ function chartScale() {
 }
 
 // The chart laid out like a trading screen: price scale on the right, dates under the pane in UTC,
-// the symbol row with the timeframe above it and the last candle's OHLC under that.
+// the symbol row with the timeframe above it.
 function drawChartFrame(scale, parent) {
   const frame = parent.appendChild(svgEl('g'));
   const bottom = PLOT.y + PLOT.height;
@@ -765,7 +797,6 @@ function drawChartFrame(scale, parent) {
     textEl('UTC', { class: 'scale', x: SCALE_X, y: DATE_Y }),
   );
   drawToolbar(frame);
-  drawLegend(scale.candles, frame);
   return frame;
 }
 
@@ -781,42 +812,16 @@ function drawTimeAxis(scale, parent) {
   });
 }
 
-// The symbol row: coin mark, pair, timeframe and exchange, and the timeframe buttons with 1D pressed.
+// The symbol row: coin mark, pair, timeframe and exchange.
 function drawToolbar(parent) {
   parent.append(
     svgEl('circle', { cx: COIN.x, cy: COIN.y, r: COIN.r, fill: '#f7931a' }),
-    textEl('₿', { class: 'coin', x: COIN.x, y: COIN.y + 3.2, 'text-anchor': 'middle', transform: `rotate(${COIN.tilt} ${COIN.x} ${COIN.y})` }),
+    textEl('₿', { class: 'coin', x: COIN.x, y: COIN.y + 4, 'text-anchor': 'middle', transform: `rotate(${COIN.tilt} ${COIN.x} ${COIN.y})` }),
   );
-  const pair = parent.appendChild(textEl('BTC/USD', { class: 't-primary', x: COIN.x + 11, y: TOOLBAR_Y }));
-  const afterPair = COIN.x + 11 + pair.getComputedTextLength() + 7;
+  const pairX = COIN.x + COIN.r + 6;
+  const pair = parent.appendChild(textEl('BTC/USD', { class: 'pair', x: pairX, y: TOOLBAR_Y }));
+  const afterPair = pairX + pair.getComputedTextLength() + 8;
   parent.append(textEl(`Bitcoin / U.S. Dollar · ${TIMEFRAME} · Coinbase`, { class: 't-muted', x: afterPair, y: TOOLBAR_Y }));
-  TIMEFRAMES.forEach((label, i) => {
-    const x = PILL.right - (TIMEFRAMES.length - i) * PILL.step + (PILL.step - PILL.width);
-    const isOn = label === TIMEFRAME;
-    if (isOn) parent.append(svgEl('rect', { class: 'pill-on', x, y: TOOLBAR_Y - 10, width: PILL.width, height: PILL.height, rx: 2.5 }));
-    parent.append(textEl(label, { class: isOn ? 'pill-text-on' : 'pill-text', x: x + PILL.width / 2, y: TOOLBAR_Y - 0.5, 'text-anchor': 'middle' }));
-  });
-}
-
-// The last candle's OHLC, its change on the day before and its volume, coloured like the candle.
-function drawLegend(candles, parent) {
-  const [before, last] = candles.slice(-2);
-  const change = last.close - before.close;
-  const percent = `${Math.abs((change / before.close) * 100).toFixed(2)}%`;
-  const candleTone = toneOf(last.close >= last.open);
-  const fields = [
-    ['O', cents(last.open), candleTone],
-    ['H', cents(last.high), candleTone],
-    ['L', cents(last.low), candleTone],
-    ['C', cents(last.close), candleTone],
-    ['', `${signed(change, cents(Math.abs(change)))} (${signed(change, percent)})`, toneOf(change >= 0)],
-    ['Vol', `${(last.volume / 1000).toFixed(2)}K BTC`, candleTone],
-  ];
-  const legend = parent.appendChild(textEl(fullDay(dayOf(last.day)), { class: 'legend num', x: PLOT.x, y: LEGEND_Y }));
-  for (const [label, value, tone] of fields) {
-    if (label) legend.append(textEl(label, { dx: 8 }, 'tspan'));
-    legend.append(textEl(value, { class: `toned ${tone}`, dx: label ? 2.5 : 8 }, 'tspan'));
-  }
 }
 
 function drawCandles(scale, parent) {
@@ -844,7 +849,7 @@ function drawLastPrice(scale, parent) {
   const group = parent.appendChild(svgEl('g'));
   group.append(svgEl('line', { class: `price-line ${tone}`, x1: PLOT.x, y1: y, x2: PANE_RIGHT, y2: y }));
   const tag = group.appendChild(svgEl('rect', { class: `toned ${tone}`, x: PANE_RIGHT, y: y - TAG.height / 2, height: TAG.height, rx: 2 }));
-  const label = group.appendChild(textEl(cents(last.close), { class: 'price-tag num', x: PANE_RIGHT + TAG.pad, y: y + 3 }));
+  const label = group.appendChild(textEl(dollars(last.close), { class: 'price-tag num', x: PANE_RIGHT + TAG.pad, y: y + 4 }));
   tag.setAttribute('width', label.getComputedTextLength() + 2 * TAG.pad);
   return group;
 }
@@ -854,49 +859,45 @@ function drawWeek(scale, parent) {
   const x = PLOT.x + scale.weekStart * scale.slot;
   const width = WEEK_DAYS * scale.slot;
   const mid = x + width / 2;
-  week.append(svgEl('rect', { class: 'week', x, y: PLOT.y, width, height: PLOT.height, rx: 3 }));
-  // At the bottom of the zone: the arrow tips stay above the volume strip, so they never cross it.
-  week.append(textEl('next week', { class: 'scale', x: mid, y: PLOT.y + PLOT.height - 4, 'text-anchor': 'middle' }));
-  const friday = addDays(scale.monday, WEEK_DAYS - 1);
-  week.append(textEl(dayRange(scale.monday, friday), { class: 'scale week-dates', x: mid, y: DATE_Y, 'text-anchor': 'middle' }));
+  week.append(
+    svgEl('rect', { class: 'week', x, y: PLOT.y, width, height: PLOT.height, rx: 3 }),
+    textEl(weekLabel(scale), { class: 'scale week-dates', x: mid, y: DATE_Y, 'text-anchor': 'middle' }),
+  );
   return week;
 }
 
-function robotHead(color) {
-  const head = svgEl('g');
-  head.append(
-    svgEl('line', { x1: 0, y1: -14.28, x2: 0, y2: -22.28, stroke: color, 'stroke-width': 3 }),
-    svgEl('circle', { cx: 0, cy: -24.28, r: 3.5, fill: color }),
-    svgEl('rect', { x: -17, y: -14.28, width: 34, height: 28.56, rx: 8.84, fill: '#0b1024', stroke: color, 'stroke-width': 3 }),
-    svgEl('circle', { cx: -6.46, cy: -2, r: 3.06, fill: color }),
-    svgEl('circle', { cx: 6.46, cy: -2, r: 3.06, fill: color }),
-    svgEl('path', { d: 'M-4.76 5.712 Q0 9.1392 4.76 5.712', fill: 'none', stroke: color, 'stroke-width': 2.5, 'stroke-linecap': 'round' }),
+// The model's logo on its dark tile, its top left corner at [x, y].
+function modelLogo(model, [x, y]) {
+  const logo = svgEl('g');
+  const mark = new DOMParser().parseFromString(LOGOS[model.toLowerCase()], 'image/svg+xml').documentElement;
+  const inset = (CARD_LOGO.tile - CARD_LOGO.size) / 2;
+  Object.entries({ x: x + inset, y: y + inset, width: CARD_LOGO.size, height: CARD_LOGO.size }).forEach(([k, v]) => mark.setAttribute(k, v));
+  logo.append(
+    svgEl('rect', { class: 'card-logo', x, y, width: CARD_LOGO.tile, height: CARD_LOGO.tile, rx: 5 }),
+    document.importNode(mark, true),
   );
-  return head;
+  return logo;
 }
 
-// A dashed arrow from the last close to the end of the week, the model's head and name at the tip.
+// A dashed arrow from the last close to the end of the week, the model's name in the lane at the tip.
 // Ideas with the same call fan out by FAN in file order, so arrows never sit on top of each other.
-function drawIdeaArrow(scale, { model, call }, index, rank, parent) {
+function drawIdeaArrow(scale, { model, name: label, call }, index, rank, parent) {
   const color = MODEL_COLORS[model];
   const from = [scale.x(scale.candles.length - 1), scale.y(scale.candles.at(-1).close)];
   const weekRight = PLOT.x + (scale.weekStart + WEEK_DAYS) * scale.slot;
   const tipY = from[1] + (call === 'up' ? -1 : 1) * FAN * (rank + 1);
   const to = [weekRight - 6, clamp(tipY, PLOT.y + 6, PLOT.y + PLOT.height - 6)];
   const base = mix(to, from, ARROW_HEAD / dist(from, to));
-  const [nx, ny] = [-Math.sin(angle(from, to)) * 3.5, Math.cos(angle(from, to)) * 3.5];
+  const [nx, ny] = [-Math.sin(angle(from, to)) * (ARROW_HEAD / 2), Math.cos(angle(from, to)) * (ARROW_HEAD / 2)];
   const arrow = parent.appendChild(svgEl('g'));
   arrow.append(
-    svgEl('line', { x1: from[0], y1: from[1], x2: base[0], y2: base[1], stroke: color, 'stroke-width': 2, 'stroke-dasharray': '5 4' }),
+    svgEl('line', { x1: from[0], y1: from[1], x2: base[0], y2: base[1], stroke: color, 'stroke-width': 2.5, 'stroke-dasharray': '6 4' }),
     svgEl('polygon', { points: `${to} ${base[0] + nx},${base[1] + ny} ${base[0] - nx},${base[1] - ny}`, fill: color }),
   );
-  const head = parent.appendChild(robotHead(color));
-  const name = parent.appendChild(textEl(model, { class: 't-secondary', x: weekRight + 21, y: to[1] + 3.5, style: 'font-size: 10px' }));
+  const name = parent.appendChild(textEl(label ?? model, { class: 'idea-name', x: weekRight + 3, y: to[1] + 4 }));
   return {
     reveal: clipTo(arrow, `s3-reveal-idea-${index}`, [from[0] - 2, PLOT.y - 10, 0, PLOT.height + 20]),
     width: to[0] - from[0] + 4,
-    head,
-    at: [weekRight + 11, to[1]],
     name,
   };
 }
@@ -918,32 +919,69 @@ function wrapLines(probe, text, width) {
   return [...lines, line];
 }
 
-function drawIdeaCard({ model, call, reason }, index, parent) {
+// The one reason size for all the cards, in px, measured on the page.
+function reasonSize(ideas, parent) {
+  const probe = parent.appendChild(svgEl('text', { class: 'card-reason' }));
+  const overflow = (size) => ideas.find(({ reason }) => {
+    probe.style.fontSize = `${size}px`;
+    return wrapLines(probe, reason, CARD_TEXT_ROOM).length > REASON_LINES;
+  });
+  const size = REASON_SIZES.find((s) => overflow(s) === undefined);
+  const tooLong = size === undefined && overflow(REASON_SIZES.at(-1));
+  probe.remove();
+  if (tooLong) throw new Error(`ideas: ${tooLong.model} reason is too long for its card even at ${REASON_SIZES.at(-1)} px`);
+  return size;
+}
+
+// All the week's cards, their reasons at one size.
+function drawIdeaCards(ideas, parent) {
+  const size = reasonSize(ideas, parent);
+  return ideas.map((idea, i) => drawIdeaCard(idea, i, parent, size));
+}
+
+// The card and the room left between the name and the call, measured on the page. The top row reads
+// name, call, confidence; the call sits just before the confidence so the two read together.
+function drawIdeaCard({ model, name: title, call, confidence, reason }, index, parent, size) {
   const color = MODEL_COLORS[model];
-  const x = CARD.x + index * (CARD.width + CARD.gap);
-  const { y } = CARD;
+  const { x } = CARD;
+  const y = CARD.y + index * (CARD.height + CARD.gap);
+  const nameX = x + 40;
   const card = parent.appendChild(svgEl('g'));
+  const name = textEl(title ?? model, { class: 'card-name', x: nameX, y: y + 25 });
+  const conf = textEl(`${confidence}%`, { class: 'card-conf num', x: x + CARD.width - 12, y: y + 25, 'text-anchor': 'end' });
   card.append(
-    svgEl('rect', { class: 'card', x, y, width: CARD.width, height: CARD.height, rx: 3 }),
-    svgEl('rect', { x, y: y + 4, width: 3, height: CARD.height - 8, rx: 1.5, fill: color }),
-    textEl(model, { class: 't-primary', x: x + 28, y: y + 21 }),
-    textEl(CALL_LABELS[call], { class: 't-primary', x: x + CARD.width - 8, y: y + 21, 'text-anchor': 'end' }),
+    svgEl('rect', { class: 'card', x, y, width: CARD.width, height: CARD.height, rx: 6 }),
+    svgEl('rect', { x, y: y + 5, width: 4, height: CARD.height - 10, rx: 2, fill: color }),
+    name,
+    conf,
   );
-  const head = card.appendChild(robotHead(color));
-  head.setAttribute('transform', `translate(${x + 16} ${y + 17}) scale(${HEAD_SCALE})`);
-  const text = card.appendChild(svgEl('text', { class: 't-secondary', style: 'font-size: 10px' }));
-  const lines = wrapLines(text, reason, CARD.width - 18);
+  const label = card.appendChild(textEl(CALL_LABELS[call], { class: `card-call card-${call}`, x: conf.getBBox().x - 8, y: y + 25, 'text-anchor': 'end' }));
+  const gap = label.getBBox().x - (nameX + name.getComputedTextLength());
+  if (gap < CARD_LABEL_GAP) throw new Error(`ideas: ${model} and its call are ${gap.toFixed(1)} px apart, the card needs ${CARD_LABEL_GAP}`);
+  card.appendChild(modelLogo(model, [x + CARD_LOGO.x, y + CARD_LOGO.y]));
+  const text = card.appendChild(svgEl('text', { class: 'card-reason', style: `font-size: ${size}px` }));
+  const lines = wrapLines(text, reason, CARD_TEXT_ROOM);
   if (lines.length > REASON_LINES) throw new Error(`ideas: ${model} reason needs ${lines.length} lines, the card fits ${REASON_LINES}`);
   text.textContent = '';
-  text.append(...lines.map((line, i) => textEl(line, { x: x + 10, y: y + 35 + 12 * i }, 'tspan')));
-  return card;
+  text.append(...lines.map((line, i) => textEl(line, { x: x + 16, y: y + REASON_BASELINES[lines.length - 1][i] }, 'tspan')));
+  return { card, gap, centre: [x + CARD.width / 2, y + CARD.height / 2] };
+}
+
+// One week everywhere: the board's question and the screen's title name the same Mon-Fri as the chart.
+function writeCallWeek(scale) {
+  const week = weekLabel(scale);
+  const board = $('s1', 'week');
+  if (board) board.textContent = `BTC: up or down, ${week}?`;
+  $('s3', 'title').textContent += ` · ${week.toUpperCase()}`;
 }
 
 function planMonitor() {
   checkMonitorData();
   const scale = chartScale();
+  writeCallWeek(scale);
   const chart = $('s3', 'chart');
   const rankOf = (i) => IDEAS.ideas.slice(0, i).filter((idea) => idea.call === IDEAS.ideas[i].call).length;
+  const cards = drawIdeaCards(IDEAS.ideas, $('s3', 'cards'));
   return {
     frame: drawChartFrame(scale, chart),
     candles: drawCandles(scale, chart),
@@ -951,8 +989,10 @@ function planMonitor() {
     week: drawWeek(scale, $('s3', 'week')),
     ideas: IDEAS.ideas.map((idea, i) => ({
       ...drawIdeaArrow(scale, idea, i, rankOf(i), $('s3', 'ideas')),
-      card: drawIdeaCard(idea, i, $('s3', 'cards')),
+      card: cards[i].card,
+      cardCentre: cards[i].centre,
     })),
+    cardGap: Math.min(...cards.map(({ gap }) => gap)),
   };
 }
 
@@ -961,85 +1001,90 @@ function riseIn(node, t) {
   node.setAttribute('transform', `translate(0 ${(1 - t) * 6})`);
 }
 
-// Draws the arrow over `frames`, then pops the head and the name in at its tip.
-function revealIdea({ reveal, width, head, at, name }, k, frames) {
-  reveal.setAttribute('width', width * ease(progress(k, 0, frames)));
-  const popped = ease(progress(k, frames - 2, POP));
-  head.setAttribute('transform', `translate(${at[0]} ${at[1]}) scale(${HEAD_SCALE * popped})`);
-  name.style.opacity = popped;
+// A beat landing: it fades in from BEAT_POP larger, scaled about its anchor.
+function popIn(node, t, [x, y]) {
+  node.style.opacity = t;
+  node.setAttribute('transform', `translate(${x} ${y}) scale(${1 + BEAT_POP * (1 - t)}) translate(${-x} ${-y})`);
 }
 
+// Draws the arrow over `frames`, then fades the name in at its tip.
+function revealIdea({ reveal, width, name }, k, frames) {
+  reveal.setAttribute('width', width * ease(progress(k, 0, frames)));
+  name.style.opacity = ease(progress(k, frames - 2, POP));
+}
+
+// The chart builds over the hook, `t` frames in: the candles left to right, then the last price and the week.
+function renderChart(plan, t) {
+  plan.frame.style.opacity = 1;
+  const step = CANDLES_SWEEP / Math.max(1, plan.candles.length - 1);
+  plan.candles.forEach((candle, i) => riseIn(candle, ease(progress(t, CANDLES_START + i * step, CANDLE_RISE))));
+  plan.lastPrice.style.opacity = progress(t, CANDLES_START + CANDLES_SWEEP, FADE);
+  plan.week.style.opacity = progress(t, WEEK_START, FADE);
+}
+
+// The chart is whole by now; the calls land one at a time, each arrow and then its card.
 function renderMonitor(plan, k, view = FULL_VIEW) {
   setViewBox('s3', view);
-  plan.frame.style.opacity = progress(k, FRAME_START, FADE);
-  const step = CANDLES_SWEEP / Math.max(1, plan.candles.length - 1);
-  plan.candles.forEach((candle, i) => riseIn(candle, ease(progress(k, CANDLES_START + i * step, CANDLE_RISE))));
-  plan.lastPrice.style.opacity = progress(k, CANDLES_START + CANDLES_SWEEP, FADE);
-  plan.week.style.opacity = progress(k, WEEK_START, FADE);
+  renderChart(plan, Infinity);
   plan.ideas.forEach((idea, i) => {
     const start = IDEAS_START + i * IDEA_STEP;
     revealIdea(idea, k - start, ARROW_FRAMES);
-    riseIn(idea.card, ease(progress(k, start + ARROW_FRAMES, CARD_SLIDE)));
+    popIn(idea.card, ease(progress(k, start + ARROW_FRAMES, CARD_POP)), idea.cardCentre);
   });
 }
 
 // ---------------------------------------------------------------- hook
 
-// The two captions, written from the ideas: the match-up, then how the calls split.
+// One caption at a time, the only text on screen: the question, then the bar the calls have to clear,
+// with the coin after it. They never tell the calls; those show first on the monitor.
 // Each part is [text, class]; the call words wear the candle colours, next to the word itself.
 function hookCaptions(ideas) {
   const n = ideas.length;
-  const split = Object.keys(CALL_CLASSES)
-    .map((call) => ({ call, k: ideas.filter((idea) => idea.call === call).length }))
-    .filter(({ k }) => k > 0)
-    .flatMap(({ call, k }, i) => [
-      [`${i ? ' ' : ''}${k === n && n > 1 ? 'All ' : ''}${k} ${k === 1 ? 'says' : 'say'} `],
-      [call, CALL_CLASSES[call]],
-      ['.'],
-    ]);
   return [
-    { title: [[`${n} ${n === 1 ? 'AI' : 'AIs'} vs a coin flip`]], sub: "Next week's Bitcoin calls" },
-    { title: split, sub: 'Friday decides.' },
+    { title: [[`${n} ${n === 1 ? 'AI' : 'AIs'}. BTC `], ['up', CALL_CLASSES.up], [' or '], ['down', CALL_CLASSES.down], [' this week?']] },
+    { title: [['Can they beat a coin flip?']] },
   ];
 }
 
-function drawCaption({ title, sub }, x, parent) {
+function drawCaption({ title }, x, parent) {
   const group = parent.appendChild(svgEl('g'));
   const line = group.appendChild(svgEl('text', { class: 'hook-title', x, y: CAPTION.y, 'text-anchor': 'middle' }));
   line.append(...title.map(([text, cls]) => textEl(text, cls ? { class: cls } : {}, 'tspan')));
-  group.append(textEl(sub, { class: 'hook-sub', x: CAPTION.x, y: CAPTION.subY, 'text-anchor': 'middle' }));
-  return { group, width: line.getComputedTextLength() };
+  const width = line.getComputedTextLength();
+  if (width > CAPTION.maxWidth) throw new Error(`hook: "${line.textContent}" is ${width.toFixed(0)} px wide, the frame fits ${CAPTION.maxWidth}`);
+  return { group, width };
 }
 
-// The first title moves left so that it and the coin after it sit centred together.
+// The second title moves left so that it and the coin after it sit centred together.
 function planHook() {
   const [first, second] = hookCaptions(IDEAS.ideas);
   const shift = COIN_GAP / 2 + COIN_R;
-  const matchUp = drawCaption(first, CAPTION.x - shift, $('s0', 'beats'));
+  const bar = drawCaption(second, CAPTION.x - shift, $('s0', 'beats'));
   return {
-    beats: [matchUp.group, drawCaption(second, CAPTION.x, $('s0', 'beats')).group],
-    coinX: CAPTION.x - shift + matchUp.width / 2 + COIN_GAP + COIN_R,
+    beats: [drawCaption(first, CAPTION.x, $('s0', 'beats')).group, bar.group],
+    coinX: CAPTION.x - shift + bar.width / 2 + COIN_GAP + COIN_R,
   };
 }
 
-// The finished screen, held close while the arrows shoot again, then pulled back to show the room.
+// The chart builds full frame under the captions, its week still empty; the calls wait for the monitor.
 function renderHookScreen(monitor, h) {
-  renderMonitor(monitor, MONITOR, zoomBox(HOOK_VIEW, FULL_VIEW, ease(progress(h, HOOK_PULL_START, HOOK_PULL))));
-  monitor.ideas.forEach((idea, i) => revealIdea(idea, h - HOOK_ARROWS - i * HOOK_ARROW_STEP, HOOK_ARROW_FRAMES));
+  setViewBox('s3', FULL_VIEW);
+  renderChart(monitor, h);
+  monitor.ideas.forEach((idea) => {
+    revealIdea(idea, -1, ARROW_FRAMES);
+    idea.card.style.opacity = 0;
+  });
 }
 
 function renderHook({ beats: [first, second], coinX }, h) {
-  const firstShown = 1 - progress(h, BEAT_SWAP - BEAT_OUT, BEAT_OUT);
-  first.style.opacity = firstShown;
-  const landed = ease(progress(h, BEAT_SWAP, BEAT_IN));
-  const size = 1 + BEAT_POP * (1 - landed);
-  second.style.opacity = landed;
-  second.setAttribute('transform', `translate(${CAPTION.x} ${CAPTION.y}) scale(${size}) translate(${-CAPTION.x} ${-CAPTION.y})`);
-  // A toss: up and back down, spinning while in the air.
-  const tossed = progress(h, 0, COIN_FLIGHT);
+  first.style.opacity = 1 - progress(h, BEAT_SWAP - BEAT_OUT, BEAT_OUT);
+  const secondShown = ease(progress(h, BEAT_SWAP, BEAT_IN));
+  popIn(second, secondShown, [CAPTION.x, CAPTION.y]);
+  // A toss as the second caption lands: up and back down, spinning while in the air.
+  const tossed = progress(h, BEAT_SWAP, COIN_FLIGHT);
   const facing = Math.cos(2 * Math.PI * COIN_TURNS * tossed);
   const coin = $('s0', 'coin');
-  coin.style.opacity = firstShown;
+  coin.style.opacity = secondShown;
   coin.setAttribute('transform', `translate(${coinX} ${CAPTION.coinY - COIN_TOSS * 4 * tossed * (1 - tossed)})`);
   $('s0', 'coin-spin').setAttribute('transform', `scale(${Math.max(Math.abs(facing), COIN_EDGE)} 1)`);
   $('s0', 'coin-face').setAttribute('fill', facing >= 0 ? COIN_FACES.front : COIN_FACES.back);
@@ -1048,7 +1093,7 @@ function renderHook({ beats: [first, second], coinX }, h) {
 
 // ---------------------------------------------------------------- end card
 
-function renderEnd(k) {
+function poseEndFigure(k) {
   const parts = {
     ...Rig.STANDING,
     head: -4,
@@ -1064,34 +1109,103 @@ function renderEnd(k) {
     browLift: 2,
     chalk: false,
   });
-  $('s4', 'text').style.opacity = progress(k, 4, 10);
-  const landed = ease(progress(k, CTA.start, BEAT_IN));
-  const cta = $('s4', 'cta');
-  cta.style.opacity = landed;
-  cta.setAttribute('transform', `translate(${CTA.x} ${CTA.y}) scale(${1 + BEAT_POP * (1 - landed)}) translate(${-CTA.x} ${-CTA.y})`);
+}
+
+// The card fades in whole and its question pops in after; a story episode keeps this one.
+function renderPlainEnd(k) {
+  poseEndFigure(k);
+  const cardIn = progress(k, END_FADE, END_IN);
+  $('s4', 'place').style.opacity = cardIn;
+  $('s4', 'text').style.opacity = cardIn;
+  popIn($('s4', 'cta'), ease(progress(k, CTA.start, BEAT_IN)), [CTA.x, CTA.y]);
+}
+
+// The call episode's card builds line by line so the end never sits still: the question pops in,
+// the reply rises under it, the arrow draws to the reply button and nods on the beat, then the rest rises.
+function renderEnd(k) {
+  poseEndFigure(k);
+  const cardIn = progress(k, END_FADE, END_IN);
+  $('s4', 'place').style.opacity = cardIn;
+  $('s4', 'text').style.opacity = 1;
+  $('s4', 'kicker').style.opacity = cardIn;
+  popIn($('s4', 'ask'), ease(progress(k, END_STEPS.ask, BEAT_IN)), [CTA.x, CTA.y]);
+  for (const id of ['reply', 'lead', 'ledger']) riseIn($('s4', id), ease(progress(k, END_STEPS[id], END_RISE)));
+  drawEndArrow(k);
+}
+
+function drawEndArrow(k) {
+  const arrow = $('s4', 'arrow');
+  if (!arrow) return;
+  const t = progress(k, END_STEPS.arrow, END_ARROW_DRAW);
+  const line = $('s4', 'arrow-line');
+  const head = $('s4', 'arrow-head');
+  for (const path of [line, head]) path.style.strokeDasharray = '1 1';
+  line.style.strokeDashoffset = 1 - clamp(t / 0.7, 0, 1);
+  head.style.strokeDashoffset = 1 - clamp((t - 0.7) / 0.3, 0, 1);
+  arrow.style.opacity = t > 0 ? 1 : 0;
+  const nod = progress(k, END_STEPS.arrow + END_ARROW_DRAW, ARROW_NOD.ramp) * Math.cos((Math.PI * (k + episode.endStart)) / ARROW_NOD.beat) ** 2;
+  arrow.setAttribute('transform', `translate(0 ${ARROW_NOD.depth * nod})`);
+}
+
+// ---------------------------------------------------------------- story question
+
+const questionShown = (f, start) => {
+  const { fade, length } = QUESTION;
+  return progress(f + 1, start, fade) * (1 - progress(f + 1, start + length - fade, fade));
+};
+
+// The question is written into its layer at build time; only its words fade, inside the plate's fades,
+// and the answers move.
+function renderQuestion(k) {
+  const { fade, length, answers, x, y } = QUESTION;
+  $('s5', 'words').style.opacity = progress(k + 1, fade, fade) * (1 - progress(k + 1, length - 2 * fade, fade));
+  popIn($('s5', 'answers'), ease(progress(k, answers, BEAT_IN)), [x, y]);
 }
 
 // ---------------------------------------------------------------- timeline
 
+// A story episode (heist-*.js) swaps the hook and the monitor for its own, and may set its own hook length;
+// everything else is shared. Its page may also leave the board or the desk out or carry a question layer:
+// the layers on the page decide.
+const STANDARD = { hookFrames: HOOK, monitorFrames: MONITOR, planHook, renderHook, renderHookScreen, planMonitor, renderMonitor, renderEnd };
+
 let episode;
 
-function setup() {
-  const board = planBoard();
-  const boardEnd = HOOK + board.frames.length;
+// When each scene starts. The hook dissolves over the board, else over the desk, else straight over the monitor.
+function timeline(story, board, desk) {
+  const hookEnd = story.hookFrames;
+  const dissolveStart = hookEnd - HOOK_DISSOLVE;
+  const boardEnd = hookEnd + (board ? board.frames.length : 0);
   const deskStart = boardEnd - DESK_SKIP; // desk frame 0; the cut from the board lands on desk frame DESK_SKIP
+  // Without a board the hook dissolves straight over the desk, held on that frame until the hook is gone.
+  const deskIn = board ? boardEnd : dissolveStart;
   const deskEnd = deskStart + DESK_LENGTH;
-  const screenOn = deskStart + SETTLED; // he starts typing
-  const monitorStart = screenOn + TYPE; // the camera starts flying in
-  const endStart = monitorStart + MONITOR - END_FADE;
-  const desk = planDesk();
-  episode = { hook: planHook(), board, desk, monitor: planMonitor(), boardEnd, deskStart, deskEnd, screenOn, monitorStart, endStart };
+  // Without a desk the monitor runs full screen from the cut off the board, else from the start of the hook's dissolve.
+  const screenOn = desk ? deskStart + SETTLED : board ? boardEnd : dissolveStart; // he starts typing
+  // Monitor frame 0: the camera starts flying in; the cut from the board lands on monitor frame MONITOR_SKIP.
+  const monitorStart = desk ? screenOn + TYPE : board ? screenOn - MONITOR_SKIP : screenOn;
+  const endStart = monitorStart + story.monitorFrames - END_FADE;
+  return { hookEnd, boardEnd, deskStart, deskIn, deskEnd, screenOn, monitorStart, endStart };
+}
+
+function setup() {
+  const story = { ...STANDARD, ...window.STORY };
+  const board = hasLayer('board') ? planBoard() : null;
+  const desk = hasLayer('desk') ? planDesk() : null;
+  const times = timeline(story, board, desk);
+  const { hookEnd, boardEnd, deskEnd, monitorStart, endStart } = times;
+  const questionStart = hasLayer('question') ? hookEnd - QUESTION.lead : null;
+  // Subtitles come with a story script (subtitles.js) that plans and plays them.
+  const subs = hasLayer('subs') ? story.planSubs() : null;
+  episode = { story, hook: story.planHook(), board, desk, monitor: story.planMonitor(), questionStart, subs, ...times };
   window.TOTAL_FRAMES = endStart + END;
   // Frame ranges, end exclusive, for rendering one scene at a time.
   window.SCENES = {
-    hook: [0, HOOK],
-    board: [HOOK, boardEnd],
-    desk: [boardEnd, deskEnd],
-    monitor: [monitorStart, endStart + END_FADE],
+    hook: [0, hookEnd],
+    ...(board && { board: [hookEnd, boardEnd] }),
+    ...(questionStart !== null && { question: [questionStart, questionStart + QUESTION.length] }),
+    ...(desk && { desk: [boardEnd, deskEnd] }),
+    monitor: [Math.max(monitorStart, times.screenOn), endStart + (story.endCut ? 0 : END_FADE)],
     end: [endStart, window.TOTAL_FRAMES],
   };
   window.report = checks(board, desk);
@@ -1101,8 +1215,35 @@ function setup() {
 // Numbers to eyeball before rendering: whether the chalk stays in reach, how fast he walks at the board,
 // how high he rises on his toes, how often the shoes switch, and whether the seated pose lands on the slot.
 function checks(board, desk) {
-  const switches = (gait) => gait.filter((g, k) => k && g.feet !== gait[k - 1].feet).length;
+  return {
+    frames: window.TOTAL_FRAMES,
+    ...(board && boardChecks(board)),
+    ...(desk && deskChecks(desk)),
+    ...(episode.monitor.cardGap !== undefined && { cardGap: +episode.monitor.cardGap.toFixed(1) }),
+    ...(episode.story.renderMonitor === renderMonitor && { clicks: ideaClicks(episode.monitorStart, episode.monitor.ideas) }),
+    ...(episode.story.clicks && { clicks: episode.story.clicks(episode) }),
+    endY: +standOn(END_FLOOR + SOLE_DROP, END_SLOT.scale, Rig.STANDING, 'front').toFixed(2),
+  };
+}
+
+// The frames score.py clicks on: each arrow starting to draw, and its card popping in at the tip.
+function ideaClicks(monitorStart, ideas) {
+  const starts = ideas.map((idea, i) => monitorStart + IDEAS_START + i * IDEA_STEP);
+  return { lines: starts, cards: starts.map((start) => start + ARROW_FRAMES) };
+}
+
+function deskChecks(desk) {
   const seatedParts = deskParts(desk, SETTLED);
+  return {
+    deskPulledOut: +desk.pulledOut.toFixed(2),
+    deskStopAmount: +desk.gait[WALK].amount.toFixed(3),
+    deskSeatedY: +standOn(DESK_FLOOR + SOLE_DROP, POSES.desk.scale, seatedParts, 'right').toFixed(2),
+    deskSeatY: POSES.desk.y,
+  };
+}
+
+function boardChecks(board) {
+  const switches = (gait) => gait.filter((g, k) => k && g.feet !== gait[k - 1].feet).length;
   // Shoulder to tip target as a share of a straight arm; frames with the pointer at rest hang off the IK.
   const shares = board.frames.flatMap(({ target, rest }, k) => {
     if (rest) return [];
@@ -1116,7 +1257,6 @@ function checks(board, desk) {
   // Frames where the reach clamp pulled the shoulder inside the head clearance.
   const crowded = board.frames.filter(({ target: [tx, ty] }, k) => board.xs[k] - tx < minDxFor(ty) - 0.5).length;
   return {
-    frames: window.TOTAL_FRAMES,
     boardFrames: board.frames.length,
     boardMaxWalk: +Math.max(...board.xs.map((x, k) => (k ? Math.abs(x - board.xs[k - 1]) : 0))).toFixed(2),
     boardMaxLift: +Math.max(...board.lifts).toFixed(2),
@@ -1126,12 +1266,11 @@ function checks(board, desk) {
     boardCrowded: crowded,
     boardShoeSwitches: switches(board.gait),
     boardShoes: [...new Set(board.gait.map((g) => g.feet))],
-    deskPulledOut: +desk.pulledOut.toFixed(2),
-    deskStopAmount: +desk.gait[WALK].amount.toFixed(3),
-    deskSeatedY: +standOn(DESK_FLOOR + SOLE_DROP, POSES.desk.scale, seatedParts, 'right').toFixed(2),
-    deskSeatY: POSES.desk.y,
-    endY: +standOn(END_FLOOR + SOLE_DROP, END_SLOT.scale, Rig.STANDING, 'front').toFixed(2),
   };
+}
+
+function hasLayer(name) {
+  return document.getElementById(`layer-${name}`) !== null;
 }
 
 function showLayer(name, opacity, render) {
@@ -1140,25 +1279,42 @@ function showLayer(name, opacity, render) {
 }
 
 window.renderFrame = (f) => {
-  const { hook, board, desk, monitor, boardEnd, deskStart, deskEnd, screenOn, monitorStart, endStart } = episode;
-  const hooked = f < HOOK;
-  const hookShown = 1 - progress(f + 1, HOOK - HOOK_DISSOLVE, HOOK_DISSOLVE);
-  const atDesk = f >= boardEnd && f < deskEnd;
-  showLayer('board', f >= HOOK - HOOK_DISSOLVE && f < boardEnd ? 1 : 0, () => renderBoard(board, Math.max(0, f - HOOK)));
-  showLayer('desk', atDesk ? 1 : 0, () => renderDesk(desk, f - deskStart));
-  showLayer('monitor', hooked ? hookShown : progress(f + 1, screenOn, SCREEN_ON), () => {
+  const { story, hook, board, desk, monitor, questionStart, subs, hookEnd, boardEnd, deskStart, deskIn, deskEnd, screenOn, monitorStart, endStart } = episode;
+  const hooked = f < hookEnd;
+  const hookShown = 1 - progress(f + 1, hookEnd - HOOK_DISSOLVE, HOOK_DISSOLVE);
+  const atDesk = desk !== null && f >= deskIn && f < deskEnd;
+  if (board) showLayer('board', f >= hookEnd - HOOK_DISSOLVE && f < boardEnd ? 1 : 0, () => renderBoard(board, Math.max(0, f - hookEnd)));
+  if (desk) showLayer('desk', atDesk ? 1 : 0, () => renderDesk(desk, Math.max(DESK_SKIP, f - deskStart)));
+  // Before the screen comes on only the hook's own screen shows; a hook without one (renderHookScreen null)
+  // keeps the monitor dark until then.
+  const onScreen = f >= screenOn;
+  const hookScreen = story.renderHookScreen ? hookShown : 0;
+  // The board cuts to the monitor as hard as it does to the desk, and a hook screen is the monitor already lit;
+  // only a screen that lights up fades in.
+  const screenShown = !desk && (board || story.renderHookScreen) ? 1 : progress(f + 1, screenOn, SCREEN_ON);
+  showLayer('monitor', onScreen ? screenShown : hookScreen, () => {
     // At the desk only the screen shows, over the desk's own; the desk draws the room around it.
     $('s3', 'room').style.visibility = atDesk ? 'hidden' : 'visible';
-    if (hooked) renderHookScreen(monitor, f);
-    else renderMonitor(monitor, f - monitorStart, atDesk ? monitorThroughDesk(desk, f - deskStart) : FULL_VIEW);
+    if (onScreen) story.renderMonitor(monitor, f - monitorStart, atDesk ? monitorThroughDesk(desk, f - deskStart) : FULL_VIEW);
+    else story.renderHookScreen(monitor, f);
   });
-  showLayer('hook', hooked ? hookShown : 0, () => renderHook(hook, f));
-  showLayer('end', progress(f + 1, endStart, END_FADE), () => renderEnd(f - endStart));
-  document.getElementById('flash').style.opacity = 1 - clamp(Math.abs(f + 0.5 - boardEnd) / FLASH, 0, 1);
+  showLayer('hook', hooked ? hookShown : 0, () => story.renderHook(hook, f));
+  if (questionStart !== null) showLayer('question', questionShown(f, questionStart), () => renderQuestion(f - questionStart));
+  if (subs) showLayer('subs', 1, () => story.renderSubs(subs, f));
+  // A story with endCut cuts to the end on its first frame; the others dissolve into it.
+  const endShown = story.endCut ? Number(f >= endStart) : progress(f + 1, endStart, END_FADE);
+  showLayer('end', endShown, () => story.renderEnd(f - endStart));
+  document.getElementById('flash').style.opacity = board ? 1 - clamp(Math.abs(f + 0.5 - boardEnd) / FLASH, 0, 1) : 0;
   return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 };
 
+// Story scripts come after this one, so wait for the whole page to parse: with the fonts cached, setup
+// would otherwise run before they do.
+const parsed = new Promise((resolve) =>
+  document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', resolve, { once: true }) : resolve(),
+);
 // Web fonts load only once something lays out with them; load every face up front so frame one has them.
-window.episodeReady = Promise.all([...document.fonts].map((face) => face.load()))
+window.episodeReady = parsed
+  .then(() => Promise.all([...document.fonts].map((face) => face.load())))
   .then(() => document.fonts.ready)
   .then(setup);

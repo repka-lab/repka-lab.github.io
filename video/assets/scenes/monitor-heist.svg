@@ -1,0 +1,257 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 3: the Binance hack on the monitor</title>
+  <!--
+    Episode scene 3 for the Binance hack story (assets/data/heist.json). The room and the screen are the
+    ones in monitor.svg, so the camera flies in from desk.svg the same way; only what is on the screen differs.
+    episode/heist-monitor.js fills the empty groups and plays five beats, one group each, cross-fading:
+      #beat-prep     how it started: four steps on a track, the way in, control, funding, the rehearsal
+      #beat-drain    10 hot-wallet safes go red while coins arc into the attacker's wallet; the counter runs up
+      #beat-who      who analysts link it to, under the flag, and what was taken, one bar per chain
+      #beat-launder  the laundering: the swap into ETH, the BTC peel chain, the fan-out to fresh addresses
+      #beat-after    the market after: BTC and BNB 4h candles around the hack, and Binance's statement
+    The clock in the header runs through the drain, then fades out.
+
+    RE-CHECK every figure and the withdrawal status before release.
+    The frozen sum is Binance's and the one out of reach is Elliptic's; together they make up the total.
+    Attribution is the analysts' (TRM Labs, Chainalysis, Elliptic); Binance hasn't named anyone.
+
+    Content stays in y 64-285, sources sit under the line at y 290.
+    Classes carry an hm- prefix, because the episode puts every scene in one document.
+  -->
+  <style>
+    .hm-head { fill: #eef2f6; font: 600 12px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 1.5px; }
+    .hm-clock { fill: #ff4655; font: 600 12px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
+    .hm-label { fill: #b9c6d8; font: 600 11px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 2px; }
+    .hm-muted { fill: #8193ad; font: 9.5px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-title { fill: #eef2f6; font: 700 20px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-value { fill: #eef2f6; font: 700 13px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .hm-what { fill: #b9c6d8; font: 600 11px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .hm-callout { fill: #eef2f6; font: 700 16px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-counter { fill: #ff4655; font: 700 46px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .hm-ice { fill: #8fd3ff; }
+    .hm-red { fill: #ff4655; }
+    .hm-line { stroke: #1b2c45; stroke-width: 1; }
+    .hm-route { fill: none; stroke: #2b4365; stroke-width: 1.5; stroke-dasharray: 3 4; }
+    .hm-chip { fill: #0f1d33; stroke: #4a6890; stroke-width: 1; }
+    .hm-card { fill: #0f1d33; stroke: #2b4365; stroke-width: 1; }
+    .hm-step { fill: #0a1526; stroke: #f0b90b; stroke-width: 1.5; }
+    .hm-step-num { fill: #f0b90b; font: 700 10px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-kick { fill: #f0b90b; font: 700 9.5px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 1.5px; }
+    .hm-card-text { fill: #eef2f6; font: 700 12px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-badge { fill: #fff; font: 800 10px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-track { stroke: #1b2c45; stroke-width: 2; }
+    .hm-icon { fill: #13233a; stroke: #4a6890; stroke-width: 1.5; }
+    .hm-tick { fill: none; stroke: #26a69a; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .candle-up { --tone: #26a69a; }
+    .candle-down { --tone: #ef5350; }
+    .candle-body { fill: var(--tone); }
+    .candle-wick { stroke: var(--tone); stroke-width: 1; }
+  </style>
+  <defs>
+    <clipPath id="screen-clip"><rect x="30" y="26" width="580" height="294" rx="4"/></clipPath>
+    <clipPath id="wallet-clip"><rect x="470" y="100" width="100" height="60" rx="8"/></clipPath>
+  </defs>
+
+  <g id="room">
+    <rect width="640" height="360" fill="#13233a"/>
+    <rect x="296" y="330" width="48" height="30" fill="#24395a"/>
+    <rect x="16" y="12" width="608" height="322" rx="14" fill="#24395a" stroke="#0d1828" stroke-width="4"/>
+  </g>
+  <rect id="screen" x="30" y="26" width="580" height="294" rx="4" fill="#0a1526"/>
+
+  <g clip-path="url(#screen-clip)">
+    <text class="hm-head" x="44" y="47">BINANCE HACK · OCT 29, 2026</text>
+    <g id="clock" opacity="0">
+      <circle id="clock-dot" cx="530" cy="43" r="3" fill="#ff4655"/>
+      <text id="clock-time" class="hm-clock" x="596" y="47" text-anchor="end">20:05 UTC</text>
+    </g>
+    <line class="hm-line" x1="44" y1="58" x2="596" y2="58"/>
+    <line class="hm-line" x1="44" y1="290" x2="596" y2="290"/>
+
+    <g id="beat-prep">
+      <text class="hm-label" x="50" y="84">HOW IT STARTED</text>
+      <line class="hm-track" x1="116" y1="104" x2="524" y2="104"/>
+      <line id="prep-line" x1="116" y1="104" x2="116" y2="104" stroke="#f0b90b" stroke-width="2"/>
+
+      <g id="prep-1">
+        <rect class="hm-card" x="51" y="120" width="130" height="124" rx="8"/>
+        <circle class="hm-step" cx="116" cy="104" r="9"/>
+        <text class="hm-step-num" x="116" y="108" text-anchor="middle">1</text>
+        <rect class="hm-icon" x="98" y="134" width="36" height="23" rx="2"/>
+        <path d="M103 141 H119 M103 146 H125 M103 151 H115" stroke="#8193ad" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M92 160 H140 L136 164 H96 Z" fill="#4a6890"/>
+        <circle id="prep-halo" cx="134" cy="134" r="7" fill="#ff4655" opacity="0"/>
+        <g id="prep-alert" opacity="0">
+          <circle cx="134" cy="134" r="7" fill="#ff4655"/>
+          <text class="hm-badge" x="134" y="137.5" text-anchor="middle">!</text>
+        </g>
+        <text class="hm-kick" x="116" y="186" text-anchor="middle">WAY IN</text>
+        <text class="hm-card-text" x="116" y="206" text-anchor="middle">Engineer's laptop</text>
+        <text class="hm-what" x="116" y="222" text-anchor="middle">compromised</text>
+      </g>
+
+      <g id="prep-2">
+        <rect class="hm-card" x="187" y="120" width="130" height="124" rx="8"/>
+        <circle class="hm-step" cx="252" cy="104" r="9"/>
+        <text class="hm-step-num" x="252" y="108" text-anchor="middle">2</text>
+        <rect class="hm-icon" x="238" y="130" width="28" height="36" rx="2"/>
+        <path d="M243 138 H261 M243 144 H261 M243 150 H255" stroke="#8193ad" stroke-width="1.5" stroke-linecap="round"/>
+        <path id="prep-sign" d="M242 159 q2.5 -6 5 0 t5 0 t5 0 t5 0" fill="none" stroke="#ff4655" stroke-width="1.6" stroke-linecap="round"/>
+        <text class="hm-kick" x="252" y="186" text-anchor="middle">CONTROL</text>
+        <text class="hm-card-text" x="252" y="206" text-anchor="middle">Hot-wallet signing</text>
+        <text class="hm-what" x="252" y="222" text-anchor="middle">system taken over</text>
+      </g>
+
+      <g id="prep-3">
+        <rect class="hm-card" x="323" y="120" width="130" height="124" rx="8"/>
+        <circle class="hm-step" cx="388" cy="104" r="9"/>
+        <text class="hm-step-num" x="388" y="108" text-anchor="middle">3</text>
+        <path d="M379 126 H397 M382 130 H394 M385 134 H391" stroke="#8193ad" stroke-width="1.5" stroke-linecap="round"/>
+        <g id="prep-coins"></g>
+        <path d="M374 154 V151 Q374 148 377 148 H399 Q402 148 402 151 V154" fill="#24101c" stroke="#ff4655" stroke-width="1.5"/>
+        <rect x="370" y="154" width="36" height="18" rx="4" fill="#1a1020" stroke="#ff4655" stroke-width="1.5"/>
+        <text class="hm-kick" x="388" y="186" text-anchor="middle">FUNDING</text>
+        <text class="hm-card-text" x="388" y="206" text-anchor="middle">Wallet funded via</text>
+        <text class="hm-what" x="388" y="222" text-anchor="middle">Tornado Cash · Oct 28</text>
+      </g>
+
+      <g id="prep-4">
+        <rect class="hm-card" x="459" y="120" width="130" height="124" rx="8"/>
+        <circle class="hm-step" cx="524" cy="104" r="9"/>
+        <text class="hm-step-num" x="524" y="108" text-anchor="middle">4</text>
+        <rect x="491" y="150" width="18" height="13" rx="3" fill="#1a1020" stroke="#ff4655" stroke-width="1.2"/>
+        <rect x="515" y="150" width="18" height="13" rx="3" fill="#1a1020" stroke="#ff4655" stroke-width="1.2"/>
+        <rect x="539" y="150" width="18" height="13" rx="3" fill="#1a1020" stroke="#ff4655" stroke-width="1.2"/>
+        <g id="prep-ticks">
+          <path class="hm-tick" d="M495 139 l3.5 3.5 l6.5 -7"/>
+          <path class="hm-tick" d="M519 139 l3.5 3.5 l6.5 -7"/>
+          <path class="hm-tick" d="M543 139 l3.5 3.5 l6.5 -7"/>
+        </g>
+        <text class="hm-kick" x="524" y="186" text-anchor="middle">REHEARSAL</text>
+        <text class="hm-card-text" x="524" y="206" text-anchor="middle">Attack code tested</text>
+        <text class="hm-what" x="524" y="222" text-anchor="middle">on 3 wallets · Oct 29</text>
+      </g>
+
+      <text id="prep-callout" class="hm-callout" x="320" y="272" text-anchor="middle">36+ hours of setup, then the drain</text>
+      <text class="hm-muted" x="44" y="306">Sources: TRM Labs; Binance (preliminary findings)</text>
+    </g>
+
+    <g id="beat-drain" opacity="0">
+      <text class="hm-label" x="50" y="84">BINANCE HOT WALLETS · 10 CHAINS</text>
+      <g id="safes"></g>
+      <g id="wallet">
+        <path d="M480 100 V91 Q480 86 485 86 H555 Q560 86 560 91 V100" fill="#24101c" stroke="#ff4655" stroke-width="1.5"/>
+        <rect x="470" y="100" width="100" height="60" rx="8" fill="#1a1020" stroke="#ff4655" stroke-width="1.5"/>
+        <rect id="wallet-fill" x="470" y="160" width="100" height="0" fill="#f0b90b" opacity="0.35" clip-path="url(#wallet-clip)"/>
+        <rect x="540" y="120" width="30" height="20" rx="4" fill="#2a1420" stroke="#ff4655" stroke-width="1.5"/>
+        <circle cx="552" cy="130" r="3" fill="#ff4655"/>
+        <text class="hm-label hm-red" x="520" y="176" text-anchor="middle">ATTACKER WALLETS</text>
+      </g>
+      <g id="flying"></g>
+      <text class="hm-label" x="320" y="214" text-anchor="middle">LEFT BINANCE HOT WALLETS</text>
+      <text id="counter" class="hm-counter" x="320" y="262" text-anchor="middle">$0.0B</text>
+      <text class="hm-muted" x="44" y="306">Sources: TRM Labs, Binance · times UTC</text>
+    </g>
+
+    <g id="beat-who" opacity="0">
+      <text class="hm-label" x="50" y="84">ANALYSTS LINK IT TO</text>
+      <g id="who-flag">
+        <rect x="50" y="94" width="96" height="48" fill="#024fa2"/>
+        <rect x="50" y="102" width="96" height="32" fill="#fff"/>
+        <rect x="50" y="103.5" width="96" height="29" fill="#ed1c27"/>
+        <circle cx="85" cy="118" r="10" fill="#fff"/>
+        <path d="M0 -9.5 L2.13 -2.94 L9.04 -2.94 L3.45 1.12 L5.58 7.69 L0 3.63 L-5.58 7.69 L-3.45 1.12 L-9.04 -2.94 L-2.13 -2.94 Z" transform="translate(85 118)" fill="#ed1c27"/>
+        <rect x="50" y="94" width="96" height="48" fill="none" stroke="#0d1828" stroke-width="1"/>
+      </g>
+      <text id="who-name" class="hm-title" x="50" y="166">NORTH KOREA</text>
+      <text id="who-group" class="hm-value" x="50" y="186">TraderTraitor (Lazarus Group)</text>
+      <text id="who-trm" class="hm-muted" x="50" y="206">TRM Labs: “high confidence”</text>
+      <text id="who-chain" class="hm-muted" x="50" y="219">Chainalysis agrees · Elliptic: “likely”</text>
+      <text id="who-binance" class="hm-muted" x="50" y="232">Binance hasn't named anyone</text>
+      <text id="who-bybit" class="hm-what" x="50" y="258">TRM: same group as Bybit 2025 ($1.5B)</text>
+
+      <text class="hm-label" x="290" y="84">WHAT WAS TAKEN · BY CHAIN</text>
+      <g id="chains"></g>
+      <text id="who-note" class="hm-muted" x="290" y="258">Incl. 18,270 BTC · 200k ETH · 2.5B USDT</text>
+      <text class="hm-muted" x="44" y="306">Sources: TRM Labs, Chainalysis, Elliptic</text>
+    </g>
+
+    <g id="beat-launder" opacity="0">
+      <text class="hm-label" x="50" y="84">THEN THE LAUNDERING</text>
+
+      <g id="launder-swap">
+        <rect x="50" y="105" width="62" height="22" rx="11" fill="#0f1d33" stroke="#26a17b" stroke-width="1.2"/>
+        <text class="hm-what" x="81" y="120" text-anchor="middle" fill="#26a17b" style="fill: #26a17b">USDT</text>
+        <path id="swap-route" class="hm-route" d="M112 116 H166"/>
+        <rect x="166" y="105" width="62" height="22" rx="11" fill="#0f1d33" stroke="#627eea" stroke-width="1.2"/>
+        <text class="hm-what" x="197" y="120" text-anchor="middle" style="fill: #8fa2f0">ETH</text>
+        <g id="swap-coins"></g>
+        <text class="hm-value" x="250" y="113">Stablecoins swapped for ETH</text>
+        <text class="hm-muted" x="250" y="128">≈325M USDT into ≈122k ETH, below market price</text>
+      </g>
+
+      <g id="launder-peel">
+        <line class="hm-route" x1="66" y1="170" x2="226" y2="170"/>
+        <g id="peel-nodes"></g>
+        <circle cx="66" cy="170" r="12" fill="#f7931a"/>
+        <text x="66" y="172.5" text-anchor="middle" style="fill: #3a2204; font: 800 7px Bahnschrift, 'Segoe UI', sans-serif">BTC</text>
+        <text class="hm-value" x="250" y="167">BTC split into 1,000 and 100 BTC pieces</text>
+        <text class="hm-muted" x="250" y="182">a “peel chain” through fresh addresses</text>
+      </g>
+
+      <g id="launder-fan">
+        <g id="fan-links"></g>
+        <circle cx="64" cy="224" r="5" fill="#ff4655"/>
+        <text class="hm-value" x="250" y="221">Thousands of scripted transfers</text>
+        <text class="hm-muted" x="250" y="236">to new addresses, Chainalysis says</text>
+      </g>
+
+      <text id="launder-frozen" class="hm-value hm-ice" x="50" y="268">≈$3B frozen on-chain</text>
+      <text id="launder-held" class="hm-value hm-red" x="320" y="268">≈$3.3B still out of reach</text>
+      <text class="hm-muted" x="44" y="306">Sources: Binance, Elliptic, TRM Labs, Chainalysis</text>
+    </g>
+
+    <g id="beat-after" opacity="0">
+      <text class="hm-label" x="50" y="84">THE MARKET AFTER</text>
+
+      <g id="chart-btc" class="hm-chart">
+        <text id="btc-price" class="hm-title" x="60" y="106">BTC</text>
+        <text id="btc-change" class="hm-what" x="60" y="122">4h chart pending</text>
+        <g id="btc-pending">
+          <rect x="60" y="146" width="230" height="94" rx="4" fill="none" stroke="#2b4365" stroke-dasharray="3 4"/>
+          <text class="hm-muted" x="175" y="196" text-anchor="middle">data pending</text>
+        </g>
+        <g id="btc-candles"></g>
+        <g id="btc-hack-mark" opacity="0">
+          <line id="btc-hack-line" y1="143" y2="246" stroke="#ff4655" stroke-width="1" stroke-dasharray="2 2"/>
+          <text id="btc-hack-label" class="hm-muted hm-red" y="139" text-anchor="middle" style="font-size: 9px; font-weight: 700">HACK</text>
+        </g>
+        <text id="btc-caption" class="hm-muted" x="60" y="258">Coinbase BTC-USD · 4h candles</text>
+      </g>
+
+      <g id="chart-bnb" class="hm-chart">
+        <text id="bnb-price" class="hm-title" x="350" y="106">BNB</text>
+        <text id="bnb-change" class="hm-what" x="350" y="122">4h chart pending</text>
+        <g id="bnb-pending">
+          <rect x="350" y="146" width="230" height="94" rx="4" fill="none" stroke="#2b4365" stroke-dasharray="3 4"/>
+          <text class="hm-muted" x="465" y="196" text-anchor="middle">data pending</text>
+        </g>
+        <g id="bnb-candles"></g>
+        <g id="bnb-hack-mark" opacity="0">
+          <line id="bnb-hack-line" y1="143" y2="246" stroke="#ff4655" stroke-width="1" stroke-dasharray="2 2"/>
+          <text id="bnb-hack-label" class="hm-muted hm-red" y="139" text-anchor="middle" style="font-size: 9px; font-weight: 700">HACK</text>
+        </g>
+        <text id="bnb-caption" class="hm-muted" x="350" y="258">Binance BNB-USDT · 4h candles</text>
+      </g>
+
+      <g id="after-status">
+        <g transform="translate(0 173)">
+          <path d="M57 92 L65 95 V101 C65 106 61.5 109.5 57 111 C52.5 109.5 49 106 49 101 V95 Z" fill="none" stroke="#26a69a" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M53.5 101 L56 103.5 L60.5 98.5" fill="none" stroke="#26a69a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <text class="hm-what" x="72" y="280">Binance says it “will cover all losses” · withdrawals were paused</text>
+      </g>
+      <text class="hm-muted" x="44" y="306">Sources: Binance, Coinbase · candles to Oct 31, 12:00 UTC</text>
+    </g>
+  </g>
+</svg>

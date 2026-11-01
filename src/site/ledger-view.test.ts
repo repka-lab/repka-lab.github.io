@@ -34,7 +34,7 @@ describe('renderScoreboard', () => {
   test('lists every model with dashes before anything is checked', () => {
     const html = renderScoreboard(emptyLedger());
 
-    for (const name of ['ChatGPT', 'Claude', 'Gemini', 'Grok']) assert.match(html, new RegExp(`>${name}<`));
+    for (const name of ['ChatGPT', 'Claude', 'Gemini', 'Grok Bot']) assert.match(html, new RegExp(`>${name}<`));
     assert.match(rowOf(html, 'Claude'), /—/);
   });
 
@@ -46,7 +46,7 @@ describe('renderScoreboard', () => {
   });
 
   test('counts a pending forecast without judging it', () => {
-    const grok = rowOf(renderScoreboard(sampleLedger()), 'Grok');
+    const grok = rowOf(renderScoreboard(sampleLedger()), 'Grok Bot');
     const cells = [...grok.matchAll(/<td[^>]*>([^<]*)</g)].map((m) => m[1]);
 
     assert.deepEqual(cells, ['1', '0', '1', '0', '0', '—', '—']);

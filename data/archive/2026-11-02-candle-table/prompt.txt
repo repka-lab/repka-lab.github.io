@@ -1,0 +1,68 @@
+AI Prediction Lab: weekly BTC call for the week of Monday 2 November 2026
+
+You are taking part in a public experiment. Four AI models (ChatGPT, Claude, Gemini and Grok) get this same prompt, word for word. Each one calls the direction of Bitcoin for the coming week. The calls go into a public, append-only ledger before the week starts, and each call is checked after the week ends. This is a record of forecasts, not financial advice.
+
+THE QUESTION
+
+Will the Coinbase BTC-USD price at Friday 6 November 2026, 23:59:59 UTC be strictly higher than the price at Monday 2 November 2026, 00:00 UTC?
+
+- UP: the Friday price is strictly higher than the Monday price.
+- DOWN: anything else, an unchanged price included.
+
+There is no flat option. Pick one side.
+
+THE DATA
+
+Coinbase Exchange BTC-USD daily candles in US dollars, by UTC day, taken on 2026-11-01 at 15:00 UTC. The last row is today and is still open.
+
+Day (UTC)           Open      High       Low     Close
+Mon 2026-10-05    86,503    86,996    84,944    85,749
+Tue 2026-10-06    85,749    86,698    85,100    85,540
+Wed 2026-10-07    85,540    85,601    82,717    83,275
+Thu 2026-10-08    83,275    83,473    80,315    81,693
+Fri 2026-10-09    81,693    83,453    81,534    82,545
+Sat 2026-10-10    82,545    83,093    82,458    82,911
+Sun 2026-10-11    82,911    84,111    82,714    83,678
+Mon 2026-10-12    83,678    84,262    81,634    81,742
+Tue 2026-10-13    81,736    84,070    80,927    83,102
+Wed 2026-10-14    83,102    84,062    81,332    81,566
+Thu 2026-10-15    81,566    82,555    79,676    82,131
+Fri 2026-10-16    82,131    82,831    80,694    81,500
+Sat 2026-10-17    81,500    81,655    80,700    81,378
+Sun 2026-10-18    81,387    82,184    80,565    82,007
+Mon 2026-10-19    82,007    83,076    81,634    81,838
+Tue 2026-10-20    81,838    83,344    81,081    82,938
+Wed 2026-10-21    82,938    84,856    82,535    84,025
+Thu 2026-10-22    84,025    84,305    80,790    81,307
+Fri 2026-10-23    81,306    81,962    80,401    81,078
+Sat 2026-10-24    81,080    81,106    79,107    80,770
+Sun 2026-10-25    80,770    80,925    79,732    80,053
+Mon 2026-10-26    80,053    80,710    79,255    80,009
+Tue 2026-10-27    80,009    81,182    79,366    80,800
+Wed 2026-10-28    80,800    81,715    80,271    81,249
+Thu 2026-10-29    81,249    81,890    77,699    77,780
+Fri 2026-10-30    77,783    78,635    76,141    77,180
+Sat 2026-10-31    77,180    77,645    76,955    77,424
+Sun 2026-11-01    77,424    78,126    77,370    77,925   (to 15:00 UTC)
+
+Work from this data and from what you already know. Please do not search the web, so that all four models start from the same information. If something you know beyond this table affects your call, name it.
+
+YOUR ANSWER
+
+First, explain your reasoning in your own words, at whatever length you need.
+
+Then end your answer with this block, filled in:
+
+CALL: UP or DOWN
+CONFIDENCE: a whole number from 50 to 100, how likely you think it is that your call is right
+REASON: your main reason in five words or fewer
+FACTORS:
+- a factor in a few words | pulls UP or DOWN
+- a factor in a few words | pulls UP or DOWN
+- an optional third factor | pulls UP or DOWN
+
+Give the two or three factors that matter most to your call. They may pull either way.
+
+Rules for the whole answer:
+- Name a direction even if you are unsure. A low confidence is the way to show doubt.
+- Give no trading or investment advice. Do not use the words "buy", "sell", "should", "invest" or "guaranteed", or the phrases "will go up" and "will go down".

@@ -1,0 +1,33 @@
+{
+  "note": "Calls for the week of 2026-11-02 as logged in data/ledger.json (P0001, P0002, P0003, P0004). Names from data/answers/2026-11-02/models.json.",
+  "ideas": [
+    {
+      "model": "ChatGPT",
+      "name": "ChatGPT",
+      "call": "down",
+      "confidence": 62,
+      "reason": "Bearish momentum and ETF outflows outweigh the weekend recovery"
+    },
+    {
+      "model": "Claude",
+      "name": "Claude",
+      "call": "down",
+      "confidence": 54,
+      "reason": "Hawkish Fed, ETF outflows, weak momentum outweigh oversold bounce"
+    },
+    {
+      "model": "Gemini",
+      "name": "Gemini",
+      "call": "down",
+      "confidence": 58,
+      "reason": "Macro event risk and overhead technical resistance outweigh spot momentum"
+    },
+    {
+      "model": "Grok",
+      "name": "Grok Bot",
+      "call": "up",
+      "confidence": 52,
+      "reason": "Fearful, oversold market with easing Binance hack overhang"
+    }
+  ]
+}

@@ -42,7 +42,7 @@ function chartError(message: RegExp): { name: string; message: RegExp } {
 
 describe('isStoryKind', () => {
   test('knows the story charts and nothing else', () => {
-    for (const kind of ['stats', 'chains', 'timeline', 'split', 'analysts', 'wallets', 'market']) assert.ok(isStoryKind(kind), kind);
+    for (const kind of ['stats', 'chains', 'counts', 'dots', 'timeline', 'split', 'analysts', 'wallets', 'market']) assert.ok(isStoryKind(kind), kind);
     for (const kind of ['score', 'calls', 'Stats', '']) assert.ok(!isStoryKind(kind), kind);
   });
 });
@@ -76,6 +76,49 @@ describe('chains', () => {
   test('needs amounts that are numbers of zero or more', () => {
     assert.throws(() => story('chains Stolen\nEthereum | lots | ETH'), chartError(/amounts in millions of US dollars, got "lots"/));
     assert.throws(() => story('chains Stolen\nEthereum | -5 | ETH'), chartError(/got "-5"/));
+  });
+});
+
+describe('counts', () => {
+  test('draws each bar as long as its share of the largest, with the plain number beside it', () => {
+    const html = story('counts Sources named\nClaude | 14 | named <without> links\nGrok Bot | 5 | with links\nGemini | 0 | none listed\nnote: As each answer lists them.');
+
+    assert.match(html, /<figure class="chart counts">\s*<figcaption>Sources named<\/figcaption>/);
+    assert.match(rowOf(html, 'Claude'), /style="width: 100%".*<span class="chain-value">14<\/span><span class="chain-detail">named &lt;without&gt; links</);
+    assert.match(rowOf(html, 'Grok Bot'), /style="width: 35\.71%".*<span class="chain-value">5<\/span>/);
+    assert.match(rowOf(html, 'Gemini'), /style="width: 0%".*<span class="chain-value">0<\/span>/);
+    assert.match(html, /<p class="chart-note">As each answer lists them\.<\/p>/);
+  });
+
+  test('needs whole numbers of zero or more', () => {
+    assert.throws(() => story('counts Sources\nClaude | many | x'), chartError(/chart "counts" needs whole numbers of zero or more, got "many"/));
+    assert.throws(() => story('counts Sources\nClaude | 1.5 | x'), chartError(/got "1\.5"/));
+    assert.throws(() => story('counts Sources\nClaude | -1 | x'), chartError(/got "-1"/));
+  });
+});
+
+describe('dots', () => {
+  const PRICES = 'dots Price each AI found\nChatGPT | 77937.61 | $77,937.61 | 3:29 PM, <no> time zone\nClaude | 78050 | ≈$78,050 | ≈16:55 UTC\nGemini | 77994 | ≈$77,994 | ≈16:50 UTC';
+
+  test('places each dot between the lowest and the highest number and says the line does not start at zero', () => {
+    const html = story(PRICES);
+
+    assert.match(html, /<figure class="chart dots">\s*<figcaption>Price each AI found<\/figcaption>/);
+    assert.match(html, /<p class="chart-status">The line runs from the lowest to the highest, not from zero: \$77,937\.61 to ≈\$78,050<\/p>/);
+    assert.match(rowOf(html, 'ChatGPT'), /<span class="dots-mark" style="left: 0%"><\/span><\/span><span class="dots-value">\$77,937\.61<\/span><span class="dots-detail">3:29 PM, &lt;no&gt; time zone</);
+    assert.match(rowOf(html, 'Claude'), /style="left: 100%"/);
+    assert.match(rowOf(html, 'Gemini'), /style="left: 50\.17%"/);
+  });
+
+  test('puts every dot in the middle when the numbers are all the same', () => {
+    const html = story('dots Same\nOne | 5 | 5 | a\nTwo | 5 | 5 | b');
+
+    assert.match(rowOf(html, 'One'), /style="left: 50%"/);
+    assert.match(rowOf(html, 'Two'), /style="left: 50%"/);
+  });
+
+  test('needs a number in the second field', () => {
+    assert.throws(() => story('dots Prices\nClaude | about 78k | ≈$78,000 | x'), chartError(/chart "dots" needs a number in the second field of each row, got "about 78k"/));
   });
 });
 

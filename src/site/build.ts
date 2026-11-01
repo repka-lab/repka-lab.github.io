@@ -35,6 +35,10 @@ const ASSETS = [
   'img/binance-hack-launder.jpg',
   'img/binance-hack-video.jpg',
   'video/binance-hack.mp4',
+  'img/btc-calls-2026-11-02-video.jpg',
+  'img/btc-calls-2026-11-02-cards.jpg',
+  'img/btc-calls-2026-11-02-tally.jpg',
+  'video/btc-calls-2026-11-02.mp4',
 ] as const;
 const PROJECT_ROOT = resolve(import.meta.dirname, '../..');
 const PUBLIC_DIR = join(PROJECT_ROOT, 'docs');

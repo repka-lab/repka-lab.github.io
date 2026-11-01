@@ -21,8 +21,9 @@ const ledgerPath = join(work, 'ledger.json');
 const articlesDir = join(work, 'articles');
 writeFileSync(ledgerPath, `${JSON.stringify(sampleLedger(), null, 2)}\n`);
 mkdirSync(articlesDir);
-// Every chart kind, so the page checks below cover chart output too. The sample week starts on 2026-10-19.
-const CHARTS = ['flow', 'calls 2026-10-19', 'check 2026-10-19', 'score 2026-10-19'].map((spec) => `\`\`\`chart\n${spec}\n\`\`\``);
+// Every chart kind, so the page checks below cover chart output too. The sample calls are checked in the week
+// that starts on 2026-10-26.
+const CHARTS = ['flow', 'calls 2026-10-26', 'check 2026-10-26', 'score 2026-10-26'].map((spec) => `\`\`\`chart\n${spec}\n\`\`\``);
 writeFileSync(
   join(articlesDir, 'week-one.md'),
   article('Week <one>', 'published', ['See [the ledger](../ledger.html).', ...CHARTS].join('\n\n')),
@@ -64,6 +65,9 @@ describe('buildSite', () => {
       'img/binance-hack-setup.jpg',
       'img/binance-hack-video.jpg',
       'img/binance-hack-who.jpg',
+      'img/btc-calls-2026-11-02-cards.jpg',
+      'img/btc-calls-2026-11-02-tally.jpg',
+      'img/btc-calls-2026-11-02-video.jpg',
       'index.html',
       'ledger.html',
       'logos/LICENSE.txt',
@@ -74,6 +78,7 @@ describe('buildSite', () => {
       'news.html',
       'style.css',
       'video/binance-hack.mp4',
+      'video/btc-calls-2026-11-02.mp4',
     ]);
     assert.deepEqual(written, filesIn(out));
     assert.equal(readFileSync(join(out, 'data/ledger.json'), 'utf8'), readFileSync(ledgerPath, 'utf8'));

@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Binance hack episode preview</title>
+<style>
+  @font-face { font-family: 'Caveat Brush'; src: url('../assets/fonts/caveatbrush/CaveatBrush-Regular.ttf') format('truetype'); }
+  html, body { margin: 0; width: 1280px; height: 720px; overflow: hidden; background: #13233a; }
+  .layer { position: absolute; inset: 0; opacity: 0; }
+  .layer > svg { display: block; width: 1280px; height: 720px; }
+  #flash { background: #1e3352; }
+</style>
+</head>
+<body>
+<div class="layer" id="layer-monitor">
+<svg id="s3-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 3: the Binance hack on the monitor</title>
+  <!--
+    Episode scene 3 for the Binance hack story (assets/data/heist.json). The room and the screen are the
+    ones in monitor.svg, so the camera flies in from desk.svg the same way; only what is on the screen differs.
+    episode/heist-monitor.js fills the empty groups and plays five beats, one group each, cross-fading:
+      #beat-prep     how it started: four steps on a track, the way in, control, funding, the rehearsal
+      #beat-drain    10 hot-wallet safes go red while coins arc into the attacker's wallet; the counter runs up
+      #beat-who      who analysts link it to, under the flag, and what was taken, one bar per chain
+      #beat-launder  the laundering: the swap into ETH, the BTC peel chain, the fan-out to fresh addresses
+      #beat-after    the market after: BTC and BNB 4h candles around the hack, and Binance's statement
+    The clock in the header runs through the drain, then fades out.
+
+    RE-CHECK every figure and the withdrawal status before release.
+    The frozen sum is Binance's and the one out of reach is Elliptic's; together they make up the total.
+    Attribution is the analysts' (TRM Labs, Chainalysis, Elliptic); Binance hasn't named anyone.
+
+    Content stays in y 64-285, sources sit under the line at y 290.
+    Classes carry an hm- prefix, because the episode puts every scene in one document.
+  -->
+  <style>
+    .hm-head { fill: #eef2f6; font: 600 12px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 1.5px; }
+    .hm-clock { fill: #ff4655; font: 600 12px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
+    .hm-label { fill: #b9c6d8; font: 600 11px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 2px; }
+    .hm-muted { fill: #8193ad; font: 9.5px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-title { fill: #eef2f6; font: 700 20px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-value { fill: #eef2f6; font: 700 13px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .hm-what { fill: #b9c6d8; font: 600 11px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .hm-callout { fill: #eef2f6; font: 700 16px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-counter { fill: #ff4655; font: 700 46px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .hm-ice { fill: #8fd3ff; }
+    .hm-red { fill: #ff4655; }
+    .hm-line { stroke: #1b2c45; stroke-width: 1; }
+    .hm-route { fill: none; stroke: #2b4365; stroke-width: 1.5; stroke-dasharray: 3 4; }
+    .hm-chip { fill: #0f1d33; stroke: #4a6890; stroke-width: 1; }
+    .hm-card { fill: #0f1d33; stroke: #2b4365; stroke-width: 1; }
+    .hm-step { fill: #0a1526; stroke: #f0b90b; stroke-width: 1.5; }
+    .hm-step-num { fill: #f0b90b; font: 700 10px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-kick { fill: #f0b90b; font: 700 9.5px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 1.5px; }
+    .hm-card-text { fill: #eef2f6; font: 700 12px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-badge { fill: #fff; font: 800 10px Bahnschrift, 'Segoe UI', sans-serif; }
+    .hm-track { stroke: #1b2c45; stroke-width: 2; }
+    .hm-icon { fill: #13233a; stroke: #4a6890; stroke-width: 1.5; }
+    .hm-tick { fill: none; stroke: #26a69a; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .candle-up { --tone: #26a69a; }
+    .candle-down { --tone: #ef5350; }
+    .candle-body { fill: var(--tone); }
+    .candle-wick { stroke: var(--tone); stroke-width: 1; }
+  </style>
+  <defs>
+    <clipPath id="s3-screen-clip"><rect x="30" y="26" width="580" height="294" rx="4"/></clipPath>
+    <clipPath id="s3-wallet-clip"><rect x="470" y="100" width="100" height="60" rx="8"/></clipPath>
+  </defs>
+
+  <g id="s3-room">
+    <rect width="640" height="360" fill="#13233a"/>
+    <rect x="296" y="330" width="48" height="30" fill="#24395a"/>
+    <rect x="16" y="12" width="608" height="322" rx="14" fill="#24395a" stroke="#0d1828" stroke-width="4"/>
+  </g>
+  <rect id="s3-screen" x="30" y="26" width="580" height="294" rx="4" fill="#0a1526"/>
+
+  <g clip-path="url(#s3-screen-clip)">
+    <text class="hm-head" x="44" y="47">BINANCE HACK · OCT 29, 2026</text>
+    <g id="s3-clock" opacity="0">
+      <circle id="s3-clock-dot" cx="530" cy="43" r="3" fill="#ff4655"/>
+      <text id="s3-clock-time" class="hm-clock" x="596" y="47" text-anchor="end">20:05 UTC</text>
+    </g>
+    <line class="hm-line" x1="44" y1="58" x2="596" y2="58"/>
+    <line class="hm-line" x1="44" y1="290" x2="596" y2="290"/>
+
+    <g id="s3-beat-prep">
+      <text class="hm-label" x="50" y="84">HOW IT STARTED</text>
+      <line class="hm-track" x1="116" y1="104" x2="524" y2="104"/>
+      <line id="s3-prep-line" x1="116" y1="104" x2="116" y2="104" stroke="#f0b90b" stroke-width="2"/>
+
+      <g id="s3-prep-1">
+        <rect class="hm-card" x="51" y="120" width="130" height="124" rx="8"/>
+        <circle class="hm-step" cx="116" cy="104" r="9"/>
+        <text class="hm-step-num" x="116" y="108" text-anchor="middle">1</text>
+        <rect class="hm-icon" x="98" y="134" width="36" height="23" rx="2"/>
+        <path d="M103 141 H119 M103 146 H125 M103 151 H115" stroke="#8193ad" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M92 160 H140 L136 164 H96 Z" fill="#4a6890"/>
+        <circle id="s3-prep-halo" cx="134" cy="134" r="7" fill="#ff4655" opacity="0"/>
+        <g id="s3-prep-alert" opacity="0">
+          <circle cx="134" cy="134" r="7" fill="#ff4655"/>
+          <text class="hm-badge" x="134" y="137.5" text-anchor="middle">!</text>
+        </g>
+        <text class="hm-kick" x="116" y="186" text-anchor="middle">WAY IN</text>
+        <text class="hm-card-text" x="116" y="206" text-anchor="middle">Engineer's laptop</text>
+        <text class="hm-what" x="116" y="222" text-anchor="middle">compromised</text>
+      </g>
+
+      <g id="s3-prep-2">
+        <rect class="hm-card" x="187" y="120" width="130" height="124" rx="8"/>
+        <circle class="hm-step" cx="252" cy="104" r="9"/>
+        <text class="hm-step-num" x="252" y="108" text-anchor="middle">2</text>
+        <rect class="hm-icon" x="238" y="130" width="28" height="36" rx="2"/>
+        <path d="M243 138 H261 M243 144 H261 M243 150 H255" stroke="#8193ad" stroke-width="1.5" stroke-linecap="round"/>
+        <path id="s3-prep-sign" d="M242 159 q2.5 -6 5 0 t5 0 t5 0 t5 0" fill="none" stroke="#ff4655" stroke-width="1.6" stroke-linecap="round"/>
+        <text class="hm-kick" x="252" y="186" text-anchor="middle">CONTROL</text>
+        <text class="hm-card-text" x="252" y="206" text-anchor="middle">Hot-wallet signing</text>
+        <text class="hm-what" x="252" y="222" text-anchor="middle">system taken over</text>
+      </g>
+
+      <g id="s3-prep-3">
+        <rect class="hm-card" x="323" y="120" width="130" height="124" rx="8"/>
+        <circle class="hm-step" cx="388" cy="104" r="9"/>
+        <text class="hm-step-num" x="388" y="108" text-anchor="middle">3</text>
+        <path d="M379 126 H397 M382 130 H394 M385 134 H391" stroke="#8193ad" stroke-width="1.5" stroke-linecap="round"/>
+        <g id="s3-prep-coins"></g>
+        <path d="M374 154 V151 Q374 148 377 148 H399 Q402 148 402 151 V154" fill="#24101c" stroke="#ff4655" stroke-width="1.5"/>
+        <rect x="370" y="154" width="36" height="18" rx="4" fill="#1a1020" stroke="#ff4655" stroke-width="1.5"/>
+        <text class="hm-kick" x="388" y="186" text-anchor="middle">FUNDING</text>
+        <text class="hm-card-text" x="388" y="206" text-anchor="middle">Wallet funded via</text>
+        <text class="hm-what" x="388" y="222" text-anchor="middle">Tornado Cash · Oct 28</text>
+      </g>
+
+      <g id="s3-prep-4">
+        <rect class="hm-card" x="459" y="120" width="130" height="124" rx="8"/>
+        <circle class="hm-step" cx="524" cy="104" r="9"/>
+        <text class="hm-step-num" x="524" y="108" text-anchor="middle">4</text>
+        <rect x="491" y="150" width="18" height="13" rx="3" fill="#1a1020" stroke="#ff4655" stroke-width="1.2"/>
+        <rect x="515" y="150" width="18" height="13" rx="3" fill="#1a1020" stroke="#ff4655" stroke-width="1.2"/>
+        <rect x="539" y="150" width="18" height="13" rx="3" fill="#1a1020" stroke="#ff4655" stroke-width="1.2"/>
+        <g id="s3-prep-ticks">
+          <path class="hm-tick" d="M495 139 l3.5 3.5 l6.5 -7"/>
+          <path class="hm-tick" d="M519 139 l3.5 3.5 l6.5 -7"/>
+          <path class="hm-tick" d="M543 139 l3.5 3.5 l6.5 -7"/>
+        </g>
+        <text class="hm-kick" x="524" y="186" text-anchor="middle">REHEARSAL</text>
+        <text class="hm-card-text" x="524" y="206" text-anchor="middle">Attack code tested</text>
+        <text class="hm-what" x="524" y="222" text-anchor="middle">on 3 wallets · Oct 29</text>
+      </g>
+
+      <text id="s3-prep-callout" class="hm-callout" x="320" y="272" text-anchor="middle">36+ hours of setup, then the drain</text>
+      <text class="hm-muted" x="44" y="306">Sources: TRM Labs; Binance (preliminary findings)</text>
+    </g>
+
+    <g id="s3-beat-drain" opacity="0">
+      <text class="hm-label" x="50" y="84">BINANCE HOT WALLETS · 10 CHAINS</text>
+      <g id="s3-safes"></g>
+      <g id="s3-wallet">
+        <path d="M480 100 V91 Q480 86 485 86 H555 Q560 86 560 91 V100" fill="#24101c" stroke="#ff4655" stroke-width="1.5"/>
+        <rect x="470" y="100" width="100" height="60" rx="8" fill="#1a1020" stroke="#ff4655" stroke-width="1.5"/>
+        <rect id="s3-wallet-fill" x="470" y="160" width="100" height="0" fill="#f0b90b" opacity="0.35" clip-path="url(#s3-wallet-clip)"/>
+        <rect x="540" y="120" width="30" height="20" rx="4" fill="#2a1420" stroke="#ff4655" stroke-width="1.5"/>
+        <circle cx="552" cy="130" r="3" fill="#ff4655"/>
+        <text class="hm-label hm-red" x="520" y="176" text-anchor="middle">ATTACKER WALLETS</text>
+      </g>
+      <g id="s3-flying"></g>
+      <text class="hm-label" x="320" y="214" text-anchor="middle">LEFT BINANCE HOT WALLETS</text>
+      <text id="s3-counter" class="hm-counter" x="320" y="262" text-anchor="middle">$0.0B</text>
+      <text class="hm-muted" x="44" y="306">Sources: TRM Labs, Binance · times UTC</text>
+    </g>
+
+    <g id="s3-beat-who" opacity="0">
+      <text class="hm-label" x="50" y="84">ANALYSTS LINK IT TO</text>
+      <g id="s3-who-flag">
+        <rect x="50" y="94" width="96" height="48" fill="#024fa2"/>
+        <rect x="50" y="102" width="96" height="32" fill="#fff"/>
+        <rect x="50" y="103.5" width="96" height="29" fill="#ed1c27"/>
+        <circle cx="85" cy="118" r="10" fill="#fff"/>
+        <path d="M0 -9.5 L2.13 -2.94 L9.04 -2.94 L3.45 1.12 L5.58 7.69 L0 3.63 L-5.58 7.69 L-3.45 1.12 L-9.04 -2.94 L-2.13 -2.94 Z" transform="translate(85 118)" fill="#ed1c27"/>
+        <rect x="50" y="94" width="96" height="48" fill="none" stroke="#0d1828" stroke-width="1"/>
+      </g>
+      <text id="s3-who-name" class="hm-title" x="50" y="166">NORTH KOREA</text>
+      <text id="s3-who-group" class="hm-value" x="50" y="186">TraderTraitor (Lazarus Group)</text>
+      <text id="s3-who-trm" class="hm-muted" x="50" y="206">TRM Labs: “high confidence”</text>
+      <text id="s3-who-chain" class="hm-muted" x="50" y="219">Chainalysis agrees · Elliptic: “likely”</text>
+      <text id="s3-who-binance" class="hm-muted" x="50" y="232">Binance hasn't named anyone</text>
+      <text id="s3-who-bybit" class="hm-what" x="50" y="258">TRM: same group as Bybit 2025 ($1.5B)</text>
+
+      <text class="hm-label" x="290" y="84">WHAT WAS TAKEN · BY CHAIN</text>
+      <g id="s3-chains"></g>
+      <text id="s3-who-note" class="hm-muted" x="290" y="258">Incl. 18,270 BTC · 200k ETH · 2.5B USDT</text>
+      <text class="hm-muted" x="44" y="306">Sources: TRM Labs, Chainalysis, Elliptic</text>
+    </g>
+
+    <g id="s3-beat-launder" opacity="0">
+      <text class="hm-label" x="50" y="84">THEN THE LAUNDERING</text>
+
+      <g id="s3-launder-swap">
+        <rect x="50" y="105" width="62" height="22" rx="11" fill="#0f1d33" stroke="#26a17b" stroke-width="1.2"/>
+        <text class="hm-what" x="81" y="120" text-anchor="middle" fill="#26a17b" style="fill: #26a17b">USDT</text>
+        <path id="s3-swap-route" class="hm-route" d="M112 116 H166"/>
+        <rect x="166" y="105" width="62" height="22" rx="11" fill="#0f1d33" stroke="#627eea" stroke-width="1.2"/>
+        <text class="hm-what" x="197" y="120" text-anchor="middle" style="fill: #8fa2f0">ETH</text>
+        <g id="s3-swap-coins"></g>
+        <text class="hm-value" x="250" y="113">Stablecoins swapped for ETH</text>
+        <text class="hm-muted" x="250" y="128">≈325M USDT into ≈122k ETH, below market price</text>
+      </g>
+
+      <g id="s3-launder-peel">
+        <line class="hm-route" x1="66" y1="170" x2="226" y2="170"/>
+        <g id="s3-peel-nodes"></g>
+        <circle cx="66" cy="170" r="12" fill="#f7931a"/>
+        <text x="66" y="172.5" text-anchor="middle" style="fill: #3a2204; font: 800 7px Bahnschrift, 'Segoe UI', sans-serif">BTC</text>
+        <text class="hm-value" x="250" y="167">BTC split into 1,000 and 100 BTC pieces</text>
+        <text class="hm-muted" x="250" y="182">a “peel chain” through fresh addresses</text>
+      </g>
+
+      <g id="s3-launder-fan">
+        <g id="s3-fan-links"></g>
+        <circle cx="64" cy="224" r="5" fill="#ff4655"/>
+        <text class="hm-value" x="250" y="221">Thousands of scripted transfers</text>
+        <text class="hm-muted" x="250" y="236">to new addresses, Chainalysis says</text>
+      </g>
+
+      <text id="s3-launder-frozen" class="hm-value hm-ice" x="50" y="268">≈$3B frozen on-chain</text>
+      <text id="s3-launder-held" class="hm-value hm-red" x="320" y="268">≈$3.3B still out of reach</text>
+      <text class="hm-muted" x="44" y="306">Sources: Binance, Elliptic, TRM Labs, Chainalysis</text>
+    </g>
+
+    <g id="s3-beat-after" opacity="0">
+      <text class="hm-label" x="50" y="84">THE MARKET AFTER</text>
+
+      <g id="s3-chart-btc" class="hm-chart">
+        <text id="s3-btc-price" class="hm-title" x="60" y="106">BTC</text>
+        <text id="s3-btc-change" class="hm-what" x="60" y="122">4h chart pending</text>
+        <g id="s3-btc-pending">
+          <rect x="60" y="146" width="230" height="94" rx="4" fill="none" stroke="#2b4365" stroke-dasharray="3 4"/>
+          <text class="hm-muted" x="175" y="196" text-anchor="middle">data pending</text>
+        </g>
+        <g id="s3-btc-candles"></g>
+        <g id="s3-btc-hack-mark" opacity="0">
+          <line id="s3-btc-hack-line" y1="143" y2="246" stroke="#ff4655" stroke-width="1" stroke-dasharray="2 2"/>
+          <text id="s3-btc-hack-label" class="hm-muted hm-red" y="139" text-anchor="middle" style="font-size: 9px; font-weight: 700">HACK</text>
+        </g>
+        <text id="s3-btc-caption" class="hm-muted" x="60" y="258">Coinbase BTC-USD · 4h candles</text>
+      </g>
+
+      <g id="s3-chart-bnb" class="hm-chart">
+        <text id="s3-bnb-price" class="hm-title" x="350" y="106">BNB</text>
+        <text id="s3-bnb-change" class="hm-what" x="350" y="122">4h chart pending</text>
+        <g id="s3-bnb-pending">
+          <rect x="350" y="146" width="230" height="94" rx="4" fill="none" stroke="#2b4365" stroke-dasharray="3 4"/>
+          <text class="hm-muted" x="465" y="196" text-anchor="middle">data pending</text>
+        </g>
+        <g id="s3-bnb-candles"></g>
+        <g id="s3-bnb-hack-mark" opacity="0">
+          <line id="s3-bnb-hack-line" y1="143" y2="246" stroke="#ff4655" stroke-width="1" stroke-dasharray="2 2"/>
+          <text id="s3-bnb-hack-label" class="hm-muted hm-red" y="139" text-anchor="middle" style="font-size: 9px; font-weight: 700">HACK</text>
+        </g>
+        <text id="s3-bnb-caption" class="hm-muted" x="350" y="258">Binance BNB-USDT · 4h candles</text>
+      </g>
+
+      <g id="s3-after-status">
+        <g transform="translate(0 173)">
+          <path d="M57 92 L65 95 V101 C65 106 61.5 109.5 57 111 C52.5 109.5 49 106 49 101 V95 Z" fill="none" stroke="#26a69a" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M53.5 101 L56 103.5 L60.5 98.5" fill="none" stroke="#26a69a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <text class="hm-what" x="72" y="280">Binance says it “will cover all losses” · withdrawals were paused</text>
+      </g>
+      <text class="hm-muted" x="44" y="306">Sources: Binance, Coinbase · candles to Oct 31, 12:00 UTC</text>
+    </g>
+  </g>
+</svg>
+
+</div>
+<div class="layer" id="layer-hook">
+<svg id="s0-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 0: the Binance hack cold open</title>
+  <!--
+    Episode scene 0 for the Binance hack story (assets/data/heist.json): the date, BINANCE HACKED and
+    the stolen sum, for a feed that plays muted. episode/heist-hook.js animates it:
+      #big    the full sum from the first frame, under a short glitch burst; the resting frame stays calm
+      #glitch hidden at rest; the burst shows it and moves the tears and the scan lines each frame
+      #coins  steel coins streak right, out of frame: money leaving. Only the trails are red.
+      #net    faint chains on the edges; the dashed red links are the drained ones and flow
+    #who is centred by heist-hook.js once Bahnschrift is measured.
+
+    Classes carry an hh- prefix, because the episode puts every scene in one document.
+    The Binance mark is redrawn from its geometry and used only to name the subject of the story.
+  -->
+  <style>
+    .hh-date { fill: #b9c6d8; font: 600 13px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 6px; }
+    .hh-who { fill: #f5f7fa; font: 700 32px Bahnschrift, 'Segoe UI', sans-serif; font-variation-settings: 'wdth' 90, 'wght' 700; letter-spacing: 5px; }
+    .hh-pill { fill: #fff; font: 700 13px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 3px; }
+    .hh-big { font: 700 124px Bahnschrift, Impact, sans-serif; font-variation-settings: 'wdth' 78, 'wght' 700; letter-spacing: -2px; font-variant-numeric: tabular-nums; }
+    .hh-sub { fill: #fff; font: 700 17px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 5px; }
+    .hh-brand { fill: #8193ad; font: 600 10px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 2px; }
+    .hh-glyph { fill: #b9c6d8; font: 700 11px 'Segoe UI', sans-serif; }
+  </style>
+  <defs>
+    <radialGradient id="s0-bg" cx="50%" cy="50%" r="75%">
+      <stop offset="0" stop-color="#16284a"/><stop offset="0.45" stop-color="#0a1526"/><stop offset="1" stop-color="#03060c"/>
+    </radialGradient>
+    <pattern id="s0-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0H0V20" fill="none" stroke="#2b4365" stroke-width="0.5"/>
+    </pattern>
+    <radialGradient id="s0-fade" cx="50%" cy="50%" r="60%">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="s0-grid-mask"><rect width="640" height="360" fill="url(#s0-fade)"/></mask>
+    <pattern id="s0-scan" width="4" height="3" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1" fill="#000"/>
+    </pattern>
+    <filter id="s0-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.5 0"/>
+    </filter>
+    <filter id="s0-soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="40"/></filter>
+    <filter id="s0-edge"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="s0-blur1"><feGaussianBlur stdDeviation="1.2"/></filter>
+    <filter id="s0-glow" x="-20%" y="-40%" width="140%" height="180%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="b"/>
+      <feFlood flood-color="#ff1f35" flood-opacity="0.85"/><feComposite in2="b" operator="in" result="g"/>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="s0-num" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd0d0"/><stop offset="0.35" stop-color="#ff4655"/><stop offset="1" stop-color="#b80f22"/>
+    </linearGradient>
+    <linearGradient id="s0-trail" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff4655" stop-opacity="0"/><stop offset="1" stop-color="#ff4655" stop-opacity="0.7"/>
+    </linearGradient>
+    <radialGradient id="s0-vignette" cx="50%" cy="50%" r="72%">
+      <stop offset="0.6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.6"/>
+    </radialGradient>
+    <!-- Binance mark: centre and side diamonds, two chevrons -->
+    <path id="s0-bnb" d="M12 9.28 14.72 12 12 14.72 9.28 12Z M2.72 9.28 5.44 12 2.72 14.72 0 12Z M21.28 9.28 24 12 21.28 14.72 18.56 12Z M12 0 19.36 7.36 16.64 10.08 12 5.44 7.36 10.08 4.64 7.36Z M12 24 4.64 16.64 7.36 13.92 12 18.56 16.64 13.92 19.36 16.64Z"/>
+    <clipPath id="s0-slice"><rect x="0" y="188" width="640" height="10"/></clipPath>
+    <clipPath id="s0-tear-a"><rect id="s0-tear-a-rect" x="0" y="156" width="640" height="9"/></clipPath>
+    <clipPath id="s0-tear-b"><rect id="s0-tear-b-rect" x="0" y="214" width="640" height="6"/></clipPath>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#s0-bg)"/>
+  <rect width="640" height="360" fill="url(#s0-grid)" mask="url(#s0-grid-mask)" opacity="0.55"/>
+
+  <g id="s0-net" opacity="0.45" stroke-width="0.7">
+    <line x1="40" y1="80" x2="96" y2="130" stroke="#3987e5"/>
+    <line class="hh-drained" x1="96" y1="130" x2="58" y2="200" stroke="#ff4655" stroke-dasharray="2 2"/>
+    <line x1="58" y1="200" x2="120" y2="250" stroke="#3987e5"/>
+    <line class="hh-drained" x1="120" y1="250" x2="44" y2="300" stroke="#ff4655" stroke-dasharray="2 2"/>
+    <line x1="40" y1="80" x2="150" y2="66" stroke="#3987e5"/>
+    <line x1="96" y1="130" x2="150" y2="66" stroke="#3987e5"/>
+    <line x1="58" y1="200" x2="44" y2="300" stroke="#3987e5"/>
+    <line x1="540" y1="74" x2="596" y2="128" stroke="#3987e5"/>
+    <line class="hh-drained" x1="596" y1="128" x2="560" y2="220" stroke="#ff4655" stroke-dasharray="2 2"/>
+    <line x1="560" y1="220" x2="600" y2="290" stroke="#3987e5"/>
+    <line x1="600" y1="290" x2="500" y2="300" stroke="#3987e5"/>
+    <line x1="540" y1="74" x2="488" y2="120" stroke="#3987e5"/>
+    <line class="hh-drained" x1="488" y1="120" x2="596" y2="128" stroke="#ff4655" stroke-dasharray="2 2"/>
+    <line x1="560" y1="220" x2="500" y2="300" stroke="#3987e5"/>
+    <g fill="#0a1526" stroke="#3987e5" stroke-width="0.9">
+      <circle cx="40" cy="80" r="2.4"/><circle cx="96" cy="130" r="2.4"/><circle cx="58" cy="200" r="2.4"/>
+      <circle cx="120" cy="250" r="2.4"/><circle cx="44" cy="300" r="2.4"/><circle cx="150" cy="66" r="2.4"/>
+      <circle cx="540" cy="74" r="2.4"/><circle cx="596" cy="128" r="2.4"/><circle cx="560" cy="220" r="2.4"/>
+      <circle cx="600" cy="290" r="2.4"/><circle cx="500" cy="300" r="2.4"/><circle cx="488" cy="120" r="2.4"/>
+    </g>
+  </g>
+
+  <!-- Near coins run fast and sharp, far ones slow and soft. -->
+  <g id="s0-coins" text-anchor="middle">
+    <g class="hh-coin" opacity="0.85">
+      <rect x="-6" y="148.4" width="70" height="3.2" rx="1.6" fill="url(#s0-trail)"/>
+      <circle cx="72" cy="150" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="72" y="153.8">₿</text>
+    </g>
+    <g class="hh-coin hh-far" opacity="0.4" filter="url(#s0-blur1)">
+      <rect x="62" y="304.4" width="70" height="3.2" rx="1.6" fill="url(#s0-trail)"/>
+      <circle cx="140" cy="306" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="140" y="309.8">Ξ</text>
+    </g>
+    <g class="hh-coin hh-far" opacity="0.4" filter="url(#s0-blur1)">
+      <rect x="488" y="138.4" width="70" height="3.2" rx="1.6" fill="url(#s0-trail)"/>
+      <circle cx="566" cy="140" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="566" y="143.8">₮</text>
+    </g>
+    <g class="hh-coin" opacity="0.85">
+      <rect x="470" y="264.4" width="70" height="3.2" rx="1.6" fill="url(#s0-trail)"/>
+      <circle cx="548" cy="266" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="548" y="269.8">$</text>
+    </g>
+    <g class="hh-coin hh-far" opacity="0.4" filter="url(#s0-blur1)">
+      <rect x="528" y="320.4" width="70" height="3.2" rx="1.6" fill="url(#s0-trail)"/>
+      <circle cx="606" cy="322" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="606" y="325.8">₿</text>
+    </g>
+    <g class="hh-coin hh-far" opacity="0.4" filter="url(#s0-blur1)">
+      <rect x="18" y="38.4" width="70" height="3.2" rx="1.6" fill="url(#s0-trail)"/>
+      <circle cx="96" cy="40" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="96" y="43.8">Ξ</text>
+    </g>
+  </g>
+
+  <ellipse cx="320" cy="196" rx="200" ry="70" fill="#ff1f35" opacity="0.32" filter="url(#s0-soft)"/>
+  <!-- Alarm glow, even on all four edges -->
+  <rect width="640" height="360" fill="none" stroke="#ff1f35" stroke-width="40" opacity="0.3" filter="url(#s0-edge)"/>
+
+  <g text-anchor="middle">
+    <text class="hh-date" x="320" y="62">OCT 29, 2026</text>
+    <line x1="200" y1="57" x2="236" y2="57" stroke="#ff4655" stroke-width="1"/>
+    <line x1="404" y1="57" x2="440" y2="57" stroke="#ff4655" stroke-width="1"/>
+  </g>
+
+  <g id="s0-who">
+    <use id="s0-who-mark" href="#s0-bnb" fill="#f0b90b"/>
+    <text id="s0-who-word" class="hh-who" y="119">BINANCE</text>
+    <rect id="s0-who-pill" y="95.5" height="24" rx="4" fill="#e0182d"/>
+    <text id="s0-who-pill-text" class="hh-pill" y="112" text-anchor="middle">HACKED</text>
+  </g>
+
+  <g id="s0-big" class="hh-big" text-anchor="middle">
+    <text id="s0-ghost-cyan" x="317" y="236" fill="#00e5ff" opacity="0.45">−$6.3B</text>
+    <text id="s0-ghost-red" x="323" y="236" fill="#ff1f35" opacity="0.55">−$6.3B</text>
+    <text x="320" y="236" fill="url(#s0-num)" filter="url(#s0-glow)">−$6.3B</text>
+    <text x="328" y="236" fill="url(#s0-num)" clip-path="url(#s0-slice)">−$6.3B</text>
+    <g id="s0-glitch" display="none">
+      <text id="s0-tear-a-text" x="336" y="236" fill="url(#s0-num)" clip-path="url(#s0-tear-a)">−$6.3B</text>
+      <text id="s0-tear-b-text" x="306" y="236" fill="#ffe1e1" clip-path="url(#s0-tear-b)">−$6.3B</text>
+      <rect id="s0-scan-a" x="150" y="176" width="340" height="1.5" fill="#fff" opacity="0.55"/>
+      <rect id="s0-scan-b" x="210" y="229" width="230" height="1" fill="#00e5ff" opacity="0.6"/>
+    </g>
+  </g>
+  <text id="s0-sub" class="hh-sub" x="320" y="284" text-anchor="middle">LARGEST CRYPTO HACK EVER</text>
+  <text class="hh-brand" x="612" y="34" text-anchor="end">AI PREDICTION LAB</text>
+
+  <rect width="640" height="360" fill="url(#s0-vignette)"/>
+  <rect width="640" height="360" fill="url(#s0-scan)" opacity="0.22"/>
+  <rect width="640" height="360" filter="url(#s0-grain)" opacity="0.06"/>
+</svg>
+
+</div>
+<div class="layer" id="layer-question">
+<svg id="s5-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <style>
+    .q-ask { fill: #fff; font: 700 32px Bahnschrift, 'Segoe UI', sans-serif; paint-order: stroke; stroke: #0a1526; stroke-width: 5px; stroke-linejoin: round; }
+    .q-answer { font: 700 18px Bahnschrift, 'Segoe UI', sans-serif; paint-order: stroke; stroke: #0a1526; stroke-width: 4px; stroke-linejoin: round; }
+    .q-frozen { fill: #8fd3ff; }
+    .q-out { fill: #ff4655; }
+    .q-dot { fill: #b9c6d8; }
+  </style>
+  <rect x="20" y="10" width="600" height="82" rx="10" fill="#0a1526" stroke="#2a3d5c" stroke-width="1.5"/>
+  <g id="s5-words">
+    <text id="s5-ask" class="q-ask" x="320" y="46" text-anchor="middle">Where did $6.3B go?</text>
+    <text id="s5-answers" class="q-answer" x="320" y="74" text-anchor="middle"><tspan class="q-frozen">frozen?</tspan><tspan class="q-dot"> · </tspan><tspan class="q-out">still out there?</tspan></text>
+  </g>
+</svg>
+</div>
+<div class="layer" id="layer-end">
+<svg id="s4-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <style>
+    .end-kicker { fill: #f08a24; font: 700 12px 'Segoe UI', system-ui, sans-serif; letter-spacing: 2px; }
+    .end-ask { fill: #fff; font: 900 36px 'Segoe UI', system-ui, sans-serif; }
+    .end-reply { fill: #eef2f6; font: 700 20px 'Segoe UI', system-ui, sans-serif; }
+    .end-arrow { fill: none; stroke: #f08a24; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .end-lead { fill: #b9c6d8; font: 14px 'Segoe UI', system-ui, sans-serif; }
+    .end-ledger { fill: #8193ad; font: 12px 'Segoe UI', system-ui, sans-serif; }
+  </style>
+  <style>
+    .gp-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .gp-out { stroke: #0d1828; stroke-width: 2; stroke-linejoin: round; }
+    .gp-thin { stroke: #0d1828; stroke-width: 1.5; stroke-linejoin: round; }
+    .gp-edge { fill: #0d1828; stroke: #0d1828; stroke-width: 4; stroke-linejoin: round; }
+    .gp-sleeve-edge { stroke: #0d1828; stroke-width: 14; }
+    .gp-sleeve { stroke: #4a6c9e; stroke-width: 10.5; }
+    .gp-cuff { fill: none; stroke: #eef2f6; stroke-width: 10; }
+    .gp-trouser { fill: #34507c; }
+    .gp-sock { fill: #f08a24; }
+    .gp-suit { fill: #4a6c9e; }
+    .gp-suit-dark { fill: #3a5784; }
+    .gp-shirt { fill: #eef2f6; }
+    .gp-tie { fill: #f08a24; }
+    .gp-skin { fill: #f1c7a5; }
+    .gp-nose { fill: #eba889; }
+    .gp-crease { fill: none; stroke: #c98f70; stroke-width: 1.2; stroke-linecap: round; }
+    .gp-blush { fill: #f08f7e; opacity: 0.45; }
+    .gp-mouth { fill: #7a2e2e; }
+    .gp-hair { fill: #56606f; }
+    .gp-hair-light { fill: #aeb8c4; }
+    .gp-strand { stroke: #b4bec9; stroke-width: 1.4; }
+    .gp-brow { fill: #2a3442; }
+    .gp-shoe { fill: #6b3a1c; }
+  </style>
+  <rect width="640" height="360" fill="#13233a"/>
+  <rect y="312" width="640" height="48" fill="#0d1828"/>
+  <line x1="0" y1="312" x2="640" y2="312" stroke="#2b4365" stroke-width="3"/>
+  <line x1="200" y1="76" x2="232" y2="76" stroke="#f08a24" stroke-width="3" stroke-linecap="round"/>
+  <g id="s4-text">
+    <text id="s4-kicker" class="end-kicker" x="200" y="96">AI PREDICTION LAB</text>
+    <text id="s4-lead" class="end-lead" x="200" y="216">Sources for every figure on the site</text>
+    <text id="s4-ledger" class="end-ledger" x="200" y="238"></text>
+  </g>
+  <!-- The call to action pops in after the rest; the arrow points down at the reply button under the video. -->
+  <g id="s4-cta">
+    <text id="s4-ask" class="end-ask" x="200" y="142">Full story + wallets</text>
+    <text id="s4-reply" class="end-reply" x="200" y="178">repka-lab.github.io</text>
+    
+  </g>
+  <g id="s4-place">
+  <g id="s4-grandpa">
+    <g id="s4-leg-left">
+      <path class="gp-edge" d="M64.5 146 L79.5 146 L78.5 184 A6.5 6.5 0 0 1 65.5 184 Z"/>
+      <g id="s4-leg-left-shin">
+        <rect class="gp-sock gp-out" x="67.5" y="203" width="9" height="11"/>
+        <g id="s4-leg-left-foot">
+          <g id="s4-leg-left-shoe-front">
+            <path class="gp-shoe gp-out" d="M65.5 221.5 C62.3 221.5 61.2 219.3 61.8 217 C62.8 213.8 66.2 212 71 212 C75.5 212 78.6 213.4 79.3 216.2 C79.9 218.8 78.8 221.5 75.8 221.5 Z"/>
+            <ellipse cx="67.5" cy="215.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s4-leg-left-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M64 221.5 L64 215 Q64 212 67 212 L74 212 Q77.5 212 80 214.5 Q86 215.5 86 219 L86 221.5 Z"/>
+            <ellipse cx="81.5" cy="216.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M65.5 184 A6.5 6.5 0 0 1 78.5 184 L78.3 207 L65.7 207 Z"/>
+        <path class="gp-trouser" d="M65.5 184 A6.5 6.5 0 0 1 78.5 184 L78.3 207 L65.7 207 Z"/>
+      </g>
+      <path class="gp-trouser" d="M64.5 146 L79.5 146 L78.5 184 A6.5 6.5 0 0 1 65.5 184 Z"/>
+    </g>
+    <g id="s4-leg-right">
+      <path class="gp-edge" d="M80.5 146 L95.5 146 L94.5 184 A6.5 6.5 0 0 1 81.5 184 Z"/>
+      <g id="s4-leg-right-shin">
+        <rect class="gp-sock gp-out" x="83.5" y="203" width="9" height="11"/>
+        <g id="s4-leg-right-foot">
+          <g id="s4-leg-right-shoe-front">
+            <path class="gp-shoe gp-out" d="M94.5 221.5 C97.7 221.5 98.8 219.3 98.2 217 C97.2 213.8 93.8 212 89 212 C84.5 212 81.4 213.4 80.7 216.2 C80.1 218.8 81.2 221.5 84.2 221.5 Z"/>
+            <ellipse cx="92.5" cy="215.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s4-leg-right-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M80 221.5 L80 215 Q80 212 83 212 L90 212 Q93.5 212 96 214.5 Q102 215.5 102 219 L102 221.5 Z"/>
+            <ellipse cx="97.5" cy="216.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M81.5 184 A6.5 6.5 0 0 1 94.5 184 L94.3 207 L81.7 207 Z"/>
+        <path class="gp-trouser" d="M81.5 184 A6.5 6.5 0 0 1 94.5 184 L94.3 207 L81.7 207 Z"/>
+      </g>
+      <path class="gp-trouser" d="M80.5 146 L95.5 146 L94.5 184 A6.5 6.5 0 0 1 81.5 184 Z"/>
+    </g>
+
+    <g id="s4-torso">
+      <g id="s4-torso-front">
+        <path class="gp-suit gp-out" d="M53 100 A6 6 0 0 1 59 94 C69 93 91 93 101 94 A6 6 0 0 1 107 100 C107 115 106.5 135 106.5 154 C106.5 158 104.5 159.5 101 160.5 C92 162.5 68 162.5 59 160.5 C55.5 159.5 53.5 158 53.5 154 C53.5 135 53 115 53 100 Z"/>
+        <path class="gp-shirt" d="M69 95 L91 95 L80 121 Z"/>
+        <path class="gp-tie gp-out" d="M76.5 97 L83.5 97 L82 103 L78 103 Z M78 103 L82 103 L83.5 114 L80 118 L76.5 114 Z"/>
+        <path class="gp-suit-dark gp-out" d="M69 95 L60 105 L65.5 108.5 L62 112 L80 121 Z M91 95 L100 105 L94.5 108.5 L98 112 L80 121 Z"/>
+        <line class="gp-line" x1="80" y1="121" x2="80" y2="162" stroke="#0d1828" stroke-width="1.5"/>
+        <path class="gp-suit-dark gp-thin" d="M55 138 L68 138 L68 142 L55 142 Z M92 138 L105 138 L105 142 L92 142 Z"/>
+        <circle cx="80" cy="132" r="2.2" fill="#0d1828"/>
+        <circle cx="80" cy="144" r="2.2" fill="#0d1828"/>
+      </g>
+      <g id="s4-torso-side" display="none">
+        <path class="gp-suit gp-out" d="M65.5 97.5 C69 94 76 93.5 82 93.5 C88 93.5 93 94.5 95.5 97 C98 100 98.5 110 98.5 122 C98.5 133 99.5 141 97.5 147.5 C96.5 150 94 151 90 151.5 L74 154 C70 155 68 157.5 67.5 160.5 L63.5 160.5 C63 150 62.5 135 62.5 120 C62.5 108 63 101 65.5 97.5 Z"/>
+        <path class="gp-shirt gp-out" d="M64.6 93 C64.4 89.4 65.2 86.6 66.8 85 C69 84.4 71.6 84.8 73.6 85.8 L73.4 93 Z"/>
+        <path class="gp-suit-dark gp-out" d="M64.2 100.5 C63.4 95.5 63.6 91.2 65.4 88 C68.4 87 71.8 87.4 74.6 89 L75.6 96.5 Z"/>
+        <path class="gp-shirt" d="M89.5 95 C93 95.5 95.5 96.5 96.5 99 C97.6 104 98 111 98 121 L95 121 Z"/>
+        <path class="gp-tie gp-out" d="M94.5 103 L97.2 103 L98 116 L96.3 118.5 L95.2 116 Z"/>
+        <path class="gp-suit-dark gp-out" d="M89.5 95 L85.5 104 L88.5 106 L87 109 L95 121 Z"/>
+        <path class="gp-suit-dark gp-thin" d="M80 137.5 L93 137.5 L93 141.5 L80 141.5 Z"/>
+        <circle cx="96" cy="131" r="1.8" fill="#0d1828"/>
+        <circle cx="96" cy="142" r="1.8" fill="#0d1828"/>
+      </g>
+    </g>
+
+    <g id="s4-arm-right">
+      <line class="gp-line gp-sleeve-edge" x1="101" y1="100" x2="106" y2="129"/>
+      <g id="s4-arm-right-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="106" y1="129" x2="110.37" y2="146.99"/>
+        <line class="gp-line gp-sleeve" x1="106" y1="129" x2="110.37" y2="146.99"/>
+        <line class="gp-cuff" x1="109.895" y1="145.045" x2="110.845" y2="148.935"/>
+        <circle class="gp-skin gp-out" cx="112.13" cy="154.27" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="101" y1="100" x2="106" y2="129"/>
+    </g>
+    <g id="s4-arm-left">
+      <line class="gp-line gp-sleeve-edge" x1="59" y1="100" x2="54" y2="129"/>
+      <g id="s4-arm-left-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="54" y1="129" x2="49.63" y2="146.99"/>
+        <line class="gp-line gp-sleeve" x1="54" y1="129" x2="49.63" y2="146.99"/>
+        <line class="gp-cuff" x1="50.105" y1="145.045" x2="49.155" y2="148.935"/>
+        <g id="s4-chalk">
+          <line x1="47.29" y1="156.66" x2="44.89" y2="166.36" stroke="#0d1828" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="47.29" y1="156.66" x2="44.89" y2="166.36" stroke="#f4f1e8" stroke-width="3.5" stroke-linecap="round"/>
+        </g>
+        <circle class="gp-skin gp-out" cx="47.87" cy="154.27" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="59" y1="100" x2="54" y2="129"/>
+    </g>
+
+    <g id="s4-head">
+      <g transform="translate(0 6)">
+        <g id="s4-head-front">
+          <ellipse class="gp-skin gp-out" cx="61.2" cy="63" rx="4.4" ry="5.8"/>
+          <ellipse class="gp-skin gp-out" cx="98.8" cy="63" rx="4.4" ry="5.8"/>
+          <path class="gp-crease" d="M61.9 60 Q59.6 63 61.9 66 M98.1 60 Q100.4 63 98.1 66"/>
+          <path id="s4-face" class="gp-skin gp-out" d="M80 36.5 C91 36.5 98.5 44 98.5 56 C98.5 70 91 81 80 81 C69 81 61.5 70 61.5 56 C61.5 44 69 36.5 80 36.5 Z"/>
+          <path id="s4-hair" class="gp-hair gp-out" d="M60.6 57.5 C58.4 44 65.5 31 80.5 30.5 C95 30.3 102.6 42 99.4 57.5 C98.2 52.5 96.6 48.2 93.4 45.4 C87.5 46.6 80.5 45.4 75 42.4 C71 44.4 67 47.8 64 52.6 Z"/>
+          <path class="gp-line gp-strand" d="M70.5 36.5 Q78 34.8 86 36.8 M76.5 40.6 Q84.5 40.2 92.5 42.4 M66 41.5 Q68.4 39.4 71.5 39"/>
+          <path class="gp-line gp-strand" d="M61.8 55.4 Q61 50.6 63.6 47.4 M63.2 53.8 Q63.4 50.8 65.6 48.4"/>
+          <ellipse class="gp-blush" cx="65.8" cy="67.6" rx="3.6" ry="2.4"/>
+          <ellipse class="gp-blush" cx="94.2" cy="67.6" rx="3.6" ry="2.4"/>
+          <path id="s4-beard" class="gp-hair gp-out" d="M62.2 62 C62.8 68 65.2 71.5 69 72.5 L91 72.5 C94.8 71.5 97.2 68 97.8 62 C99 67.5 99 73.5 97.2 79.5 C94.8 88.5 88 97 80 99.5 C72 97 65.2 88.5 62.8 79.5 C61 73.5 61 67.5 62.2 62 Z"/>
+          <path class="gp-line gp-strand" d="M67.5 80 Q69.5 88.5 74 94 M92.5 80 Q90.5 88.5 86 94 M80 89 L80 95.5"/>
+          <g id="s4-glasses" class="gp-line" stroke="#1b2a40" stroke-width="2.2">
+            <circle cx="72" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+            <circle cx="88" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+            <line x1="78.8" y1="60" x2="81.2" y2="60"/>
+            <line x1="65.2" y1="59.3" x2="62.4" y2="57.8"/>
+            <line x1="94.8" y1="59.3" x2="97.6" y2="57.8"/>
+          </g>
+          <ellipse class="gp-nose gp-out" cx="80" cy="68" rx="5" ry="4.3"/>
+          <ellipse cx="78.3" cy="66.3" rx="1.5" ry="0.9" fill="#ffffff" opacity="0.45"/>
+          <path id="s4-mustache" class="gp-hair-light gp-out" d="M80 70.6 C76 68 70.5 68.2 67.8 71.2 C66.4 72.8 65.2 73.4 63.8 72.6 C64.2 75.4 66.8 77 70 76.6 C73.6 76.2 77 75.4 80 74.2 C83 75.4 86.4 76.2 90 76.6 C93.2 77 95.8 75.4 96.2 72.6 C94.8 73.4 93.6 72.8 92.2 71.2 C89.5 68.2 84 68 80 70.6 Z"/>
+          <path id="s4-mouth" class="gp-mouth gp-thin" d="M75 77.2 Q80 83 85 77.2 Q80 78.8 75 77.2 Z"/>
+          <g id="s4-eyes" fill="#0d1828">
+            <g id="s4-eye-left"><circle cx="72" cy="60.8" r="2.4"/><circle cx="72.9" cy="59.9" r="0.8" fill="#ffffff"/></g>
+            <g id="s4-eye-right"><circle cx="88" cy="60.8" r="2.4"/><circle cx="88.9" cy="59.9" r="0.8" fill="#ffffff"/></g>
+          </g>
+          <g id="s4-brows" class="gp-brow" stroke="#0d1828" stroke-width="1" stroke-linejoin="round">
+            <path id="s4-brow-left" d="M65.4 51.6 C66.8 48.6 71.4 47.6 76.6 49 L76.2 51.2 C72.2 50.2 68.6 50.6 65.4 51.6 Z"/>
+            <path id="s4-brow-right" d="M94.6 51.6 C93.2 48.6 88.6 47.6 83.4 49 L83.8 51.2 C87.8 50.2 91.4 50.6 94.6 51.6 Z"/>
+          </g>
+        </g>
+        <g id="s4-head-side" display="none">
+          <path id="s4-face-side" class="gp-skin gp-out" d="M83 36.5 C91.5 36.5 97 43 97 51.5 C97 54.5 95.8 56.8 96 59.5 L99.6 70 C100 76 99 81 96 83 L78 86 C72 85.5 67.5 82.5 64.5 78 C61.5 72 60.5 64 60.5 56 C60.5 44 70 36.5 83 36.5 Z"/>
+          <path id="s4-hair-side" class="gp-hair gp-out" d="M64.6 76 C60 70 58.6 60 59 52 C59.6 40 68 31.4 80 30.6 C88.5 30.2 95.4 33.8 98 40.4 C93.8 39 89.2 39.6 85.6 42.2 C81.5 45.2 78.6 50 77.4 55.8 C73.4 56.4 70 59.6 69.6 64.8 C69.4 69.4 68 73.6 64.6 76 Z"/>
+          <path class="gp-line gp-strand" d="M67.5 41.5 Q76 35 88 34.6 M63.6 50 Q68.5 43 78.5 40.2 M62.6 60 Q64 53.5 70.5 48.8"/>
+          <path class="gp-line gp-strand" d="M75.6 54.6 Q76.6 49.6 80.6 45.6 M73.4 55.6 Q74.2 51 77.4 47.6"/>
+          <ellipse class="gp-blush" cx="88.6" cy="66.8" rx="3.6" ry="2.4"/>
+          <path id="s4-beard-side" class="gp-hair gp-out" d="M77.6 57 C78 64 81 69.5 86.5 71.6 L97 72.4 C100.8 75 101.6 81 100.8 87 C100 94 96.8 99.4 90.4 100.8 C83 101 75.5 96.8 70.5 90.6 C67.6 86.6 67.4 78 68.6 71.4 C70.5 66.5 74 60.5 77.6 57 Z"/>
+          <path class="gp-line gp-strand" d="M75 80 Q77.5 88 82.5 94 M91 82 Q92.5 89 90 95"/>
+          <ellipse class="gp-skin gp-out" cx="73.5" cy="63" rx="4.2" ry="5.8"/>
+          <path class="gp-crease" d="M75 59.8 Q72.4 63 75 66.2"/>
+          <g id="s4-glasses-side" class="gp-line" stroke="#1b2a40" stroke-width="2.2">
+            <line x1="91" y1="58.6" x2="74.5" y2="57.4"/>
+            <ellipse cx="94.6" cy="60" rx="3.6" ry="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+          </g>
+          <ellipse class="gp-nose gp-out" cx="99.2" cy="65.8" rx="4.8" ry="4.3"/>
+          <ellipse cx="100.6" cy="64.2" rx="1.5" ry="0.9" fill="#ffffff" opacity="0.45"/>
+          <path id="s4-mustache-side" class="gp-hair-light gp-out" d="M88.5 70.6 C92 68.8 97.5 68.6 100.6 70.4 C102.4 71.4 103.4 73 103 75.2 C101.6 74 100.4 73.8 98.6 74.6 C95 76.2 91 76 88 74.2 C86.8 73.2 87 71.6 88.5 70.6 Z"/>
+          <path class="gp-mouth gp-thin" d="M96 77.8 Q98.8 80.6 100.6 77.6 Q98.2 78.8 96 77.8 Z"/>
+          <g id="s4-eye-side" fill="#0d1828"><circle cx="92.4" cy="60.8" r="2.3"/><circle cx="93.2" cy="59.9" r="0.8" fill="#ffffff"/></g>
+          <path id="s4-brows-side" class="gp-brow" stroke="#0d1828" stroke-width="1" stroke-linejoin="round" d="M87 51.4 C88.2 48.6 92.4 47.6 97 49.2 L96.4 51.3 C92.8 50.3 89.8 50.6 87 51.4 Z"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  </g>
+</svg>
+</div>
+<div class="layer" id="layer-subs">
+<svg id="s6-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <style>
+    .sub { opacity: 0; }
+    .sub-pill { fill: #0a1526; fill-opacity: 0.9; stroke: #2a3d5c; stroke-width: 1; }
+    .sub-text { fill: #fff; font: 700 17px Bahnschrift, 'Segoe UI', sans-serif; }
+  </style>
+  <g id="s6-sub-0" class="sub"><rect id="s6-sub-0-pill" class="sub-pill" x="20" y="325" width="600" height="28" rx="14"/><text id="s6-sub-0-text" class="sub-text" x="320" y="345" text-anchor="middle">$6.3 billion stolen from Binance.</text></g>
+  <g id="s6-sub-1" class="sub"><rect id="s6-sub-1-pill" class="sub-pill" x="20" y="325" width="600" height="28" rx="14"/><text id="s6-sub-1-text" class="sub-text" x="320" y="345" text-anchor="middle">It started with one engineer's laptop.</text></g>
+  <g id="s6-sub-2" class="sub"><rect id="s6-sub-2-pill" class="sub-pill" x="20" y="325" width="600" height="28" rx="14"/><text id="s6-sub-2-text" class="sub-text" x="320" y="345" text-anchor="middle">Binance hot wallets on ten chains were drained.</text></g>
+  <g id="s6-sub-3" class="sub"><rect id="s6-sub-3-pill" class="sub-pill" x="20" y="325" width="600" height="28" rx="14"/><text id="s6-sub-3-text" class="sub-text" x="320" y="345" text-anchor="middle">According to analysts: North Korea's Lazarus Group.</text></g>
+  <g id="s6-sub-4" class="sub"><rect id="s6-sub-4-pill" class="sub-pill" x="20" y="325" width="600" height="28" rx="14"/><text id="s6-sub-4-text" class="sub-text" x="320" y="345" text-anchor="middle">Binance hasn't named anyone.</text></g>
+  <g id="s6-sub-5" class="sub"><rect id="s6-sub-5-pill" class="sub-pill" x="20" y="325" width="600" height="28" rx="14"/><text id="s6-sub-5-text" class="sub-text" x="320" y="345" text-anchor="middle">About $3B frozen. The rest, still out there.</text></g>
+  <g id="s6-sub-6" class="sub"><rect id="s6-sub-6-pill" class="sub-pill" x="20" y="325" width="600" height="28" rx="14"/><text id="s6-sub-6-text" class="sub-text" x="320" y="345" text-anchor="middle">At the low: Bitcoin −5.7%, BNB −8.7%.</text></g>
+  <g id="s6-sub-7" class="sub" transform="translate(320 38) scale(1.3) translate(-320 -38)"><rect id="s6-sub-7-pill" class="sub-pill" x="20" y="24" width="600" height="28" rx="14"/><text id="s6-sub-7-text" class="sub-text" x="320" y="44" text-anchor="middle">Full story at the link. Follow for updates.</text></g>
+</svg>
+</div>
+<div class="layer" id="flash"></div>
+<script type="application/json" id="poses">{"board": {"x": 388.0, "y": 111.0, "scale": 1.0, "rotate": {"head": -6.0, "arm-left": 30.4, "arm-left-forearm": 108.0, "arm-right": -11.1, "arm-right-forearm": 62.9, "leg-left": 1.5, "leg-left-foot": -1.5, "leg-right": -1.5, "leg-right-foot": 1.5}, "translate": {"eyes": [-3.0, 0.0]}}, "desk": {"x": 176.0, "y": 125.0, "scale": 1.0, "rotate": {"head": 4.0, "arm-left": -29.0, "arm-left-forearm": -95.5, "arm-right": -33.5, "arm-right-forearm": -49.4, "leg-left": -90.0, "leg-left-shin": 90.0, "leg-right": -90.0, "leg-right-shin": 90.0}, "translate": {"eyes": [3.0, -1.0]}}}</script>
+<script type="application/json" id="btc">{"source": "Coinbase Exchange, BTC-USD daily candles, UTC", "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400", "fetchedAt": "2026-10-29T16:17:49.599Z", "candles": [{"day": "2026-09-14", "open": 76799.85, "high": 79591.17, "low": 76347.27, "close": 78175.01, "volume": 6547.43119962}, {"day": "2026-09-15", "open": 78175, "high": 78242.76, "low": 74887.5, "close": 75584.17, "volume": 10155.2013027}, {"day": "2026-09-16", "open": 75584.17, "high": 76499.99, "low": 74911.53, "close": 76144.99, "volume": 6945.70295886}, {"day": "2026-09-17", "open": 76144.99, "high": 77105.42, "low": 75921.88, "close": 76348.74, "volume": 5353.30278119}, {"day": "2026-09-18", "open": 76348.74, "high": 81388.47, "low": 76205.46, "close": 80875.04, "volume": 12360.2523087}, {"day": "2026-09-19", "open": 80875.04, "high": 81925, "low": 80822.48, "close": 81233.91, "volume": 3325.31440002}, {"day": "2026-09-20", "open": 81233.91, "high": 81472.04, "low": 80085, "close": 81159.64, "volume": 3612.2748174}, {"day": "2026-09-21", "open": 81160.33, "high": 87397, "low": 80837.42, "close": 86594.94, "volume": 14077.54012157}, {"day": "2026-09-22", "open": 86594.94, "high": 86734, "low": 85059.28, "close": 86198.05, "volume": 8943.87588877}, {"day": "2026-09-23", "open": 86198.05, "high": 87282.81, "low": 83513, "close": 84378.31, "volume": 7836.10064765}, {"day": "2026-09-24", "open": 84378.31, "high": 84929.78, "low": 82708.96, "close": 84385.46, "volume": 6839.37550902}, {"day": "2026-09-25", "open": 84385.47, "high": 85250, "low": 83091.19, "close": 84093.13, "volume": 7277.8815177}, {"day": "2026-09-26", "open": 84093.13, "high": 84470.44, "low": 83777.77, "close": 84416.65, "volume": 1990.34470923}, {"day": "2026-09-27", "open": 84416.64, "high": 85158.5, "low": 84113.56, "close": 84462.14, "volume": 2958.05456342}, {"day": "2026-09-28", "open": 84463.08, "high": 84992, "low": 82510.37, "close": 83456.74, "volume": 6680.12066817}, {"day": "2026-09-29", "open": 83456.74, "high": 84557.01, "low": 82736, "close": 83638.42, "volume": 4975.86563586}, {"day": "2026-09-30", "open": 83638.42, "high": 85613.72, "low": 82911.86, "close": 83556.14, "volume": 7049.23875006}, {"day": "2026-10-01", "open": 83556.14, "high": 85244, "low": 83107.03, "close": 84848.73, "volume": 6608.91869362}, {"day": "2026-10-02", "open": 84848.73, "high": 87249.05, "low": 83850.02, "close": 84504.88, "volume": 8762.22618618}, {"day": "2026-10-03", "open": 84504.88, "high": 85021.57, "low": 84425.07, "close": 84742.22, "volume": 1921.24898945}, {"day": "2026-10-04", "open": 84742.22, "high": 86792.81, "low": 84700.02, "close": 86507.11, "volume": 2622.78236607}, {"day": "2026-10-05", "open": 86502.65, "high": 86996, "low": 84944.2, "close": 85748.96, "volume": 5354.90806311}, {"day": "2026-10-06", "open": 85748.96, "high": 86698.35, "low": 85100.01, "close": 85539.77, "volume": 4698.57646281}, {"day": "2026-10-07", "open": 85539.77, "high": 85601.11, "low": 82717.3, "close": 83275.06, "volume": 7688.7646354}, {"day": "2026-10-08", "open": 83275.05, "high": 83473.42, "low": 80314.7, "close": 81692.79, "volume": 8586.66801134}, {"day": "2026-10-09", "open": 81692.79, "high": 83452.99, "low": 81534.02, "close": 82544.71, "volume": 4446.62213697}, {"day": "2026-10-10", "open": 82544.71, "high": 83093.39, "low": 82458.02, "close": 82910.8, "volume": 1612.8723611}, {"day": "2026-10-11", "open": 82910.8, "high": 84110.99, "low": 82714.25, "close": 83678.29, "volume": 2130.40222253}, {"day": "2026-10-12", "open": 83678.29, "high": 84261.99, "low": 81634.08, "close": 81742.5, "volume": 4726.89306846}, {"day": "2026-10-13", "open": 81735.6, "high": 84070.33, "low": 80927.48, "close": 83101.99, "volume": 5184.64684673}, {"day": "2026-10-14", "open": 83101.99, "high": 84062.11, "low": 81332.15, "close": 81566.29, "volume": 6527.90385989}, {"day": "2026-10-15", "open": 81566.28, "high": 82555.08, "low": 79676.02, "close": 82131.46, "volume": 7047.11193631}, {"day": "2026-10-16", "open": 82131.46, "high": 82831.01, "low": 80693.69, "close": 81500.04, "volume": 5082.36614966}, {"day": "2026-10-17", "open": 81500.04, "high": 81655.47, "low": 80700, "close": 81378.21, "volume": 1890.36284234}, {"day": "2026-10-18", "open": 81387.16, "high": 82183.56, "low": 80564.57, "close": 82006.85, "volume": 2937.79903063}, {"day": "2026-10-19", "open": 82006.85, "high": 83076.23, "low": 81634.43, "close": 81837.69, "volume": 4758.01891866}, {"day": "2026-10-20", "open": 81837.7, "high": 83344.25, "low": 81080.64, "close": 82938.26, "volume": 5237.79241647}, {"day": "2026-10-21", "open": 82938.26, "high": 84856.07, "low": 82535, "close": 84024.67, "volume": 7643.91983004}, {"day": "2026-10-22", "open": 84024.67, "high": 84305.25, "low": 80789.61, "close": 81307.16, "volume": 7277.26547644}, {"day": "2026-10-23", "open": 81305.9, "high": 81962, "low": 80401.34, "close": 81078.04, "volume": 4904.75790284}, {"day": "2026-10-24", "open": 81079.63, "high": 81106.03, "low": 79107, "close": 80769.67, "volume": 3705.20481407}, {"day": "2026-10-25", "open": 80769.67, "high": 80925, "low": 79732.29, "close": 80053.16, "volume": 2077.13196666}, {"day": "2026-10-26", "open": 80053.16, "high": 80710.04, "low": 79255, "close": 80008.79, "volume": 6746.31852811}, {"day": "2026-10-27", "open": 80008.79, "high": 81182, "low": 79365.93, "close": 80799.51, "volume": 4356.18246596}, {"day": "2026-10-28", "open": 80799.5, "high": 81715.01, "low": 80270.68, "close": 81249.31, "volume": 5146.98648948}]}</script>
+<script type="application/json" id="ideas">{"note": "Placeholder ideas written by hand to lay out the call-episode template. Not real calls from these models and not logged in data/ledger.json; a real episode uses the calls as logged there. A reason is at most five words.", "ideas": [{"model": "ChatGPT", "call": "up", "confidence": 60, "reason": "Two higher closes"}, {"model": "Claude", "call": "down", "confidence": 55, "reason": "Under 3-week average"}, {"model": "Gemini", "call": "up", "confidence": 65, "reason": "Above 7-day average"}, {"model": "Grok", "call": "down", "confidence": 58, "reason": "Below the Oct 21 close"}]}</script>
+<script type="application/json" id="story">{"title": "Binance hack episode preview", "html": "heist.html", "monitor": "monitor-heist.svg", "desk": false, "scripts": ["heist-hook.js", "heist-monitor.js", "subtitles.js"], "end": {"ask": "Full story + wallets", "reply": "repka-lab.github.io", "lead": "Sources for every figure on the site", "arrow": false}, "hook": "hook-heist.svg", "board": false, "question": {"ask": "Where did $6.3B go?", "frozen": "frozen?", "out": "still out there?"}, "subs": [{"from": 0, "voiceFrom": 8, "to": 109, "text": "$6.3 billion stolen from Binance.", "say": "Six point three billion dollars, stolen from Binance."}, {"from": 113, "to": 178, "text": "It started with one engineer's laptop."}, {"from": 184, "to": 284, "text": "Binance hot wallets on ten chains were drained."}, {"from": 306, "to": 409, "text": "According to analysts: North Korea's Lazarus Group.", "say": "According to analysts, North Korea's Lazarus Group."}, {"from": 410, "to": 470, "text": "Binance hasn't named anyone."}, {"from": 470, "voiceFrom": 476, "to": 587, "text": "About $3B frozen. The rest, still out there.", "say": "About three billion frozen. The rest... still out there."}, {"from": 593, "to": 760, "text": "At the low: Bitcoin \u22125.7%, BNB \u22128.7%.", "say": "At the low, Bitcoin was down five point seven percent and BNB down eight point seven."}, {"from": 768, "to": 861, "y": 24, "scale": 1.3, "text": "Full story at the link. Follow for updates."}], "music": {"bpm": 100, "busy": ["drain", "launder"], "hits": [18], "chords": {"hook": "Dm", "prep": "Dm", "drain": "Bb", "who": "Gm", "launder": "A", "after": "Dm", "end": "F"}}, "hookFrames": 45, "monitorFrames": 745, "beats": [{"id": "prep", "start": 0}, {"id": "drain", "start": 149}, {"id": "who", "start": 271}, {"id": "launder", "start": 441}, {"id": "after", "start": 558}], "stolenB": 6.3, "chains": [{"label": "Ethereum", "usdM": 3790}, {"label": "Bitcoin", "usdM": 1470}, {"label": "Tron", "usdM": 628}, {"label": "XRP", "usdM": 296}, {"label": "Solana", "usdM": 96}, {"label": "5 others", "usdM": 77}], "charts": [{"id": "btc", "label": "BTC", "file": "../../../data/btc-usd-4h.json", "last": 18, "caption": "Coinbase BTC-USD \u00b7 4h candles"}, {"id": "bnb", "label": "BNB", "file": "../../../data/bnb-usdt-4h.json", "last": 18, "caption": "Binance BNB-USDT \u00b7 4h candles"}], "hackCandle": "2026-10-29T20:00:00.000Z", "sources": ["https://www.trmlabs.com/resources/blog/north-korea-steals-usd-6-36-billion-from-binance-in-the-largest-hack-in-history", "https://www.chainalysis.com/blog/binance-exploit-latest-findings-and-response/", "https://www.binance.com/en/support/announcement/detail/c5a8729a97ac486d963784d96c5642d7", "https://www.elliptic.co/insights/binance-largest-hack-in-history/", "https://www.cnbc.com/2026/10/29/circle-tether-freeze-funds-impacted-by-potential-binance-security-issue.html", "https://thehackernews.com/2026/10/binance-suffers-security-breach.html", "https://www.cnbc.com/2026/10/30/bitcoin-ether-price-binance-security-scare-rattles-crypto-markets.html", "https://www.theblock.co/news/markets/2026-10-29-bitcoin-slides-below-77000-binance-hack-432183", "https://api.binance.com/api/v3/klines?symbol=BNBUSDT&interval=4h", "https://api.exchange.coinbase.com/products/BTC-USD/candles"]}</script>
+<script type="application/json" id="candles-btc">[{"time": "2026-10-28T12:00:00.000Z", "open": 81215.3, "high": 81225.03, "low": 80270.68, "close": 80434.8}, {"time": "2026-10-28T16:00:00.000Z", "open": 80434.8, "high": 81539.42, "low": 80277.19, "close": 81502.09}, {"time": "2026-10-28T20:00:00.000Z", "open": 81502.09, "high": 81715.01, "low": 80898.98, "close": 81249.31}, {"time": "2026-10-29T00:00:00.000Z", "open": 81249.32, "high": 81289.72, "low": 79586.17, "close": 79739.07}, {"time": "2026-10-29T04:00:00.000Z", "open": 79736.42, "high": 80411.68, "low": 79662, "close": 79737.31}, {"time": "2026-10-29T08:00:00.000Z", "open": 79737.3, "high": 80272.19, "low": 79728.18, "close": 80057.41}, {"time": "2026-10-29T12:00:00.000Z", "open": 80057.41, "high": 81824.09, "low": 79772.04, "close": 81698.54}, {"time": "2026-10-29T16:00:00.000Z", "open": 81698.55, "high": 81890, "low": 80491.77, "close": 80743.29}, {"time": "2026-10-29T20:00:00.000Z", "open": 80743.29, "high": 80757.74, "low": 77699, "close": 77780.33}, {"time": "2026-10-30T00:00:00.000Z", "open": 77782.75, "high": 78083.81, "low": 76301.02, "close": 78016.94}, {"time": "2026-10-30T04:00:00.000Z", "open": 78016.95, "high": 78634.8, "low": 77709.75, "close": 78017.76}, {"time": "2026-10-30T08:00:00.000Z", "open": 78017.76, "high": 78091.63, "low": 77087.53, "close": 77241.91}, {"time": "2026-10-30T12:00:00.000Z", "open": 77241.91, "high": 77957.75, "low": 76409, "close": 77459.46}, {"time": "2026-10-30T16:00:00.000Z", "open": 77459.47, "high": 77574.61, "low": 76141.02, "close": 76715.4}, {"time": "2026-10-30T20:00:00.000Z", "open": 76732.97, "high": 77216.41, "low": 76438.06, "close": 77180.42}, {"time": "2026-10-31T00:00:00.000Z", "open": 77180.42, "high": 77488.58, "low": 76969.01, "close": 77011.23}, {"time": "2026-10-31T04:00:00.000Z", "open": 77011.23, "high": 77355.84, "low": 76954.57, "close": 77205.83}, {"time": "2026-10-31T08:00:00.000Z", "open": 77205.83, "high": 77537.73, "low": 77103.5, "close": 77465}]</script>
+<script type="application/json" id="candles-bnb">[{"time": "2026-10-28T12:00:00.000Z", "open": 760.86, "high": 761.42, "low": 747, "close": 749.76}, {"time": "2026-10-28T16:00:00.000Z", "open": 749.77, "high": 755.19, "low": 746.67, "close": 755.18}, {"time": "2026-10-28T20:00:00.000Z", "open": 755.18, "high": 760, "low": 751.88, "close": 759.85}, {"time": "2026-10-29T00:00:00.000Z", "open": 759.85, "high": 761, "low": 744.35, "close": 746.94}, {"time": "2026-10-29T04:00:00.000Z", "open": 746.94, "high": 759.38, "low": 745.45, "close": 748.47}, {"time": "2026-10-29T08:00:00.000Z", "open": 748.47, "high": 753.95, "low": 738.3, "close": 739.84}, {"time": "2026-10-29T12:00:00.000Z", "open": 739.85, "high": 753, "low": 739.04, "close": 750.12}, {"time": "2026-10-29T16:00:00.000Z", "open": 750.12, "high": 754.29, "low": 742.62, "close": 744.89}, {"time": "2026-10-29T20:00:00.000Z", "open": 744.9, "high": 745.04, "low": 680, "close": 698.46}, {"time": "2026-10-30T00:00:00.000Z", "open": 698.47, "high": 720, "low": 682.16, "close": 719.9}, {"time": "2026-10-30T04:00:00.000Z", "open": 719.9, "high": 722.08, "low": 706, "close": 708.09}, {"time": "2026-10-30T08:00:00.000Z", "open": 708.06, "high": 708.79, "low": 699.31, "close": 700.11}, {"time": "2026-10-30T12:00:00.000Z", "open": 700.11, "high": 705.98, "low": 694, "close": 700.23}, {"time": "2026-10-30T16:00:00.000Z", "open": 700.23, "high": 703.32, "low": 696, "close": 700.71}, {"time": "2026-10-30T20:00:00.000Z", "open": 700.71, "high": 705, "low": 696.33, "close": 704.42}, {"time": "2026-10-31T00:00:00.000Z", "open": 704.41, "high": 710.83, "low": 703.42, "close": 704.45}, {"time": "2026-10-31T04:00:00.000Z", "open": 704.46, "high": 705.31, "low": 699.89, "close": 700.16}, {"time": "2026-10-31T08:00:00.000Z", "open": 700.17, "high": 706.32, "low": 698.79, "close": 705.34}]</script>
+<script src="rig.js"></script>
+<script src="episode.js"></script>
+<script src="heist-hook.js"></script>
+<script src="heist-monitor.js"></script>
+<script src="subtitles.js"></script>
+</body>
+</html>

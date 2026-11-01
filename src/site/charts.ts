@@ -189,9 +189,9 @@ function percent(rate: number): number {
   return Math.round(rate * 100);
 }
 
-// The ledger as it stood for the calls recorded before a time: those calls and their checks.
+// The ledger as it stood for the calls due for checking before a time: those calls and their checks.
 function ledgerBefore(ledger: Ledger, time: number): Ledger {
-  const predictions = ledger.predictions.filter((p) => Date.parse(p.date) < time);
+  const predictions = ledger.predictions.filter((p) => Date.parse(p.verify_date) < time);
   const ids = new Set(predictions.map((p) => p.id));
   const verifications = ledger.verifications.filter((v) => ids.has(v.prediction_id));
   return { ...ledger, predictions, verifications };
@@ -423,12 +423,13 @@ function readNothing(kind: string, args: readonly string[]): void {
   if (args.length > 0) throw new ChartError(`chart "${kind}" takes nothing after it`);
 }
 
-// The calls recorded from Monday 00:00 UTC up to the next Monday.
+// The calls checked from Monday 00:00 UTC up to the next Monday. They are logged before the week opens,
+// so the check date, not the day they were logged, says which week they are about.
 function readWeek(kind: string, args: readonly string[], ledger: Ledger): Week {
   const monday = readMonday(kind, args);
   const start = monday.getTime();
   const calls = ledger.predictions
-    .filter((p) => Date.parse(p.date) >= start && Date.parse(p.date) < start + WEEK_MS)
+    .filter((p) => Date.parse(p.verify_date) >= start && Date.parse(p.verify_date) < start + WEEK_MS)
     .toSorted((a, b) => MODELS.indexOf(a.model) - MODELS.indexOf(b.model));
   const day = args[0] ?? '';
   if (calls.length === 0) throw new ChartError(`no calls recorded in the week of ${day}`);

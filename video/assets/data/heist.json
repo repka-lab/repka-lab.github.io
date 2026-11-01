@@ -1,0 +1,67 @@
+{
+  "title": "Binance hack episode preview",
+  "html": "heist.html",
+  "hook": "hook-heist.svg",
+  "monitor": "monitor-heist.svg",
+  "scripts": ["heist-hook.js", "heist-monitor.js", "subtitles.js"],
+  "board": false,
+  "desk": false,
+  "question": { "ask": "Where did $6.3B go?", "frozen": "frozen?", "out": "still out there?" },
+  "subs": [
+    { "from": 0, "voiceFrom": 8, "to": 109, "text": "$6.3 billion stolen from Binance.", "say": "Six point three billion dollars, stolen from Binance." },
+    { "from": 113, "to": 178, "text": "It started with one engineer's laptop." },
+    { "from": 184, "to": 284, "text": "Binance hot wallets on ten chains were drained." },
+    { "from": 306, "to": 409, "text": "According to analysts: North Korea's Lazarus Group.", "say": "According to analysts, North Korea's Lazarus Group." },
+    { "from": 410, "to": 470, "text": "Binance hasn't named anyone." },
+    { "from": 470, "voiceFrom": 476, "to": 587, "text": "About $3B frozen. The rest, still out there.", "say": "About three billion frozen. The rest... still out there." },
+    { "from": 593, "to": 760, "text": "At the low: Bitcoin −5.7%, BNB −8.7%.", "say": "At the low, Bitcoin was down five point seven percent and BNB down eight point seven." },
+    { "from": 768, "to": 861, "y": 24, "scale": 1.3, "text":"Full story at the link. Follow for updates." }
+  ],
+  "music": {
+    "bpm": 100,
+    "busy": ["drain", "launder"],
+    "hits": [18],
+    "chords": { "hook": "Dm", "prep": "Dm", "drain": "Bb", "who": "Gm", "launder": "A", "after": "Dm", "end": "F" }
+  },
+  "hookFrames": 45,
+  "monitorFrames": 745,
+  "beats": [
+    { "id": "prep", "start": 0 },
+    { "id": "drain", "start": 149 },
+    { "id": "who", "start": 271 },
+    { "id": "launder", "start": 441 },
+    { "id": "after", "start": 558 }
+  ],
+  "stolenB": 6.3,
+  "chains": [
+    { "label": "Ethereum", "usdM": 3790 },
+    { "label": "Bitcoin", "usdM": 1470 },
+    { "label": "Tron", "usdM": 628 },
+    { "label": "XRP", "usdM": 296 },
+    { "label": "Solana", "usdM": 96 },
+    { "label": "5 others", "usdM": 77 }
+  ],
+  "charts": [
+    { "id": "btc", "label": "BTC", "file": "../../../data/btc-usd-4h.json", "last": 18, "caption": "Coinbase BTC-USD · 4h candles" },
+    { "id": "bnb", "label": "BNB", "file": "../../../data/bnb-usdt-4h.json", "last": 18, "caption": "Binance BNB-USDT · 4h candles" }
+  ],
+  "hackCandle": "2026-10-29T20:00:00.000Z",
+  "end": {
+    "ask": "Full story + wallets",
+    "reply": "repka-lab.github.io",
+    "lead": "Sources for every figure on the site",
+    "arrow": false
+  },
+  "sources": [
+    "https://www.trmlabs.com/resources/blog/north-korea-steals-usd-6-36-billion-from-binance-in-the-largest-hack-in-history",
+    "https://www.chainalysis.com/blog/binance-exploit-latest-findings-and-response/",
+    "https://www.binance.com/en/support/announcement/detail/c5a8729a97ac486d963784d96c5642d7",
+    "https://www.elliptic.co/insights/binance-largest-hack-in-history/",
+    "https://www.cnbc.com/2026/10/29/circle-tether-freeze-funds-impacted-by-potential-binance-security-issue.html",
+    "https://thehackernews.com/2026/10/binance-suffers-security-breach.html",
+    "https://www.cnbc.com/2026/10/30/bitcoin-ether-price-binance-security-scare-rattles-crypto-markets.html",
+    "https://www.theblock.co/news/markets/2026-10-29-bitcoin-slides-below-77000-binance-hack-432183",
+    "https://api.binance.com/api/v3/klines?symbol=BNBUSDT&interval=4h",
+    "https://api.exchange.coinbase.com/products/BTC-USD/candles"
+  ]
+}

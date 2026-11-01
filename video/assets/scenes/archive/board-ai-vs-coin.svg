@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 1: the chalkboard</title>
+  <!--
+    Episode scene 1: Grandpa explains the method on the board.
+    In Remotion every stroke in #chalk-drawing is revealed with stroke-dashoffset, in document order.
+    Pointer mode: if any child carries data-point="x y", the board is written from the first frame and
+    grandpa taps each data-point with a pointer, in document order. He stands at the slot without a step,
+    shoulder at (447 211), and the tip is comfortable 135-157 px from it: so each data-point sits just right
+    of the end of its line, at x 290-310, and the stick runs off to the right over empty board.
+    The coin sits by "vs", centred on the two rows of names, so its tip at x 292 is near the far end of that reach.
+    Before and after, the arm hangs loose and the pointer slants down to the floor, tip near (354 341).
+    The previous chalk content (GOLD and the method) is in archive/board-gold.svg, the Ink Free lettering
+    in archive/board-inkfree.svg.
+
+    Lettering: Caveat Brush, which build_episode.py loads as a web font (Ink Free is only the fallback).
+    The chalk-rough filter wobbles the edges and bites dry grain out of #chalk-drawing, so it reads as chalk.
+    The title's caps start at y ~146, clear of the frame's inner edge at y 140.
+
+    Character slot: translate(388 111) scale(1), standing at the right edge of the board, chalk on the Grok arrow.
+    At this scale the chalk reaches no higher than y ~152, so the board starts at y 136 and no stroke starts above y 156.
+      head rotate(-6 80 80)          eyes translate(-3 0)
+      arm-left rotate(30.4 59 100)    arm-left-forearm rotate(108 54 129)
+      arm-right rotate(-11.1 101 100) arm-right-forearm rotate(62.9 106 129)
+      leg-left rotate(1.5 72 152)    leg-left-foot rotate(-1.5 72 214)
+      leg-right rotate(-1.5 88 152)  leg-right-foot rotate(1.5 88 214)
+      front shoes shown, side shoes hidden; the soles land at y 332.5, just in front of the floor line.
+
+    Wall decor keeps clear of the figure: a calendar and a clock above the board (the head never
+    rises above y 141), and a tall bookcase on the right wall, past x 527, with a plant on top.
+    It is static; only #chalk-drawing is animated.
+
+    Palette: navy room, green board, orange wood. Classes carry a b- prefix, because the
+    episode puts every scene in one document; "dash" stays bare, episode.js looks it up.
+  -->
+  <style>
+    .b-board { fill: #1e4a3c; stroke: #b8642a; stroke-width: 8; }
+    .b-wood { fill: #b8642a; }
+    .b-chalk { fill: none; stroke: #f4f1e8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .b-chalk.dash { stroke-dasharray: 2 8; }
+    .b-chalk-text { fill: #f4f1e8; font: 22px 'Caveat Brush', 'Ink Free', 'Comic Sans MS', cursive; }
+    .b-out { stroke: #0d1828; stroke-width: 2; stroke-linejoin: round; }
+    .b-wood-dark { fill: #8a4a1f; }
+    .b-paper { fill: #f4f1e8; }
+    .b-ink { fill: none; stroke: #0d1828; stroke-width: 2; stroke-linecap: round; }
+    .b-day { fill: #8fa3bf; }
+  </style>
+
+  <rect width="640" height="360" fill="#13233a"/>
+  <rect y="330" width="640" height="30" fill="#0d1828"/>
+  <line x1="0" y1="330" x2="640" y2="330" stroke="#2b4365" stroke-width="3"/>
+
+  <g id="calendar">
+    <rect class="b-paper b-out" x="62" y="46" width="56" height="62" rx="2"/>
+    <rect x="63" y="47" width="54" height="13" fill="#f08a24"/>
+    <line class="b-ink" x1="76" y1="42" x2="76" y2="50"/>
+    <line class="b-ink" x1="104" y1="42" x2="104" y2="50"/>
+    <g class="b-day">
+      <rect x="68" y="66" width="5" height="5"/><rect x="76" y="66" width="5" height="5"/><rect x="84" y="66" width="5" height="5"/><rect x="92" y="66" width="5" height="5"/><rect x="100" y="66" width="5" height="5"/><rect x="108" y="66" width="5" height="5"/>
+      <rect x="68" y="75" width="5" height="5"/><rect x="76" y="75" width="5" height="5"/><rect x="84" y="75" width="5" height="5"/><rect x="92" y="75" width="5" height="5"/><rect x="100" y="75" width="5" height="5"/><rect x="108" y="75" width="5" height="5"/>
+      <rect x="68" y="84" width="5" height="5"/><rect x="76" y="84" width="5" height="5"/><rect x="84" y="84" width="5" height="5"/><rect x="92" y="84" width="5" height="5"/><rect x="100" y="84" width="5" height="5"/><rect x="108" y="84" width="5" height="5"/>
+      <rect x="68" y="93" width="5" height="5"/><rect x="76" y="93" width="5" height="5"/><rect x="84" y="93" width="5" height="5"/><rect x="92" y="93" width="5" height="5"/>
+    </g>
+    <circle cx="94.5" cy="86.5" r="6" fill="none" stroke="#f08a24" stroke-width="2"/>
+  </g>
+
+  <g id="clock">
+    <circle class="b-paper" cx="250" cy="72" r="26" stroke="#f08a24" stroke-width="5"/>
+    <circle cx="250" cy="72" r="28.5" fill="none" stroke="#0d1828" stroke-width="2"/>
+    <path class="b-ink" d="M250 51 L250 55 M271 72 L267 72 M250 93 L250 89 M229 72 L233 72"/>
+    <path class="b-ink" d="M250 72 L250 58 M250 72 L260 78" stroke-width="2.5"/>
+    <circle cx="250" cy="72" r="2.5" fill="#f08a24"/>
+  </g>
+
+  <g id="bookcase">
+    <rect class="b-wood b-out" x="532" y="96" width="92" height="234"/>
+    <rect class="b-wood-dark" x="538" y="99" width="80" height="221"/>
+    <rect class="b-wood" x="538" y="152" width="80" height="5"/>
+    <rect class="b-wood" x="538" y="208" width="80" height="5"/>
+    <rect class="b-wood" x="538" y="264" width="80" height="5"/>
+    <rect class="b-wood b-out" x="527" y="90" width="102" height="8" rx="2"/>
+    <g class="b-out">
+      <rect x="542" y="112" width="8" height="40" fill="#1f7a5c"/>
+      <rect x="551" y="118" width="7" height="34" fill="#f08a24"/>
+      <rect x="559" y="110" width="9" height="42" fill="#3987e5"/>
+      <rect x="569" y="116" width="6" height="36" fill="#f4f1e8"/>
+      <path d="M579 152 L587 117 L594 119 L586 152 Z" fill="#2b4365"/>
+      <rect x="596" y="145" width="20" height="7" fill="#f08a24"/>
+      <rect x="598" y="138" width="17" height="7" fill="#f4f1e8"/>
+
+      <rect x="541" y="201" width="24" height="7" fill="#2b4365"/>
+      <rect x="543" y="194" width="20" height="7" fill="#1f7a5c"/>
+      <rect x="542" y="187" width="22" height="7" fill="#f4f1e8"/>
+      <rect x="569" y="170" width="8" height="38" fill="#f08a24"/>
+      <rect x="578" y="166" width="9" height="42" fill="#2b4365"/>
+      <rect x="588" y="172" width="7" height="36" fill="#1f7a5c"/>
+      <rect x="596" y="168" width="9" height="40" fill="#f4f1e8"/>
+      <rect x="606" y="174" width="8" height="34" fill="#3987e5"/>
+
+      <rect x="542" y="224" width="9" height="40" fill="#3987e5"/>
+      <rect x="552" y="228" width="7" height="36" fill="#f08a24"/>
+      <rect x="560" y="222" width="8" height="42" fill="#1f7a5c"/>
+      <rect x="569" y="230" width="6" height="34" fill="#f4f1e8"/>
+      <path d="M591 231 L605 231 L599 247 L605 261 L591 261 L597 247 Z" fill="#cfe3ff" fill-opacity="0.75"/>
+      <path d="M594 261 L602 261 L598 253 Z" fill="#f08a24"/>
+      <rect x="588" y="227" width="20" height="4" fill="#b8642a"/>
+      <rect x="588" y="261" width="20" height="4" fill="#b8642a"/>
+
+      <rect x="542" y="274" width="14" height="46" fill="#2b4365"/>
+      <rect x="557" y="274" width="14" height="46" fill="#1f7a5c"/>
+      <rect x="572" y="274" width="14" height="46" fill="#2b4365"/>
+      <rect x="545" y="282" width="8" height="12" fill="#f4f1e8"/>
+      <rect x="560" y="282" width="8" height="12" fill="#f4f1e8"/>
+      <rect x="575" y="282" width="8" height="12" fill="#f4f1e8"/>
+      <rect x="592" y="300" width="24" height="20" fill="#f08a24"/>
+      <path d="M592 306 L616 306"/>
+    </g>
+    <path d="M605 74 C598 66 596 58 599 50 C605 56 607 64 607 74 Z M609 74 C610 62 616 54 623 52 C622 61 617 69 611 74 Z M607 74 C603 62 605 48 611 40 C614 50 612 62 609 74 Z" fill="#1f7a5c" class="b-out"/>
+    <path class="b-out" d="M598 74 L618 74 L615 90 L601 90 Z" fill="#d95926"/>
+  </g>
+
+  <g id="board">
+    <rect class="b-board" x="30" y="136" width="410" height="146" rx="4"/>
+    <rect class="b-wood" x="44" y="282" width="382" height="7" rx="2"/>
+    <rect x="84" y="276" width="16" height="5" rx="1.5" fill="#f4f1e8"/>
+  </g>
+
+  <defs>
+    <!-- Chalk, not ink: wobbly edges, then dry grain bitten out of the strokes. -->
+    <filter id="chalk-rough" x="-2%" y="-5%" width="104%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="3" result="wobble"/>
+      <feDisplacementMap in="SourceGraphic" in2="wobble" scale="1.4" xChannelSelector="R" yChannelSelector="G" result="rough"/>
+      <feTurbulence type="fractalNoise" baseFrequency="1.7" numOctaves="1" seed="9" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -3.2 2.45" result="grain"/>
+      <feComposite in="rough" in2="grain" operator="in"/>
+    </filter>
+  </defs>
+
+  <g id="chalk-drawing" filter="url(#chalk-rough)">
+    <text class="b-chalk-text" x="52" y="177" style="font-size: 46px" data-point="298 163">4 AIs vs a coin</text>
+    <text class="b-chalk-text" x="54" y="201" style="font-size: 25px" data-point="299 192">BTC: up or down this week?</text>
+    <text class="b-chalk-text" x="56" y="227">ChatGPT</text>
+    <text class="b-chalk-text" x="140" y="227">Claude</text>
+    <text class="b-chalk-text" x="56" y="249">Gemini</text>
+    <text class="b-chalk-text" x="140" y="249">Grok</text>
+    <text class="b-chalk-text" x="227" y="236" text-anchor="middle">vs</text>
+    <circle class="b-chalk" cx="268" cy="229" r="19" data-point="292 230"/>
+    <circle class="b-chalk" cx="268" cy="229" r="13" style="stroke-width: 2"/>
+    <text class="b-chalk-text" x="268" y="237" text-anchor="middle" style="font-size: 25px">?</text>
+    <text class="b-chalk-text" x="56" y="271" style="font-size: 18px">every call is logged before the result</text>
+  </g>
+
+  <!-- character -->
+</svg>

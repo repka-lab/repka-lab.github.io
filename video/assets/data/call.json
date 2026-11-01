@@ -1,0 +1,25 @@
+{
+  "note": "The weekly call video: a cold open over the chart, one call every two beats, the tally against a coin, then the end card. Grandpa speaks the \"voice\" cues (his captions, so no subtitle layer). call-story.js plays it; the calls are the week's ideas file, written by src/answers.ts from the calls logged in data/ledger.json.",
+  "title": "Grandpa call episode",
+  "html": "episode.html",
+  "ideas": "ideas-2026-11-02.json",
+  "board": false,
+  "hookFigure": true,
+  "scripts": ["call-story.js"],
+  "hookFrames": 174,
+  "monitorFrames": 237,
+  "music": {
+    "bpm": 80,
+    "grooveFrom": 0,
+    "chords": { "hook": "Dm", "prof": "Bb", "coin": "A", "calls": "Gm", "climax": "Bb", "end": "F" },
+    "busy": ["calls", "climax"],
+    "hits": [6, 45, 56, 67]
+  },
+  "beats": [{ "id": "prof", "start": -113 }, { "id": "coin", "start": -45 }, { "id": "calls", "start": 0 }, { "id": "climax", "start": 180 }],
+  "voice": [
+    { "text": "Where is BTC going this week?", "say": "Where is Bitcoin going this week?", "from": 0, "to": 45 },
+    { "text": "No idea. Let me ask the AIs.", "say": "No idea. Let me ask the A.I.s.", "from": 45, "to": 113 },
+    { "text": "Can they beat a coin flip?", "from": 113, "to": 158 },
+    { "text": "Who's right by Friday? Reply with your pick.", "from": 391, "to": 488 }
+  ]
+}

@@ -22,8 +22,8 @@ video/tools/.edge/
 # Local site preview with draft articles; the public build goes to docs/
 .preview/
 
-# Internal working notes, kept local
-CLAUDE.md
+# Internal working notes, kept local. Only the root one: data/answers/*/claude.md is Claude's public answer
+/CLAUDE.md
 
 # OS and logs
 .DS_Store

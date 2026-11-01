@@ -9,8 +9,9 @@
     of the end of its line, at x 290-310, and the stick runs off to the right over empty board.
     The coin sits by "vs", centred on the two rows of names, so its tip at x 292 is near the far end of that reach.
     Before and after, the arm hangs loose and the pointer slants down to the floor, tip near (354 341).
-    The previous chalk content (GOLD and the method) is in archive/board-gold.svg, the Ink Free lettering
-    in archive/board-inkfree.svg.
+    The current chalk is "4 AIs vs a coin"; episode.js writes the call week into #week from the chart.
+    The Binance hack question is in archive/board-binance-hack.svg, GOLD and the method in archive/board-gold.svg,
+    the Ink Free lettering in archive/board-inkfree.svg.
 
     Lettering: Caveat Brush, which build_episode.py loads as a web font (Ink Free is only the fallback).
     The chalk-rough filter wobbles the edges and bites dry grain out of #chalk-drawing, so it reads as chalk.
@@ -137,7 +138,7 @@
 
   <g id="chalk-drawing" filter="url(#chalk-rough)">
     <text class="b-chalk-text" x="52" y="177" style="font-size: 46px" data-point="298 163">4 AIs vs a coin</text>
-    <text class="b-chalk-text" x="54" y="201" style="font-size: 25px" data-point="299 192">BTC: up or down this week?</text>
+    <text id="week" class="b-chalk-text" x="54" y="201" style="font-size: 25px" data-point="299 192">BTC: up or down this week?</text>
     <text class="b-chalk-text" x="56" y="227">ChatGPT</text>
     <text class="b-chalk-text" x="140" y="227">Claude</text>
     <text class="b-chalk-text" x="56" y="249">Gemini</text>
@@ -146,7 +147,7 @@
     <circle class="b-chalk" cx="268" cy="229" r="19" data-point="292 230"/>
     <circle class="b-chalk" cx="268" cy="229" r="13" style="stroke-width: 2"/>
     <text class="b-chalk-text" x="268" y="237" text-anchor="middle" style="font-size: 25px">?</text>
-    <text class="b-chalk-text" x="56" y="271" style="font-size: 18px">every call is logged before the result</text>
+    <text class="b-chalk-text" x="56" y="271" style="font-size: 18px">every call is logged first: see the ledger</text>
   </g>
 
   <!-- character -->

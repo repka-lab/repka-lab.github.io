@@ -5,7 +5,7 @@ import { getStats, MODELS } from '../ledger.ts';
 import type { Direction, Ledger, Model, Prediction, Verification } from '../ledger.ts';
 import { escapeHtml } from './html.ts';
 
-export const MODEL_NAMES: Readonly<Record<Model, string>> = { chatgpt: 'ChatGPT', claude: 'Claude', gemini: 'Gemini', grok: 'Grok' };
+export const MODEL_NAMES: Readonly<Record<Model, string>> = { chatgpt: 'ChatGPT', claude: 'Claude', gemini: 'Gemini', grok: 'Grok Bot' };
 export const DIRECTION_NAMES: Readonly<Record<Direction, string>> = { up: 'Higher', down: 'Lower' };
 export const SIGNS: Readonly<Record<Direction, string>> = { up: '▲', down: '▼' };
 

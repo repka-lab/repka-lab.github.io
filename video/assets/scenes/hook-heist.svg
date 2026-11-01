@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 0: the Binance hack cold open</title>
+  <!--
+    Episode scene 0 for the Binance hack story (assets/data/heist.json): the date, BINANCE HACKED and
+    the stolen sum, for a feed that plays muted. episode/heist-hook.js animates it:
+      #big    the full sum from the first frame, under a short glitch burst; the resting frame stays calm
+      #glitch hidden at rest; the burst shows it and moves the tears and the scan lines each frame
+      #coins  steel coins streak right, out of frame: money leaving. Only the trails are red.
+      #net    faint chains on the edges; the dashed red links are the drained ones and flow
+    #who is centred by heist-hook.js once Bahnschrift is measured.
+
+    Classes carry an hh- prefix, because the episode puts every scene in one document.
+    The Binance mark is redrawn from its geometry and used only to name the subject of the story.
+  -->
+  <style>
+    .hh-date { fill: #b9c6d8; font: 600 13px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 6px; }
+    .hh-who { fill: #f5f7fa; font: 700 32px Bahnschrift, 'Segoe UI', sans-serif; font-variation-settings: 'wdth' 90, 'wght' 700; letter-spacing: 5px; }
+    .hh-pill { fill: #fff; font: 700 13px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 3px; }
+    .hh-big { font: 700 124px Bahnschrift, Impact, sans-serif; font-variation-settings: 'wdth' 78, 'wght' 700; letter-spacing: -2px; font-variant-numeric: tabular-nums; }
+    .hh-sub { fill: #fff; font: 700 17px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 5px; }
+    .hh-brand { fill: #8193ad; font: 600 10px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 2px; }
+    .hh-glyph { fill: #b9c6d8; font: 700 11px 'Segoe UI', sans-serif; }
+  </style>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="75%">
+      <stop offset="0" stop-color="#16284a"/><stop offset="0.45" stop-color="#0a1526"/><stop offset="1" stop-color="#03060c"/>
+    </radialGradient>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0H0V20" fill="none" stroke="#2b4365" stroke-width="0.5"/>
+    </pattern>
+    <radialGradient id="fade" cx="50%" cy="50%" r="60%">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="grid-mask"><rect width="640" height="360" fill="url(#fade)"/></mask>
+    <pattern id="scan" width="4" height="3" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1" fill="#000"/>
+    </pattern>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.5 0"/>
+    </filter>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="40"/></filter>
+    <filter id="edge"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1.2"/></filter>
+    <filter id="glow" x="-20%" y="-40%" width="140%" height="180%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="b"/>
+      <feFlood flood-color="#ff1f35" flood-opacity="0.85"/><feComposite in2="b" operator="in" result="g"/>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="num" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd0d0"/><stop offset="0.35" stop-color="#ff4655"/><stop offset="1" stop-color="#b80f22"/>
+    </linearGradient>
+    <linearGradient id="trail" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff4655" stop-opacity="0"/><stop offset="1" stop-color="#ff4655" stop-opacity="0.7"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="72%">
+      <stop offset="0.6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.6"/>
+    </radialGradient>
+    <!-- Binance mark: centre and side diamonds, two chevrons -->
+    <path id="bnb" d="M12 9.28 14.72 12 12 14.72 9.28 12Z M2.72 9.28 5.44 12 2.72 14.72 0 12Z M21.28 9.28 24 12 21.28 14.72 18.56 12Z M12 0 19.36 7.36 16.64 10.08 12 5.44 7.36 10.08 4.64 7.36Z M12 24 4.64 16.64 7.36 13.92 12 18.56 16.64 13.92 19.36 16.64Z"/>
+    <clipPath id="slice"><rect x="0" y="188" width="640" height="10"/></clipPath>
+    <clipPath id="tear-a"><rect id="tear-a-rect" x="0" y="156" width="640" height="9"/></clipPath>
+    <clipPath id="tear-b"><rect id="tear-b-rect" x="0" y="214" width="640" height="6"/></clipPath>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#grid)" mask="url(#grid-mask)" opacity="0.55"/>
+
+  <g id="net" opacity="0.45" stroke-width="0.7">
+    <line x1="40" y1="80" x2="96" y2="130" stroke="#3987e5"/>
+    <line class="hh-drained" x1="96" y1="130" x2="58" y2="200" stroke="#ff4655" stroke-dasharray="2 2"/>
+    <line x1="58" y1="200" x2="120" y2="250" stroke="#3987e5"/>
+    <line class="hh-drained" x1="120" y1="250" x2="44" y2="300" stroke="#ff4655" stroke-dasharray="2 2"/>
+    <line x1="40" y1="80" x2="150" y2="66" stroke="#3987e5"/>
+    <line x1="96" y1="130" x2="150" y2="66" stroke="#3987e5"/>
+    <line x1="58" y1="200" x2="44" y2="300" stroke="#3987e5"/>
+    <line x1="540" y1="74" x2="596" y2="128" stroke="#3987e5"/>
+    <line class="hh-drained" x1="596" y1="128" x2="560" y2="220" stroke="#ff4655" stroke-dasharray="2 2"/>
+    <line x1="560" y1="220" x2="600" y2="290" stroke="#3987e5"/>
+    <line x1="600" y1="290" x2="500" y2="300" stroke="#3987e5"/>
+    <line x1="540" y1="74" x2="488" y2="120" stroke="#3987e5"/>
+    <line class="hh-drained" x1="488" y1="120" x2="596" y2="128" stroke="#ff4655" stroke-dasharray="2 2"/>
+    <line x1="560" y1="220" x2="500" y2="300" stroke="#3987e5"/>
+    <g fill="#0a1526" stroke="#3987e5" stroke-width="0.9">
+      <circle cx="40" cy="80" r="2.4"/><circle cx="96" cy="130" r="2.4"/><circle cx="58" cy="200" r="2.4"/>
+      <circle cx="120" cy="250" r="2.4"/><circle cx="44" cy="300" r="2.4"/><circle cx="150" cy="66" r="2.4"/>
+      <circle cx="540" cy="74" r="2.4"/><circle cx="596" cy="128" r="2.4"/><circle cx="560" cy="220" r="2.4"/>
+      <circle cx="600" cy="290" r="2.4"/><circle cx="500" cy="300" r="2.4"/><circle cx="488" cy="120" r="2.4"/>
+    </g>
+  </g>
+
+  <!-- Near coins run fast and sharp, far ones slow and soft. -->
+  <g id="coins" text-anchor="middle">
+    <g class="hh-coin" opacity="0.85">
+      <rect x="-6" y="148.4" width="70" height="3.2" rx="1.6" fill="url(#trail)"/>
+      <circle cx="72" cy="150" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="72" y="153.8">₿</text>
+    </g>
+    <g class="hh-coin hh-far" opacity="0.4" filter="url(#blur1)">
+      <rect x="62" y="304.4" width="70" height="3.2" rx="1.6" fill="url(#trail)"/>
+      <circle cx="140" cy="306" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="140" y="309.8">Ξ</text>
+    </g>
+    <g class="hh-coin hh-far" opacity="0.4" filter="url(#blur1)">
+      <rect x="488" y="138.4" width="70" height="3.2" rx="1.6" fill="url(#trail)"/>
+      <circle cx="566" cy="140" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="566" y="143.8">₮</text>
+    </g>
+    <g class="hh-coin" opacity="0.85">
+      <rect x="470" y="264.4" width="70" height="3.2" rx="1.6" fill="url(#trail)"/>
+      <circle cx="548" cy="266" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="548" y="269.8">$</text>
+    </g>
+    <g class="hh-coin hh-far" opacity="0.4" filter="url(#blur1)">
+      <rect x="528" y="320.4" width="70" height="3.2" rx="1.6" fill="url(#trail)"/>
+      <circle cx="606" cy="322" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="606" y="325.8">₿</text>
+    </g>
+    <g class="hh-coin hh-far" opacity="0.4" filter="url(#blur1)">
+      <rect x="18" y="38.4" width="70" height="3.2" rx="1.6" fill="url(#trail)"/>
+      <circle cx="96" cy="40" r="9.5" fill="#13233a" stroke="#4a6890" stroke-width="0.9"/>
+      <text class="hh-glyph" x="96" y="43.8">Ξ</text>
+    </g>
+  </g>
+
+  <ellipse cx="320" cy="196" rx="200" ry="70" fill="#ff1f35" opacity="0.32" filter="url(#soft)"/>
+  <!-- Alarm glow, even on all four edges -->
+  <rect width="640" height="360" fill="none" stroke="#ff1f35" stroke-width="40" opacity="0.3" filter="url(#edge)"/>
+
+  <g text-anchor="middle">
+    <text class="hh-date" x="320" y="62">OCT 29, 2026</text>
+    <line x1="200" y1="57" x2="236" y2="57" stroke="#ff4655" stroke-width="1"/>
+    <line x1="404" y1="57" x2="440" y2="57" stroke="#ff4655" stroke-width="1"/>
+  </g>
+
+  <g id="who">
+    <use id="who-mark" href="#bnb" fill="#f0b90b"/>
+    <text id="who-word" class="hh-who" y="119">BINANCE</text>
+    <rect id="who-pill" y="95.5" height="24" rx="4" fill="#e0182d"/>
+    <text id="who-pill-text" class="hh-pill" y="112" text-anchor="middle">HACKED</text>
+  </g>
+
+  <g id="big" class="hh-big" text-anchor="middle">
+    <text id="ghost-cyan" x="317" y="236" fill="#00e5ff" opacity="0.45">−$6.3B</text>
+    <text id="ghost-red" x="323" y="236" fill="#ff1f35" opacity="0.55">−$6.3B</text>
+    <text x="320" y="236" fill="url(#num)" filter="url(#glow)">−$6.3B</text>
+    <text x="328" y="236" fill="url(#num)" clip-path="url(#slice)">−$6.3B</text>
+    <g id="glitch" display="none">
+      <text id="tear-a-text" x="336" y="236" fill="url(#num)" clip-path="url(#tear-a)">−$6.3B</text>
+      <text id="tear-b-text" x="306" y="236" fill="#ffe1e1" clip-path="url(#tear-b)">−$6.3B</text>
+      <rect id="scan-a" x="150" y="176" width="340" height="1.5" fill="#fff" opacity="0.55"/>
+      <rect id="scan-b" x="210" y="229" width="230" height="1" fill="#00e5ff" opacity="0.6"/>
+    </g>
+  </g>
+  <text id="sub" class="hh-sub" x="320" y="284" text-anchor="middle">LARGEST CRYPTO HACK EVER</text>
+  <text class="hh-brand" x="612" y="34" text-anchor="end">AI PREDICTION LAB</text>
+
+  <rect width="640" height="360" fill="url(#vignette)"/>
+  <rect width="640" height="360" fill="url(#scan)" opacity="0.22"/>
+  <rect width="640" height="360" filter="url(#grain)" opacity="0.06"/>
+</svg>

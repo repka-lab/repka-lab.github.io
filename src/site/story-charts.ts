@@ -12,6 +12,8 @@
 //
 //   stats <caption>                  shape | tone | value | label        a big number beside a shape, per row
 //   chains <caption>                 name | $M | detail                  a bar per chain, as long as its amount
+//   counts <caption>                 name | count | detail               the same bars, for whole numbers of things
+//   dots <caption>                   name | number | shown | detail      a dot per row, between the lowest and highest
 //   timeline <caption>               when | tone | what | detail         events top to bottom, each on a diamond
 //   split <caption>                  label | $M | tone                   one bar cut into the parts of a whole
 //   analysts <caption>               name | https link | total | finding    a card per firm, linked to its report
@@ -30,7 +32,7 @@ import { formatChange, formatUtc } from './ledger-view.ts';
 // Price series by coin, keyed in lower case, like btc.
 export type Markets = Readonly<Record<string, PriceSeries | undefined>>;
 
-const STORY_KINDS = ['stats', 'chains', 'timeline', 'split', 'analysts', 'wallets', 'market'] as const;
+const STORY_KINDS = ['stats', 'chains', 'counts', 'dots', 'timeline', 'split', 'analysts', 'wallets', 'market'] as const;
 type StoryKind = (typeof STORY_KINDS)[number];
 
 interface Story {
@@ -63,6 +65,7 @@ const SHAPES: Readonly<Record<string, string>> = {
 };
 const TONES: readonly string[] = ['accent', 'hit', 'miss', 'btc', 'muted'];
 const ADDRESS = /^0x[0-9a-fA-F]{40}$/;
+const WHOLE = /^\d+$/;
 const EXPLORER = 'https://etherscan.io/address/';
 const EXAMPLE_TIME = '2026-10-29T20:00:00Z';
 const MS_PER_SECOND = 1000;
@@ -71,6 +74,7 @@ const MILLIONS_PER_BILLION = 1000;
 const BILLIONS = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
 const MILLIONS = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
 const PRICE = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const COUNT = new Intl.NumberFormat('en-US');
 
 export function isStoryKind(kind: string): kind is StoryKind {
   return (STORY_KINDS as readonly string[]).includes(kind);
@@ -82,7 +86,11 @@ export function renderStoryChart(spec: string, markets: Markets): string {
     case 'stats':
       return renderStats(story);
     case 'chains':
-      return renderChains(story);
+      return renderBars(story, (text) => amount(story.kind, text), usd);
+    case 'counts':
+      return renderBars(story, (text) => count(story.kind, text), (n) => COUNT.format(n));
+    case 'dots':
+      return renderDots(story);
     case 'timeline':
       return renderTimeline(story);
     case 'split':
@@ -107,19 +115,38 @@ function renderStats(story: Story): string {
   return figure('stats', captionOf(story), `${list('ul', 'stat-list', tiles)}${noteOf(story)}`);
 }
 
-// One color for every bar: they all measure the same thing, and the name beside each says which chain it is.
-function renderChains(story: Story): string {
-  const chains = story.rows.map((row) => {
-    const [name = '', millions = '', detail = ''] = fields(story.kind, row, 3);
-    return { name, millions: amount(story.kind, millions), detail };
+// One color for every bar: they all measure the same thing, and the name beside each says which row it is.
+function renderBars(story: Story, read: (text: string) => number, show: (value: number) => string): string {
+  const rows = story.rows.map((row) => {
+    const [name = '', value = '', detail = ''] = fields(story.kind, row, 3);
+    return { name, value: read(value), detail };
   });
-  const most = Math.max(...chains.map((c) => c.millions));
-  const bars = chains.map(
-    (c) => `<li><span class="chain-name">${escapeHtml(c.name)}</span>` +
-      `<span class="chain-track" aria-hidden="true"><span class="chain-fill" style="width: ${share(c.millions, most)}%"></span></span>` +
-      `<span class="chain-value">${usd(c.millions)}</span><span class="chain-detail">${escapeHtml(c.detail)}</span></li>`,
+  const most = Math.max(...rows.map((r) => r.value));
+  const bars = rows.map(
+    (r) => `<li><span class="chain-name">${escapeHtml(r.name)}</span>` +
+      `<span class="chain-track" aria-hidden="true"><span class="chain-fill" style="width: ${share(r.value, most)}%"></span></span>` +
+      `<span class="chain-value">${show(r.value)}</span><span class="chain-detail">${escapeHtml(r.detail)}</span></li>`,
   );
-  return figure('chains', captionOf(story), `${list('ul', 'chain-list', bars)}${noteOf(story)}`);
+  return figure(story.kind, captionOf(story), `${list('ul', 'chain-list', bars)}${noteOf(story)}`);
+}
+
+// Where each number sits between the lowest and the highest. The line does not start at zero, and the chart says so,
+// because numbers this close together would make bars of the same length.
+function renderDots(story: Story): string {
+  const rows = story.rows.map((row) => {
+    const [name = '', value = '', shown = '', detail = ''] = fields(story.kind, row, 4);
+    return { name, value: numberIn(story.kind, value), shown, detail };
+  });
+  const low = rows.reduce((a, b) => (b.value < a.value ? b : a));
+  const high = rows.reduce((a, b) => (b.value > a.value ? b : a));
+  const span = high.value - low.value;
+  const marks = rows.map(
+    (r) => `<li><span class="dots-name">${escapeHtml(r.name)}</span>` +
+      `<span class="dots-track" aria-hidden="true"><span class="dots-mark" style="left: ${span === 0 ? 50 : share(r.value - low.value, span)}%"></span></span>` +
+      `<span class="dots-value">${escapeHtml(r.shown)}</span><span class="dots-detail">${escapeHtml(r.detail)}</span></li>`,
+  );
+  const range = `<p class="chart-status">The line runs from the lowest to the highest, not from zero: ${escapeHtml(low.shown)} to ${escapeHtml(high.shown)}</p>`;
+  return figure('dots', captionOf(story), `${range}\n  ${list('ul', 'dots-list', marks)}${noteOf(story)}`);
 }
 
 function renderTimeline(story: Story): string {
@@ -235,6 +262,17 @@ function fields(kind: string, row: string, count: number): readonly string[] {
 function amount(kind: string, text: string): number {
   const value = Number(text);
   if (!Number.isFinite(value) || value < 0) throw new ChartError(`chart "${kind}" needs amounts in millions of US dollars, got "${text}"`);
+  return value;
+}
+
+function count(kind: string, text: string): number {
+  if (!WHOLE.test(text)) throw new ChartError(`chart "${kind}" needs whole numbers of zero or more, got "${text}"`);
+  return Number(text);
+}
+
+function numberIn(kind: string, text: string): number {
+  const value = Number(text);
+  if (!Number.isFinite(value)) throw new ChartError(`chart "${kind}" needs a number in the second field of each row, got "${text}"`);
   return value;
 }
 

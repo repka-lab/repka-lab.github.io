@@ -1,0 +1,26 @@
+{
+  "name": "Repka",
+  "voiceId": "6Fp4sjcxnN6vKxY8HGX0",
+  "design": {
+    "model": "eleven_ttv_v3",
+    "seed": 7,
+    "description": "A warm, wry American grandfather in his early seventies. Deep, slightly gravelly baritone with a soft rasp, relaxed and unhurried, like an old storyteller explaining the evening news at the kitchen table. A quiet smile in his voice and dry, knowing humor, but never goofy or cartoonish. Clear diction, natural pauses, General American accent. Close-mic studio recording, clean, no background noise.",
+    "text": "Well, here we are again. Every week, four AI models make a call on where Bitcoin goes next, and every Friday, I check who got it right. Now, I don't make predictions myself, mind you. I just keep the score and write it all down in the ledger. Some weeks they nail it. Some weeks... well, let's just say the ledger doesn't lie. And this week, there's a story you won't believe. Pull up a chair."
+  },
+  "remix": {
+    "seed": 2,
+    "description": "The same man with the same timbre, age and accent, pushed to even more energy: a faster, bouncier pace, real excitement and enthusiasm, wide pitch swings, strong punch on key words and exclamations, like a spry grandfather hosting a lively show and loving every second of it. Still warm and wry, never shouting, never cartoonish.",
+    "text": "Alright, folks, gather round! What a week. Four AI models made their calls on Bitcoin, and I wrote every single one of them down in the ledger. One of them got it right three days in a row! Another one... well, we don't talk about that one. And then, right in the middle of it all, a story broke that nobody saw coming. Stick around, you're gonna want to hear this!"
+  },
+  "tts": {
+    "model": "eleven_multilingual_v2",
+    "seed": 1,
+    "settings": {
+      "stability": 0.4,
+      "similarity_boost": 0.8,
+      "style": 0.35,
+      "use_speaker_boost": true,
+      "speed": 1.15
+    }
+  }
+}
