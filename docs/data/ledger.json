@@ -1,5 +1,107 @@
 {
-  "schema_version": 1,
-  "predictions": [],
-  "verifications": []
+  "schema_version": 2,
+  "predictions": [
+    {
+      "id": "P0001",
+      "date": "2026-11-01T16:59:03.926Z",
+      "model": "chatgpt",
+      "model_version": "ChatGPT",
+      "direction": "down",
+      "confidence": 62,
+      "reasoning": "The forecast window is Monday, 2 November 2026, 00:00 UTC, through Friday, 6 November 2026, 23:59:59 UTC. This is a five-day directional forecast, not a prediction of the exact BTC price.\n\nThe key distinction is between the probability that Bitcoin finishes the week higher and the magnitude of any move. A small positive return counts as UP, while a flat or negative return counts as DOWN. With such a short horizon, the direction is inherently uncertain, and the confidence level should reflect that.\nResearch and reasoning\n1. Recent price action: bearish momentum\nCoinbase's BTC-USD converter reported Bitcoin at $77,937.61 on 1 November at 3:29 PM (the page does not specify the timezone). Its seven-day performance was approximately −3.1%. \ncoinbase.com\n\n\nCoinbase historical data on Investing.com shows a sharp decline from approximately $81,256 on 29 October to $77,707 on 30 October, followed by a modest weekend recovery. \nInvesting.com Canada\n\n\nThat pattern suggests a weak short-term trend with some potential for a rebound. For the forecast, I give more weight to the sharp decline than to the relatively small weekend bounce.\n2. Binance security incident: elevated uncertainty\nOn 30 October, Reuters reported that Bitcoin reached a six-week low amid a serious Binance security incident. Binance subsequently announced that approximately 95% of the affected assets had been replenished and that withdrawals would resume in phases on 1 November. \nReuters+1\n\n\nThe incident creates two opposing forces:\n- DOWN: Reduced confidence in crypto-market infrastructure can trigger risk aversion and additional selling.\n- UP: Compensation, restored withdrawals and improved transparency can ease concerns and support a recovery.\nThe recovery announcements reduce the immediate risk of continued disruption, but they do not necessarily reverse the broader market's weak momentum.\n3. ETF flows: a significant bearish signal\nUS spot Bitcoin ETFs recorded approximately $643.2 million in net outflows on Friday, 30 October, according to the Farside-sourced tracker. The seven finalized sessions through that date showed net outflows of approximately $975.9 million. \nBitcoin Almanack\n\n\nThis is one of the strongest bearish indicators in the available evidence. It suggests that institutional investment products experienced substantial selling pressure just as Bitcoin was testing lower prices. A reversal in ETF flows could change the picture, but I do not have confirmed data showing such a reversal before this forecast.\n4. The macroeconomic calendar could determine Friday's result\nThe US Bureau of Labor Statistics schedules the October Employment Situation report for Friday, 6 November, at 8:30 AM Eastern Time (13:30 UTC). The JOLTS report for September is scheduled for Tuesday, 3 November, and preliminary third-quarter productivity data for Thursday, 5 November. \nBureau of Labor Statistics+1\n\n\nThe employment report is particularly important because it arrives on the final day of the forecast window. A weaker-than-expected labor market could support expectations of monetary easing, while a stronger report could have the opposite effect depending on its implications for interest rates and risk appetite. Either outcome could cause a substantial move, and I cannot reliably predict the surprise relative to market expectations.\nFinal assessment\nThe evidence favors DOWN, although not decisively. The recent price decline, negative ETF flows and security-related market stress outweigh the modest weekend recovery and Binance's progress toward restoring normal operations.\n\nMy confidence is 62%. That reflects a modest bearish edge rather than a strong directional conviction. I would reconsider the forecast if ETF flows turned positive, Bitcoin recovered above the late-October breakdown area near $81,000, or new information materially changed market sentiment.\n\nSources used\n- Coinbase — BTC-USD converter\n- Investing.com — Coinbase BTC-USD historical prices\n- Reuters — Bitcoin falls amid Binance security incident\n- Binance — Official recovery update, 1 November\n- Bitcoin ETF flow tracker\n- US Bureau of Labor Statistics — November release calendar\nCALL: DOWN\nCONFIDENCE: 62\nREASON: Bearish momentum and ETF outflows outweigh the weekend recovery.\nFACTORS:\n- Recent price breakdown and weak weekly performance | pulls DOWN\n- $643 million in daily spot Bitcoin ETF outflows | pulls DOWN\n- Binance recovery progress and potential macro-driven rebound | pulls UP",
+      "factors": [
+        {
+          "text": "Recent price breakdown and weak weekly performance",
+          "pulls": "down"
+        },
+        {
+          "text": "$643 million in daily spot Bitcoin ETF outflows",
+          "pulls": "down"
+        },
+        {
+          "text": "Binance recovery progress and potential macro-driven rebound",
+          "pulls": "up"
+        }
+      ],
+      "prompt_hash": "df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2",
+      "verify_date": "2026-11-06T23:59:59.000Z"
+    },
+    {
+      "id": "P0002",
+      "date": "2026-11-01T16:59:03.926Z",
+      "model": "claude",
+      "model_version": "Claude",
+      "direction": "down",
+      "confidence": 54,
+      "reasoning": "I’ll research current BTC price action, news, derivatives and next week’s macro calendar, then make the call.\n\nI couldn’t get a live quote straight from Coinbase. Its price page loaded without a price, so I used Coinbase-sourced figures from news coverage and several aggregators.\n\nWhere price stands (latest seen: about $78,050 on CoinDesk’s live ticker, loaded around 16:55 UTC on Sunday 1 November)\n\nCoinbase figures: BTC was quiet over the weekend, trading between about $77,200 and $78,100. It reached $77,748 at 8:00 a.m. ET Sunday, down 3.39% from the previous Sunday morning, inside a $5,749 weekly range. Coinbase’s own price page, as indexed, shows $77,871.50, down 3.25% on the week and 7.39% on the month. \nSubstack\ncoinbase\nMonday’s reference price: the 00:00 UTC Monday price will probably sit near $78K.\nLast week: forced liquidation of leveraged longs took BTC from a weekly high of $81,890 to the mid-$76,000s within hours. A 2.86% Nasdaq drop on Friday then pushed it to a weekly low of $76,141, before the $76,000–$76,600 support band held again. \nSubstack\n\nCrypto-specific drivers\n\nBinance hack: Binance was hit late Thursday by what investigators call the largest crypto hack ever, about $6.3 billion. BTC fell 5% to below $77,000 on Friday. \nYahoo Finance\nYahoo Finance\nThe panic is fading. Withdrawals restarted Sunday, and Binance says it has replaced about 95% of the affected assets with company funds. \nCoinDesk\nThe overhang remains. TRM Labs counts 18,270 BTC stolen, worth about $1.47 billion, and bitcoin and ether cannot be frozen the way stablecoins can. That is a pool of coins the hackers are likely to try to launder and cash out over time. \nCoinDesk\nCoinDesk\nA CoinDesk headline also says a Nasdaq-listed company is weighing offloading $450 million of bitcoin, citing the hack and quantum fears. \nCoinDesk\nETF flows have turned negative:\nUS spot ETFs lost $643.2 million on 30 October, their largest daily outflow since June, wiping out four days of inflows. \ncrypto\nOctober ended about −$515M, after +$2.6B in September and +$3.5B in August. \ntftc\ntftc\nPrice is also below the ETF holders’ average cost. Crypto.com puts roughly $81,500 as the average price at which the ETFs acquired their coins. \ncrypto\nDerivatives give mixed signals:\nOn one venue, funding was 0.01% per eight hours with long accounts at 72.1%. Retail perps lean long, which is not a washed-out setup. \ntokenpost\nOptions lean bullish on volume. The 6 November $82,000 call led turnover. But skew still showed demand for downside protection across all time frames. \ntokenpost\ncryptonews\nTechnical levels and sentiment:\nGalaxy’s line in the sand is a weekly close below $76,540 not recovered within a month. Price is just above it. \nSubstack\nPopeye’s Chartbook sees BTC still in a corrective phase with $75K in focus, though momentum is nearing levels that could support a short bounce. \nSubstack\nSentiment is washed out on retail platforms. Stocktwits retail sentiment moved to “extremely bearish”, while the Fear & Greed Index recovered to “Neutral”. \nYahoo Finance\n\nMacro calendar for the week\n\nFed backdrop: the FOMC held at 3.75%–4.00% in a 10-2 vote, with both dissenters favoring a 25bp hike. \nyardeniquicktakes\nData through the week: October’s jobs report on Friday caps a heavy week of labor data, including JOLTS on Tuesday, ADP on Wednesday, and Challenger and jobless claims on Thursday. \nyardeniquicktakes\nJobs report Friday: it lands at 13:30 UTC, about 10.5 hours before the measurement time. Barclays argues that roughly 50,000 new jobs plus slightly lower unemployment would keep a December hike in play. \nkiplinger\nEquities: the S&P 500 and Nasdaq have each posted three straight weekly losses as disappointing tech earnings revived worries about AI spending. Apple and Palantir report Monday after the close, and AMD on Tuesday evening. \nyardeniquicktakes\nstocktitan\nMidterms Tuesday: Pepperstone cites about 60% implied odds of Democrats winning both chambers, which would weigh more on altcoins and crypto equities than on Bitcoin. That looks largely priced in. History is no guide: across the last three midterms, BTC’s 30-day moves ranged from a 45% decline to a 13% gain. \npepperstone\nbcointalk\nOil: easing on Iran–Hormuz diplomacy, a mild help on inflation.\n\nWeighing it\n\nThe case for UP:\n\nBase rates: CoinLore’s history shows the first week of the month positive 56% of the time. \ncoinlore\nRetail sentiment is very bearish.\n$76K support has held repeatedly.\nThe hack shock is resolving.\nClearing election uncertainty sometimes brings relief rallies.\n\nThe case for DOWN:\n\nShort-term momentum is negative, with lower highs since the $85K rejection.\nThe ETF bid is fading, and holders are underwater.\nThere is a known supply overhang from the stolen BTC and possible corporate treasury exits.\nPerps are long-heavy.\nTech equities are weak into big earnings.\nMost importantly, the Fed is leaning toward hikes, with Friday’s payrolls as the last big catalyst before measurement. A solid print would firm December hike odds, which has been a headwind for BTC all year.\n\nOn balance I lean slightly DOWN, with only a small edge over a coin flip.\n\nCALL: DOWN\nCONFIDENCE: 54\nREASON: Hawkish Fed, ETF outflows, weak momentum outweigh oversold bounce\nFACTORS:\n\nHawkish Fed, payrolls Friday | pulls DOWN\nETF outflows plus stolen-BTC supply overhang | pulls DOWN\nBearish retail sentiment, $76K support held | pulls UP",
+      "factors": [
+        {
+          "text": "Hawkish Fed, payrolls Friday",
+          "pulls": "down"
+        },
+        {
+          "text": "ETF outflows plus stolen-BTC supply overhang",
+          "pulls": "down"
+        },
+        {
+          "text": "Bearish retail sentiment, $76K support held",
+          "pulls": "up"
+        }
+      ],
+      "prompt_hash": "df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2",
+      "verify_date": "2026-11-06T23:59:59.000Z"
+    },
+    {
+      "id": "P0003",
+      "date": "2026-11-01T16:59:03.926Z",
+      "model": "gemini",
+      "model_version": "Gemini",
+      "direction": "down",
+      "confidence": 58,
+      "reasoning": "As of November 1, 2026, at approximately 16:50 UTC, Bitcoin is trading around $77,994 USD according to live spot market telemetry retrieved via Coinbase and real-time feed updates.\n\nContext & Reasoning\n\nMacro Calendar Volatility: The week of November 2 to November 6, 2026, features high-impact macroeconomic risk events. Most notably, the U.S. midterm elections take place on Tuesday, November 3, followed by the U.S. October employment report (Non-Farm Payrolls) on Friday, November 6. Event risk surrounding national elections historically suppresses spot market leverage while traders de-risk into cash or stablecoins, leading to choppiness or downside pressure early in the week.\n\nTechnical Structure & Momentum: Bitcoin ended October 2026 down ~7.3%, breaking below key moving average support levels around $80,000. The 14-day RSI sits in weak territory near 35. While long-term support remains higher near the 200-day EMA (~$76,340), overhead resistance at the former range lows ($80,000–$80,700) creates a heavy ceiling for any tactical relief rallies.\n\nDerivative & Institutional Flows: ETF net inflows slowed toward late October, failing to absorb overhead spot distribution. Without a fresh institutional catalyst or clear election outcome prior to Friday's labor data, the path of least resistance remains tilted toward cautious consolidation or continuation of the prevailing short-term downtrend.\n\nCALL: DOWN\nCONFIDENCE: 58\nREASON: Macro event risk and overhead technical resistance outweigh spot momentum\nFACTORS:\nU.S. midterm elections event risk | pulls DOWN\nWeak October price momentum below $80k | pulls DOWN\nOversold 14-day RSI near $77k support | pulls UP",
+      "factors": [
+        {
+          "text": "U.S. midterm elections event risk",
+          "pulls": "down"
+        },
+        {
+          "text": "Weak October price momentum below $80k",
+          "pulls": "down"
+        },
+        {
+          "text": "Oversold 14-day RSI near $77k support",
+          "pulls": "up"
+        }
+      ],
+      "prompt_hash": "df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2",
+      "verify_date": "2026-11-06T23:59:59.000Z"
+    },
+    {
+      "id": "P0004",
+      "date": "2026-11-01T16:59:03.926Z",
+      "model": "grok",
+      "model_version": "Grok Bot",
+      "direction": "up",
+      "confidence": 52,
+      "reasoning": "**Reasoning**\n\nThe latest BTC price I saw was **$78,002.61 on Coinbase BTC-USD at 16:53 UTC on Sunday 1 November 2026** (from the Coinbase Exchange public ticker API, `api.exchange.coinbase.com/products/BTC-USD/ticker`). That is about 22 hours before the Monday 00:00 UTC reference price.\n\n**Recent price action.** I pulled Coinbase daily candles for the last three weeks. BTC traded around $82–84k in mid-October and then slid. It fell hard on 29 October, from about $81.2k to $77.8k, after the Binance hack news. It bottomed near $76.1k on 30 October and has drifted up slightly since, to about $78k. October closed down about 7.3%, which [Investing.com](https://www.investing.com/news/cryptocurrency-news/bitcoin-faces-further-downside-risks-as-fear-surges-binance-hack-rattles-markets-4989389) and [CryptoWatchDesk](https://cryptowatchdesk.com/news/first-print-1-nov-bitcoin-october-close-down-7-percent-binance-withdrawals-phase-one-84250) note is one of the weakest Octobers on record. The trend is down, with lower highs since 21 October.\n\n**News and flows.**\n\n- The record ~$6.3B Binance hack, which the FBI attributes to North Korea's TraderTraitor group, has weighed on the market since Thursday. Binance says it has covered about 90–95% of the loss and started phased withdrawals on 1 November. If those withdrawals run smoothly, one source of risk goes away. If they don't, it comes back.\n- US spot Bitcoin ETFs had net outflows of $643M on 30 October, the biggest daily outflow of the month, according to Farside as cited by [CryptoSlate](https://cryptoslate.com/bitcoins-recovery-faces-rising-derivatives-exposure-and-643-million-in-etf-outflows/).\n- Bitfinex analysts name $75k as support and $80k as the level BTC needs to reclaim for a recovery.\n\n**Sentiment, derivatives and on-chain data.**\n\n- The Fear & Greed Index ([alternative.me](https://alternative.me/crypto/fear-and-greed-index/)) is 34 (Fear), up from 30 and well down from 70 in early October. Extreme fear has often come before short-term bounces, but Investing.com notes that past drops this sharp were followed by lower prices a month later.\n- Binance perpetual funding is +0.01% per 8 hours, which is neutral, so there's no crowded long position to flush out.\n- [TokenPost/CryptoQuant](https://www.tokenpost.com/news/investing/45851) show net outflows of about 14.4k BTC from exchanges and falling exchange reserves, which is supportive. They also show SOPR below 1 (coins being spent at a loss) and falling volume and active addresses, which point to a weak bounce.\n- Futures open interest is at a five-week high, so liquidations could swing the price sharply either way.\n\n**Macro calendar.** Tuesday 3 November is the US midterm election day, which could bring a swing in risk appetite either way. Friday 6 November brings the US jobs report. It is released at 13:30 UTC, well before the 23:59:59 UTC check, so its reaction will be fully priced in.\n\n**Weighing it.** The case for DOWN is the downtrend, ETF outflows, weak volume and lingering hack risk. The case for UP is fearful sentiment after a sharp drop, neutral funding, coins leaving exchanges and the hack loss being largely covered. Over one week, BTC's direction is close to a coin flip. With the selling showing signs of tiring and the Binance overhang easing, I lean very slightly UP, with low confidence.\n\nCALL: UP\nCONFIDENCE: 52\nREASON: Fearful, oversold market with easing Binance hack overhang\nFACTORS:\n\n- Fear sentiment and neutral funding after sell-off | pulls UP\n- Downtrend and ETF outflows | pulls DOWN\n- Exchange outflows and hack losses largely covered | pulls UP",
+      "factors": [
+        {
+          "text": "Fear sentiment and neutral funding after sell-off",
+          "pulls": "up"
+        },
+        {
+          "text": "Downtrend and ETF outflows",
+          "pulls": "down"
+        },
+        {
+          "text": "Exchange outflows and hack losses largely covered",
+          "pulls": "up"
+        }
+      ],
+      "prompt_hash": "df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2",
+      "verify_date": "2026-11-06T23:59:59.000Z"
+    }
+  ],
+  "verifications": [],
+  "reviews": []
 }

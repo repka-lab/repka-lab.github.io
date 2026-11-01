@@ -25,7 +25,7 @@
   --ai-chatgpt: #0fa974;
   --ai-claude: #b43368;
   --ai-gemini: #7d4dbe;
-  --ai-grok: #b576af;
+  --ai-grok: #8cc0ff; /* the light end of xAI's Grok Bot blue; lighter than the rest so it stays apart from --up */
   --radius: 10px;
 }
 
@@ -1354,6 +1354,58 @@ dd {
   font-size: 0.85rem;
 }
 
+/* Dots: where each number sits between the lowest and the highest, on a line that does not start at zero */
+
+.chart .dots-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chart .dots-list > li {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr) 6.5rem;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 0;
+}
+
+.dots-name {
+  font-weight: 600;
+}
+
+.dots-track {
+  position: relative;
+  height: 2px;
+  margin: 0 8px;
+  background: var(--line);
+}
+
+.dots-mark {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--surface);
+  transform: translate(-50%, -50%);
+}
+
+.dots-value {
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.dots-detail {
+  grid-column: 2 / -1;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 /* Timeline: the time, a diamond on a line running down, then what happened */
 
 .chart .timeline-list {
@@ -1694,16 +1746,19 @@ dd {
     align-items: start;
   }
 
-  .chart .chain-list > li {
+  .chart .chain-list > li,
+  .chart .dots-list > li {
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  .chain-track {
+  .chain-track,
+  .dots-track {
     grid-column: 1 / -1;
     grid-row: 2;
   }
 
-  .chain-detail {
+  .chain-detail,
+  .dots-detail {
     grid-column: 1 / -1;
   }
 
@@ -1732,6 +1787,8 @@ dd {
   .bar-fill,
   .meter-fill,
   .chain-fill,
+  .dots-track,
+  .dots-mark,
   .dumbbell-line,
   .dot.after,
   .chart .wallet:not(:last-child)::before {
