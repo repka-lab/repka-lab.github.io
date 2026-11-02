@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 0: the gold in 2025 cold open</title>
+  <!--
+    Episode scene 0 for the gold explainer (assets/data/gold.json): real gold against digital gold in 2025,
+    side by side from the first frame, for a feed that plays muted. Calm, not an alarm: no glitch.
+    episode/gold-hook.js animates it:
+      #big, #big-btc  each one's 2025 change, written from the candles; a light band sweeps once across gold's
+      #trend-gold, #trend-btc  their 2025 closes on one scale, faint behind the numbers, drawn left to right
+      #sparks  small stars around gold that twinkle
+    #who and #btc-who are centred over their columns by gold-hook.js once Bahnschrift is measured.
+
+    Classes carry a gh- prefix, because the episode puts every scene in one document.
+  -->
+  <style>
+    .gh-date { fill: #d9c79a; font: 600 13px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 6px; }
+    .gh-who { fill: #f5f7fa; font: 700 32px Bahnschrift, 'Segoe UI', sans-serif; font-variation-settings: 'wdth' 90, 'wght' 700; letter-spacing: 5px; }
+    .gh-big { font: 700 112px Bahnschrift, Impact, sans-serif; font-variation-settings: 'wdth' 78, 'wght' 700; letter-spacing: -2px; font-variant-numeric: tabular-nums; }
+    .gh-sub { fill: #fff; font: 700 15px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 3px; }
+    .gh-vs { fill: #8193ad; font: 700 15px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 3px; }
+    .gh-brand { fill: #8193ad; font: 600 10px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 2px; }
+  </style>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="75%">
+      <stop offset="0" stop-color="#2a2412"/><stop offset="0.45" stop-color="#0d1320"/><stop offset="1" stop-color="#03060c"/>
+    </radialGradient>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0H0V20" fill="none" stroke="#3b3a2c" stroke-width="0.5"/>
+    </pattern>
+    <radialGradient id="fade" cx="50%" cy="50%" r="60%">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="grid-mask"><rect width="640" height="360" fill="url(#fade)"/></mask>
+    <pattern id="scan" width="4" height="3" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1" fill="#000"/>
+    </pattern>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.5 0"/>
+    </filter>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="40"/></filter>
+    <filter id="edge"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="glow" x="-20%" y="-40%" width="140%" height="180%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="b"/>
+      <feFlood flood-color="#ffb400" flood-opacity="0.6"/><feComposite in2="b" operator="in" result="g"/>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-btc" x="-20%" y="-40%" width="140%" height="180%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="b"/>
+      <feFlood flood-color="#3d7fe0" flood-opacity="0.55"/><feComposite in2="b" operator="in" result="g"/>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="num" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3c4"/><stop offset="0.4" stop-color="#f0b90b"/><stop offset="1" stop-color="#a8740a"/>
+    </linearGradient>
+    <linearGradient id="num-btc" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dbe9ff"/><stop offset="0.4" stop-color="#6ea8fe"/><stop offset="1" stop-color="#2f5fb0"/>
+    </linearGradient>
+    <linearGradient id="ingot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe08a"/><stop offset="0.5" stop-color="#f0b90b"/><stop offset="1" stop-color="#a8740a"/>
+    </linearGradient>
+    <linearGradient id="coin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dbe9ff"/><stop offset="0.5" stop-color="#6ea8fe"/><stop offset="1" stop-color="#2f5fb0"/>
+    </linearGradient>
+    <linearGradient id="shine-band" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="trend-gold-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0b90b" stop-opacity="0.16"/><stop offset="1" stop-color="#f0b90b" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="trend-btc-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6ea8fe" stop-opacity="0.14"/><stop offset="1" stop-color="#6ea8fe" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="72%">
+      <stop offset="0.6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.6"/>
+    </radialGradient>
+    <clipPath id="trend-gold-clip"><rect id="trend-gold-reveal" x="32" y="0" width="0" height="360"/></clipPath>
+    <clipPath id="trend-btc-clip"><rect id="trend-btc-reveal" x="332" y="0" width="0" height="360"/></clipPath>
+    <clipPath id="big-clip"><text id="big-clip-text" class="gh-big" x="180" y="226" text-anchor="middle">+65%</text></clipPath>
+    <path id="spark" d="M0 -6 L1.4 -1.4 L6 0 L1.4 1.4 L0 6 L-1.4 1.4 L-6 0 L-1.4 -1.4 Z" fill="#ffe08a"/>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#grid)" mask="url(#grid-mask)" opacity="0.55"/>
+
+  <g id="trend-gold" clip-path="url(#trend-gold-clip)" opacity="0.5">
+    <path id="trend-gold-area" fill="url(#trend-gold-fill)"/>
+    <path id="trend-gold-line" fill="none" stroke="#f0b90b" stroke-width="1.5" stroke-linejoin="round" opacity="0.6"/>
+  </g>
+  <g id="trend-btc" clip-path="url(#trend-btc-clip)" opacity="0.5">
+    <path id="trend-btc-area" fill="url(#trend-btc-fill)"/>
+    <path id="trend-btc-line" fill="none" stroke="#6ea8fe" stroke-width="1.5" stroke-linejoin="round" opacity="0.6"/>
+  </g>
+
+  <ellipse cx="180" cy="196" rx="150" ry="70" fill="#ffb400" opacity="0.22" filter="url(#soft)"/>
+  <ellipse cx="460" cy="196" rx="120" ry="60" fill="#3d7fe0" opacity="0.16" filter="url(#soft)"/>
+  <!-- Warm glow, even on all four edges -->
+  <rect width="640" height="360" fill="none" stroke="#f0b90b" stroke-width="40" opacity="0.12" filter="url(#edge)"/>
+
+  <g id="sparks">
+    <use class="gh-spark" href="#spark" transform="translate(52 168)"/>
+    <use class="gh-spark" href="#spark" transform="translate(296 140)"/>
+    <use class="gh-spark" href="#spark" transform="translate(280 252)"/>
+    <use class="gh-spark" href="#spark" transform="translate(66 254)"/>
+    <use class="gh-spark" href="#spark" transform="translate(262 84)"/>
+    <use class="gh-spark" href="#spark" transform="translate(84 100)"/>
+  </g>
+
+  <g text-anchor="middle">
+    <text class="gh-date" x="320" y="62">2025 IN REVIEW</text>
+    <line x1="178" y1="57" x2="214" y2="57" stroke="#f0b90b" stroke-width="1"/>
+    <line x1="426" y1="57" x2="462" y2="57" stroke="#f0b90b" stroke-width="1"/>
+  </g>
+
+  <g id="who">
+    <g id="who-mark">
+      <path d="M6 0 H28 L34 20 H0 Z" fill="url(#ingot)" stroke="#7a5408" stroke-width="1" stroke-linejoin="round"/>
+      <path d="M8 4 H26" stroke="#fff3c4" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+    </g>
+    <text id="who-word" class="gh-who" y="119">GOLD</text>
+  </g>
+  <g id="btc-who">
+    <g id="btc-mark">
+      <circle cx="10" cy="10" r="10" fill="url(#coin)" stroke="#2f5fb0" stroke-width="1"/>
+      <circle cx="10" cy="10" r="6" fill="none" stroke="#dbe9ff" stroke-width="1.5" opacity="0.7"/>
+    </g>
+    <text id="btc-word" class="gh-who" y="119">BITCOIN</text>
+  </g>
+
+  <g id="big" class="gh-big" text-anchor="middle">
+    <text x="180" y="226" fill="url(#num)" filter="url(#glow)">+65%</text>
+  </g>
+  <g clip-path="url(#big-clip)">
+    <rect id="shine" x="60" y="130" width="60" height="104" fill="url(#shine-band)" transform="skewX(-18)" opacity="0"/>
+  </g>
+  <text id="big-btc" class="gh-big" x="460" y="226" text-anchor="middle" fill="url(#num-btc)" filter="url(#glow-btc)">−6%</text>
+
+  <g stroke="#3b4a60" stroke-width="1">
+    <line x1="320" y1="96" x2="320" y2="170"/>
+    <line x1="320" y1="202" x2="320" y2="250"/>
+  </g>
+  <text class="gh-vs" x="321.5" y="191" text-anchor="middle">VS</text>
+
+  <text class="gh-sub" x="180" y="266" text-anchor="middle">BEST YEAR SINCE 1979</text>
+  <text class="gh-sub" x="460" y="266" text-anchor="middle">CALLED DIGITAL GOLD</text>
+  <text class="gh-brand" x="612" y="34" text-anchor="end">AI PREDICTION LAB</text>
+
+  <rect width="640" height="360" fill="url(#vignette)"/>
+  <rect width="640" height="360" fill="url(#scan)" opacity="0.22"/>
+  <rect width="640" height="360" filter="url(#grain)" opacity="0.06"/>
+</svg>

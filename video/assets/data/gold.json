@@ -1,0 +1,66 @@
+{
+  "title": "Gold 2025 episode preview",
+  "html": "gold.html",
+  "hook": "hook-gold.svg",
+  "monitor": "monitor-gold.svg",
+  "boardScene": "board-gold-2025.svg",
+  "scripts": ["gold-hook.js", "gold-monitor.js", "subtitles.js"],
+  "board": false,
+  "desk": false,
+  "subs": [
+    { "from": 0, "voiceFrom": 6, "to": 108, "text": "In 2025, gold rose about 65%.", "say": "In twenty twenty-five, gold rose about sixty-five percent." },
+    { "from": 111, "to": 212, "text": "Bitcoin, called digital gold, fell about 6%.", "say": "Bitcoin, called digital gold, fell about six percent." },
+    { "from": 215, "to": 235, "text": "Why?" },
+    { "from": 238, "to": 318, "text": "Gold funds and central banks kept buying." },
+    { "from": 321, "to": 407, "text": "The dollar fell, and the Fed cut rates three times." },
+    { "from": 410, "to": 486, "text": "And Trump: tariffs and pressure on the Fed." },
+    { "from": 489, "to": 608, "text": "In 2026, gold hit a record near $5,600.", "say": "In twenty twenty-six, gold hit a record near fifty-six hundred dollars." },
+    { "from": 611, "to": 688, "text": "A day later, Trump named a new Fed chair." },
+    { "from": 691, "to": 747, "text": "Gold fell about 9%.", "say": "Gold fell about nine percent." },
+    { "from": 750, "to": 834, "text": "Now gold is about 30% below its top.", "say": "Now gold is about thirty percent below its top." },
+    { "from": 837, "to": 910, "text": "Bitcoin: about 38%.", "say": "Bitcoin: about thirty-eight percent." },
+    { "from": 913, "to": 981, "text": "Real gold and digital gold:" },
+    { "from": 984, "to": 1038, "text": "two very different stories." }
+  ],
+  "music": {
+    "bpm": 100,
+    "busy": [],
+    "hits": [],
+    "chords": { "hook": "F", "race": "Bb", "why": "Gm", "record": "Dm", "end": "F" }
+  },
+  "hookFrames": 96,
+  "monitorFrames": 873,
+  "beats": [
+    { "id": "race", "start": 0 },
+    { "id": "why", "start": 133 },
+    { "id": "record", "start": 404 }
+  ],
+  "charts": [
+    { "id": "gold", "label": "XAUT", "file": "gold-daily.json", "last": 669, "caption": "Bitfinex XAUT/USD · daily (a token backed by 1 oz of gold)" },
+    { "id": "btc", "label": "BTC", "file": "btc-history.json", "last": 669, "caption": "Coinbase BTC-USD · daily" }
+  ],
+  "end": { "ask": "Real gold vs digital gold", "reply": "Gold +65% · Bitcoin −6% in 2025", "lead": "Follow Repka for the next story", "ledger": "Sources for every number: repka-lab.github.io", "arrow": false },
+  "sources": [
+    "https://www.gold.org/goldhub/research/gold-market-commentary-december-2024",
+    "https://www.gold.org/goldhub/research/gold-market-commentary-december-2025",
+    "https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-full-year-2025",
+    "https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-full-year-2025/central-banks",
+    "https://www.gold.org/goldhub/research/gold-etfs-holdings-and-flows/2026/01",
+    "https://www.gold.org/goldhub/research/gold-outlook-2026",
+    "https://www.gold.org/goldhub/research/gold-mid-year-outlook-2026",
+    "https://www.investing.com/news/economy-news/gold-inches-closer-to-record-high-as-geopolitical-risks-fed-cut-bets-boost-demand-4432838",
+    "https://www.cnbc.com/amp/2025/12/30/gold-bounces-back-from-two-week-low-silver-recovers.html",
+    "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250917a.htm",
+    "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251029a.htm",
+    "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251210a.htm",
+    "https://www.thestar.com.my/business/business-news/2026/01/02/dollar-posts-worst-year-since-2017",
+    "https://www.cnbc.com/2025/04/21/gold-surges-to-a-record-above-3400-as-trump-threatens-fed-independence.html",
+    "https://www.brecorder.com/news/amp/40358881",
+    "https://gvwire.com/2026/01/30/gold-set-for-steepest-daily-drop-since-1983-silver-eyes-worst-day-ever/",
+    "https://www.cnbc.com/2026/01/30/silver-gold-fall-price-usd-dollar-fed-warsh-chair-trump-metals.html",
+    "https://www.cnbc.com/2025/12/30/bitcoin-fell-in-2025-but-can-it-rebound-in-the-new-year.html",
+    "https://www.kitco.com/news/article/2026-10-30/gold-prices-plunge-one-year-low-below-3900-higher-oil-prices-fuel-fears",
+    "https://api-pub.bitfinex.com/v2/candles/trade:1D:tXAUT:USD/hist",
+    "https://api.exchange.coinbase.com/products/BTC-USD/candles"
+  ]
+}

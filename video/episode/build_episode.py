@@ -7,8 +7,9 @@ The rig (pivots, gait, floor contact) is the one the character pages use, copied
 
 An optional story json (assets/data/heist.json) swaps in its own hook and monitor scenes, the
 scripts that play them, the end card text, and the 4h candles of its charts. It may also leave the
-board or the desk out ("board": false, "desk": false), lay a question over the cut from its hook
-("question"), run subtitles under the screen ("subs") and name the week's calls ("ideas").
+board or the desk out ("board": false, "desk": false) or write its own board ("boardScene", a copy of
+board.svg with other chalk), lay a question over the cut from its hook ("question"), run subtitles
+under the screen ("subs") and name the week's calls ("ideas").
 """
 import html
 import json
@@ -247,7 +248,7 @@ def story_extras(story: dict) -> tuple:
 
 
 story = {**STANDARD, **json.loads(read(story_path))} if story_path else STANDARD
-board = read(assets / "scenes" / "board.svg")
+board = read(assets / "scenes" / story.get("boardScene", "board.svg"))
 desk = read(assets / "scenes" / "desk.svg")
 monitor = read(assets / "scenes" / "monitor.svg")
 hook = read(assets / "scenes" / story["hook"]) if "hook" in story else HOOK_CARD

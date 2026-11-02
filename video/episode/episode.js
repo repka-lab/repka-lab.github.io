@@ -1217,6 +1217,7 @@ function setup() {
 function checks(board, desk) {
   return {
     frames: window.TOTAL_FRAMES,
+    monitorStart: episode.monitorStart, // monitor frame 0, which story beats count from; after a board it is before the cut
     ...(board && boardChecks(board)),
     ...(desk && deskChecks(desk)),
     ...(episode.monitor.cardGap !== undefined && { cardGap: +episode.monitor.cardGap.toFixed(1) }),

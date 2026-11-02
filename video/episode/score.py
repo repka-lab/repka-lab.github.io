@@ -193,10 +193,11 @@ def click(buf: array.array, at: int, amp: float, hz: float, rng: random.Random) 
     tone(buf, BLIP, hz, at, int(CLICK_BLIP_S * RATE), amp * 0.5, attack_s=0.001, decay_s=CLICK_DECAY_S)
 
 
-def sections(story: dict, scenes: dict, total: int) -> list:
-    monitor, end = scenes["monitor"][0], scenes["end"][0]
+def sections(story: dict, scenes: dict, monitor_start: int, total: int) -> list:
+    """The beats count from monitor frame 0, as the page renders them, not from the cut to the monitor."""
+    end = scenes["end"][0]
     board = [("board", scenes["board"][0])] if "board" in scenes else []
-    beats = [(beat["id"], monitor + beat["start"]) for beat in story["beats"]]
+    beats = [(beat["id"], monitor_start + beat["start"]) for beat in story["beats"]]
     starts = [("hook", 0)] + board + beats + [("end", end)]
     chords = story["music"]["chords"]
     missing = [name for name, _ in starts if chords.get(name) not in CHORDS]
@@ -442,7 +443,7 @@ scenes = checks["scenes"]
 total = samples(checks["report"]["frames"])
 lines = [] if voice_dir == Path("-") else place(story.get("voice") or story["subs"], total)
 clicks = checks["report"].get("clicks", {})
-bed, hits = music(story, sections(story, scenes, total), samples(story["music"].get("grooveFrom", scenes["monitor"][0])), clicks, total)
+bed, hits = music(story, sections(story, scenes, checks["report"]["monitorStart"], total),samples(story["music"].get("grooveFrom", scenes["monitor"][0])), clicks, total)
 pcm, bed_db = mix(bed, hits, lines, total)
 mix_wav = out.with_suffix(".wav")
 write_wav(mix_wav, pcm)

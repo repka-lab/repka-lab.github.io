@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 3: the monitor, gold in 2025</title>
+  <!--
+    Episode scene 3 for the gold explainer (assets/data/gold.json): real gold against digital gold.
+    No bezel: the screen is the whole frame, so the figures read on a phone.
+    episode/gold-monitor.js fills it from the candles and plays one beat group at a time:
+      #beat-race    2025, both rebased to 100: XAUT draws first, then BTC, each with its end label
+      #beat-why     five rows, one reason each, from the World Gold Council, Bloomberg, the Fed and CNBC
+      #beat-record  XAUT from Jan 2025 to the last candle: the climb to the record, the fall of
+                    Jan 30, 2026, the drop since, and BTC's drop from its own top beside it
+    Every gridline, path and position that depends on the data is written by the script, so the svg
+    and the candles can't disagree; the svg holds the groups, the clips and the fixed words.
+
+    Content stays in y 48-290, sources sit under the line at y 298, clear of the subtitles.
+    Classes carry a gm- prefix, because the episode puts every scene in one document.
+  -->
+  <style>
+    .gm-head { fill: #eef2f6; font: 600 15px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 1.5px; }
+    .gm-label { fill: #b9c6d8; font: 600 15px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 2px; }
+    .gm-muted { fill: #8193ad; font: 11px Bahnschrift, 'Segoe UI', sans-serif; }
+    .gm-title { fill: #eef2f6; font: 700 28px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .gm-value { fill: #eef2f6; font: 700 22px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .gm-what { fill: #b9c6d8; font: 600 16px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .gm-reason { fill: #d5deea; font: 600 18px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .gm-drop { fill: #ff4655; font: 700 34px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .gm-drop-small { fill: #ff4655; font: 700 24px Bahnschrift, 'Segoe UI', sans-serif; font-variant-numeric: tabular-nums; }
+    .gm-line { stroke: #1b2c45; stroke-width: 1; }
+    .gm-grid { stroke: #1b2c45; stroke-width: 1; }
+    .gm-base { stroke: #4a6890; stroke-width: 1; stroke-dasharray: 3 4; }
+    .gm-card { fill: #0f1d33; stroke: #2b4365; stroke-width: 1; }
+    .gm-kick { fill: #f0b90b; font: 700 14px Bahnschrift, 'Segoe UI', sans-serif; letter-spacing: 1.5px; }
+    .gm-icon { fill: #13233a; stroke: #4a6890; stroke-width: 1.5; }
+    .gm-bar { fill: #f0b90b; stroke: #a8740a; stroke-width: 1; stroke-linejoin: round; }
+    .gm-gold { fill: none; stroke: #f0b90b; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+    .gm-btc { fill: none; stroke: #6ea8fe; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+    .gm-red { fill: none; stroke: #ff4655; stroke-width: 2; stroke-linecap: round; }
+    .gm-halo { paint-order: stroke; stroke: #0a1526; stroke-width: 5px; stroke-linejoin: round; }
+  </style>
+  <defs>
+    <clipPath id="screen-clip"><rect width="640" height="360"/></clipPath>
+    <clipPath id="race-gold-clip"><rect id="race-gold-reveal" x="64" y="72" width="0" height="210"/></clipPath>
+    <clipPath id="race-btc-clip"><rect id="race-btc-reveal" x="64" y="72" width="0" height="210"/></clipPath>
+    <clipPath id="record-clip"><rect id="record-reveal" x="64" y="72" width="0" height="210"/></clipPath>
+  </defs>
+
+  <g id="room">
+    <rect width="640" height="360" fill="#0a1526"/>
+  </g>
+  <rect id="screen" width="640" height="360" fill="#0a1526"/>
+
+  <g clip-path="url(#screen-clip)">
+    <text class="gm-head" x="20" y="26">GOLD IN 2025 · REAL GOLD VS DIGITAL GOLD</text>
+    <text class="gm-muted" x="620" y="26" text-anchor="end">AI PREDICTION LAB</text>
+    <line class="gm-line" x1="20" y1="38" x2="620" y2="38"/>
+    <line class="gm-line" x1="20" y1="298" x2="620" y2="298"/>
+
+    <g id="beat-race">
+      <text class="gm-label" x="20" y="60">2025 · BOTH START AT 100</text>
+      <g id="race-grid"/>
+      <path id="race-btc-line" class="gm-btc" clip-path="url(#race-btc-clip)"/>
+      <path id="race-gold-line" class="gm-gold" clip-path="url(#race-gold-clip)"/>
+      <circle id="race-btc-tip" r="4.5" fill="#6ea8fe" stroke="#0a1526" stroke-width="2"/>
+      <circle id="race-gold-tip" r="4.5" fill="#f0b90b" stroke="#0a1526" stroke-width="2"/>
+      <g id="race-gold-label">
+        <circle cx="5" cy="0" r="5" fill="#f0b90b"/>
+        <text id="race-gold-value" class="gm-value" x="16" y="8"/>
+        <text class="gm-what" x="16" y="26">GOLD (XAUT)</text>
+      </g>
+      <g id="race-btc-label">
+        <circle cx="5" cy="0" r="5" fill="#6ea8fe"/>
+        <text id="race-btc-value" class="gm-value" x="16" y="8"/>
+        <text class="gm-what" x="16" y="26">BTC</text>
+      </g>
+      <text class="gm-muted" x="20" y="312">Sources: Bitfinex XAUT/USD (a token backed by 1 oz of gold) · Coinbase BTC-USD · daily closes</text>
+    </g>
+
+    <g id="beat-why" opacity="0">
+      <text class="gm-label" x="20" y="60">WHY GOLD ROSE IN 2025</text>
+      <g id="why-1">
+        <rect class="gm-card" x="20" y="74" width="600" height="40" rx="8"/>
+        <g transform="translate(50 94) scale(0.8)">
+          <path class="gm-bar" d="M-23 9 L-21 0 L-3 0 L-1 9 Z M1 9 L3 0 L21 0 L23 9 Z M-11 -1 L-9 -10 L9 -10 L11 -1 Z"/>
+        </g>
+        <text class="gm-kick" x="86" y="99">GOLD ETFs</text>
+        <text class="gm-title" x="236" y="103">$89B</text>
+        <text class="gm-reason" x="356" y="100">inflows, +801 t</text>
+      </g>
+      <g id="why-2">
+        <rect class="gm-card" x="20" y="118" width="600" height="40" rx="8"/>
+        <g transform="translate(50 138) scale(0.8)">
+          <path class="gm-icon" d="M-22 -6 L0 -18 L22 -6 Z"/>
+          <rect class="gm-icon" x="-20" y="-3" width="40" height="3"/>
+          <path class="gm-icon" d="M-16 0 V12 M-7 0 V12 M7 0 V12 M16 0 V12"/>
+          <rect class="gm-icon" x="-23" y="12" width="46" height="5"/>
+        </g>
+        <text class="gm-kick" x="86" y="143">CENTRAL BANKS</text>
+        <text class="gm-title" x="236" y="147">863 t</text>
+        <text class="gm-reason" x="356" y="144">bought in 2025</text>
+      </g>
+      <g id="why-3">
+        <rect class="gm-card" x="20" y="162" width="600" height="40" rx="8"/>
+        <g transform="translate(50 182) scale(0.8)">
+          <circle class="gm-icon" cx="-4" cy="0" r="16"/>
+          <text x="-4" y="7" fill="#f0b90b" text-anchor="middle" style="font: 700 19px Bahnschrift, 'Segoe UI', sans-serif">$</text>
+          <path class="gm-red" d="M20 -13 V9 M15 4 L20 9 L25 4"/>
+        </g>
+        <text class="gm-kick" x="86" y="187">US DOLLAR</text>
+        <text id="why-dollar" class="gm-title" x="236" y="191">−8%</text>
+        <text class="gm-reason" x="356" y="188">dollar index, 2025</text>
+      </g>
+      <g id="why-4">
+        <rect class="gm-card" x="20" y="206" width="600" height="40" rx="8"/>
+        <g transform="translate(50 226) scale(0.8)">
+          <path class="gm-gold" style="stroke-width: 2.5" d="M-23 -15 H-11 V-5 H1 V5 H13 V15 H23"/>
+        </g>
+        <text class="gm-kick" x="86" y="231">THE FED</text>
+        <text class="gm-title" x="236" y="235">3 cuts</text>
+        <text class="gm-reason" x="356" y="232">to 3.50–3.75%</text>
+      </g>
+      <g id="why-5">
+        <rect class="gm-card" x="20" y="250" width="600" height="40" rx="8"/>
+        <g transform="translate(50 270) scale(0.8)">
+          <rect class="gm-icon" x="-18" y="-13" width="36" height="26" rx="2"/>
+          <path class="gm-icon" fill="none" d="M-18 -13 L18 13 M18 -13 L-18 13 M-18 0 H18"/>
+        </g>
+        <text class="gm-kick" x="86" y="275">TRUMP</text>
+        <text class="gm-title" x="236" y="279">Tariffs</text>
+        <text class="gm-reason" x="356" y="276">+ pressure on the Fed</text>
+      </g>
+      <text class="gm-muted" x="20" y="312">Sources: World Gold Council (ETFs, central banks) · Bloomberg Dollar Spot Index · Federal Reserve · CNBC</text>
+    </g>
+
+    <g id="beat-record" opacity="0">
+      <text class="gm-label" x="20" y="60">GOLD (XAUT), JAN 2025 – OCT 2026</text>
+      <g id="record-grid"/>
+      <path id="record-area" fill="#f0b90b" opacity="0.10" clip-path="url(#record-clip)"/>
+      <path id="record-line" class="gm-gold" clip-path="url(#record-clip)"/>
+      <circle id="record-tip" r="4.5" fill="#f0b90b" stroke="#0a1526" stroke-width="2"/>
+      <g id="record-mark-jan30">
+        <circle id="record-mark-jan30-dot" r="5" fill="#ff4655" stroke="#0a1526" stroke-width="2"/>
+        <g id="record-mark-jan30-label" class="gm-halo" text-anchor="end">
+          <text class="gm-kick" x="0" y="-14">JAN 30 · −9% IN A DAY</text>
+          <text class="gm-what" x="0" y="4">Trump names a new Fed chair</text>
+        </g>
+      </g>
+      <g id="record-peak">
+        <circle id="record-peak-dot" r="6" fill="#f0b90b" stroke="#0a1526" stroke-width="2"/>
+        <g id="record-peak-label" class="gm-halo" text-anchor="middle">
+          <text id="record-peak-kick" class="gm-kick">RECORD · JAN 29, 2026</text>
+          <text id="record-peak-what" class="gm-what">$5,595 spot (WGC)</text>
+        </g>
+      </g>
+      <g id="record-drop">
+        <path id="record-drop-guide" class="gm-base"/>
+        <path id="record-drop-bracket" class="gm-red"/>
+        <text id="record-drop-value" class="gm-drop"/>
+        <text id="record-drop-what" class="gm-what">from the top close</text>
+        <text id="record-drop-last" class="gm-muted"/>
+      </g>
+      <g id="record-btc">
+        <rect class="gm-card" x="462" y="226" width="158" height="60" rx="8"/>
+        <circle cx="478" cy="244" r="5" fill="#6ea8fe"/>
+        <text class="gm-what" x="490" y="249">BTC</text>
+        <text id="record-btc-value" class="gm-drop-small" x="610" y="252" text-anchor="end"/>
+        <text class="gm-what" style="font-size: 14px" x="472" y="267">from its top close</text>
+        <text id="record-btc-top" class="gm-muted" x="472" y="280"/>
+      </g>
+      <text class="gm-muted" x="20" y="312">Sources: Bitfinex XAUT/USD · Coinbase BTC-USD · daily closes · record: World Gold Council · Jan 30: Reuters, CNBC</text>
+    </g>
+  </g>
+</svg>
