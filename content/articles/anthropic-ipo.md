@@ -1,14 +1,14 @@
 ---
 title: Four AIs call Anthropic's IPO, and one of them is Claude
 date: 2026-11-03
-summary: ChatGPT, Claude, Gemini and Grok Bot all call Anthropic's shares to close their first day of trading above the IPO offer price, with 70% to 76% confidence. Anthropic makes Claude, and Claude said so in its own answer. What is known about the offering, the calls in their own words, and how they will be checked.
+summary: ChatGPT, Claude, Gemini and Grok Bot all call Anthropic's shares to close their first day of trading above the IPO offer price, with 70% to 76% confidence. Anthropic reportedly seeks a valuation of $1.5 to $2 trillion. Anthropic makes Claude, and Claude said so in its own answer. What is known about the offering, the calls in their own words, and how they will be checked.
 section: forecasts
 status: published
 ---
 
-<figure class="shot"><video controls preload="none" playsinline width="1280" height="720" poster="../img/anthropic-ipo-video.jpg" src="../video/anthropic-ipo.mp4"></video><figcaption>Repka's 29-second episode with the four calls on Anthropic's IPO. Repka is an animated AI character, not a person.</figcaption></figure>
+<figure class="shot"><video controls preload="none" playsinline width="1280" height="720" poster="../img/anthropic-ipo-video.jpg" src="../video/anthropic-ipo.mp4"></video><figcaption>Repka's 34-second episode with the four calls on Anthropic's IPO. Repka is an animated AI character, not a person.</figcaption></figure>
 
-Anthropic, the company that makes Claude, has filed to list its shares on Nasdaq under the ticker ANT. The lab asked four AIs, ChatGPT, Claude, Gemini and Grok Bot, one question about it: will ANT close its first day of trading above the IPO offer price? On November 2, all four called UP, with confidence from 70% to 76%. One of the four is made by the company it was asked about, and it said so itself.
+Anthropic, the company that makes Claude, has filed to list its shares on Nasdaq under the ticker ANT. It reportedly seeks a valuation of $1.5 to $2 trillion in the offering; its last private valuation, in May, was $965 billion. The lab asked four AIs, ChatGPT, Claude, Gemini and Grok Bot, one question about it: will ANT close its first day of trading above the IPO offer price? On November 2, all four called UP, with confidence from 70% to 76%. One of the four is made by the company it was asked about, and it said so itself.
 
 ```chart
 stats The calls in four numbers
@@ -29,6 +29,8 @@ An amended filing on November 2 shows third-quarter revenue of about $17 billion
 No price range has been published. The listing could take place as soon as November 19 or 20, Fox Business's Liz Claman reported. The roadshow, where the company and its banks present the shares to large investors, was being prepared with no date given, according to CNBC on November 2.
 
 <figure class="shot"><img src="../img/anthropic-ipo-facts.jpg" width="1280" height="720" loading="lazy" alt="A tile headed: Filed, S-1 public October 26, 2026. ANT on Nasdaq. Reported: as soon as November 19–20, Fox Business. Below it: from the filing, July to September 2026, about $17B revenue, up about 1,127% year on year, filing, via CNBC. Repka stands beside it, pointing."><figcaption>From Repka's episode: the filing and the one figure from it that the episode shows, each with its source.</figcaption></figure>
+
+<figure class="shot"><img src="../img/anthropic-ipo-value.jpg" width="1280" height="720" loading="lazy" alt="Under the caption Valuation sought: up to $2T, a tile headed: Reported, valuation sought in the IPO. $1.5–2T. Last private valuation: $965B, in May. Source: CNBC, October 26 and 27. Repka stands beside it, pointing."><figcaption>From Repka's episode: the valuation Anthropic reportedly seeks, beside its last private one, both from CNBC.</figcaption></figure>
 
 ## The question
 
@@ -145,6 +147,7 @@ The four calls go into the lab's public [ledger](../ledger.html) before the offe
 
 Newest first. Each entry is dated, and the text above changes only with a new entry here.
 
+- **November 3.** The valuation Anthropic reportedly seeks, $1.5 to $2 trillion, is now in the opening and in Repka's episode, with a still of it above. The episode is now 34 seconds.
 - **November 3.** First version of this page, with the four calls as collected on November 2.
 
 ## How this page was made

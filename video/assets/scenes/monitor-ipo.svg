@@ -10,7 +10,8 @@
       #logos        the four models, filled by ipo-story.js; Claude's gets ringed
       #ipo-tile     the filing and the reported date; its lower half, #ipo-revenue, the one figure from the
                     filing, lands with its own caption; every figure is attributed
-      #pop-tile     how US IPOs since 1980 closed day one (Ritter, Table 1a: 70.5% above the offer)
+      #value-tile   the valuation Anthropic reportedly seeks, beside its last private one (both CNBC)
+      #pop-tile    how US IPOs since 1980 closed day one (Ritter, Table 1a: 70.5% above the offer)
     Then the calls: #top states the pre-registered question, ipo-story.js fills #cards two by two from
     assets/data/ideas-anthropic-ipo.json, which holds the calls word for word from data/answers/anthropic-ipo,
     and rings Claude's card in Claude's colour so it ties to #disclosure, the climax.
@@ -81,6 +82,14 @@
       <text class="tile-big num" x="34" y="294" style="font-size: 46px">≈$17B<tspan class="tile-line" dx="12" style="font-size: 26px">revenue</tspan></text>
       <text class="tile-source" x="34" y="314">up ~1,127% year on year · filing, via CNBC</text>
     </g>
+  </g>
+
+  <g id="value-tile">
+    <rect class="card" x="16" y="114" width="510" height="196" rx="8"/>
+    <text class="kicker" x="34" y="144">REPORTED · VALUATION SOUGHT IN THE IPO</text>
+    <text class="tile-big num" x="34" y="216" style="font-size: 64px">$1.5–2T</text>
+    <text class="zone-text num" x="34" y="258" style="font-size: 24px">Last private valuation: <tspan font-weight="700">$965B</tspan>, in May</text>
+    <text class="tile-source" x="34" y="292" style="font-size: 18px">Source: CNBC, Oct 26 and 27</text>
   </g>
 
   <g id="pop-tile">

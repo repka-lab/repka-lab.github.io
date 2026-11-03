@@ -67,6 +67,7 @@ describe('buildSite', () => {
       'img/anthropic-ipo-cards.jpg',
       'img/anthropic-ipo-facts.jpg',
       'img/anthropic-ipo-pop.jpg',
+      'img/anthropic-ipo-value.jpg',
       'img/anthropic-ipo-video.jpg',
       'img/binance-hack-drain.jpg',
       'img/binance-hack-launder.jpg',

@@ -46,6 +46,7 @@ const ASSETS = [
   'video/gold-2025.mp4',
   'img/anthropic-ipo-video.jpg',
   'img/anthropic-ipo-facts.jpg',
+  'img/anthropic-ipo-value.jpg',
   'img/anthropic-ipo-pop.jpg',
   'img/anthropic-ipo-cards.jpg',
   'img/anthropic-ipo-biased.jpg',

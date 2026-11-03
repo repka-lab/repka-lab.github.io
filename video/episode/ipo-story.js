@@ -1,8 +1,8 @@
 /*
  * The Anthropic IPO episode (assets/data/anthropic-ipo.json): one pre-registered question instead of a
  * chart. He is on from the first frame, pointing at the screen: the four models with Claude singled out,
- * the filing, then its one figure with its own caption, how US IPOs since 1980 closed day one and "Is this
- * one different?".
+ * the filing, then its one figure with its own caption, the valuation it reportedly seeks, how US IPOs since
+ * 1980 closed day one and "Is this one different?".
  * Then the four calls land two by two under the question, and the climax: all four say up, including
  * Claude, so "Biased?" brings Claude's conflict of interest, the disclosure, while Claude's own reason
  * for a pop is marked on its card. He speaks his own captions (the
@@ -29,6 +29,7 @@
   const CLAUDE_AT = hookAt('claude');
   const FACTS_AT = hookAt('facts');
   const REVENUE_AT = hookAt('revenue');
+  const VALUE_AT = hookAt('value');
   const POP_AT = hookAt('pop');
   const DIFFERENT_AT = hookAt('different');
   const CLIMAX_AT = beatStart('climax'); // monitor frames
@@ -41,6 +42,7 @@
     { start: CLAUDE_AT, title: [['One of them is '], ['Claude', MODEL_COLORS.Claude], ['.']] },
     { start: FACTS_AT, title: [['Anthropic filed for an IPO.']] },
     { start: REVENUE_AT, title: [['Q3 revenue: about $17B.']] },
+    { start: VALUE_AT, title: [['Valuation sought: up to $2T.']] },
     { start: POP_AT, title: [['Most IPOs pop.']] },
     { start: DIFFERENT_AT, title: [['Is this one different?']] },
   ];
@@ -55,6 +57,7 @@
     { at: CLAUDE_AT, target: [212, 194] },
     { at: FACTS_AT, target: [300, 180] },
     { at: REVENUE_AT, target: [300, 270] },
+    { at: VALUE_AT, target: [300, 200] },
     { at: POP_AT, target: [300, 200] },
   ];
   const POINT = { move: 6 };
@@ -69,7 +72,8 @@
   const TILE_PAD = 12;
   // When each tile of the hook's screen shows, by caption.
   const TILES = [
-    { id: 'ipo-tile', from: FACTS_AT, to: POP_AT },
+    { id: 'ipo-tile', from: FACTS_AT, to: VALUE_AT },
+    { id: 'value-tile', from: VALUE_AT, to: POP_AT },
     { id: 'pop-tile', from: POP_AT, to: Infinity },
   ];
   const DOTS = { of: 10, above: 7, columns: 5, r: 10, step: 30, gap: 32, rows: [178, 208], right: 508, step_frames: 2, grow: 4, on: UP_INK, off: '#2b4365' };
@@ -625,7 +629,7 @@
   // from frame 0, so they have no click.
   function ipoClicks({ monitorStart }) {
     return {
-      lines: [CLAUDE_AT, FACTS_AT, REVENUE_AT, POP_AT],
+      lines: [CLAUDE_AT, FACTS_AT, REVENUE_AT, VALUE_AT, POP_AT],
       cards: IDEAS.ideas.map((_, i) => monitorStart + i * CALL_STEP),
     };
   }

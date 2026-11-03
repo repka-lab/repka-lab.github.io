@@ -1,5 +1,5 @@
 {
-  "note": "The Anthropic IPO video. The hook has him and the four logos on from frame 0: four AIs on Anthropic's IPO, one of them Claude, then the filing, then its one figure growing into the same tile with its own caption (the rest of what is public is on the site), how US IPOs since 1980 closed day one (Ritter, Table 1a) for 2.5 s and 'Is this one different?'; each caption is long enough for his spoken line; the calls start at about 15 s. The pre-registered question is the header over the calls. Then the four calls of 2 November 2026 two by two, word for word from data/answers/anthropic-ipo via ideas-anthropic-ipo.json, and the climax: 'All four say up, including Claude.' on a dark band that all but hides the cards under it, then 'Biased?' for 3 s with Claude's conflict of interest on an opaque card, shown and spoken, while its own 'mega IPOs usually pop' is marked on its card. ipo-story.js plays it. The end card has no follow line; its ledger line holds once P0005-P0008 are written.",
+  "note": "The Anthropic IPO video. The hook has him and the four logos on from frame 0: four AIs on Anthropic's IPO, one of them Claude, then the filing, then its one figure growing into the same tile with its own caption, then the valuation it reportedly seeks beside its last private one (the rest of what is public is on the site), how US IPOs since 1980 closed day one (Ritter, Table 1a) for 2.5 s and 'Is this one different?'; each caption is long enough for his spoken line; the calls start at about 18.5 s. The pre-registered question is the header over the calls. Then the four calls of 2 November 2026 two by two, word for word from data/answers/anthropic-ipo via ideas-anthropic-ipo.json, and the climax: 'All four say up, including Claude.' on a dark band that all but hides the cards under it, then 'Biased?' for 3 s with Claude's conflict of interest on an opaque card, shown and spoken, while its own 'mega IPOs usually pop' is marked on its card. ipo-story.js plays it. The end card has no follow line; its ledger line holds once P0005-P0008 are written.",
   "sources": [
     { "what": "Q3 revenue about $17B, up about 1,127% year on year; nine-month net loss $104B, mostly fair-value changes; roadshow being prepared, no date", "url": "https://www.cnbc.com/2026/11/02/anthropic-ant-s-1-quarter-financials.html" },
     { "what": "S-1 public on 26 October 2026; Nasdaq, ticker ANT; last private valuation $965B in May", "url": "https://www.cnbc.com/2026/10/26/anthropic-ipo-live-updates-ai-s-1-filing.html" },
@@ -14,19 +14,20 @@
   "board": false,
   "hookFigure": true,
   "scripts": ["ipo-story.js"],
-  "hookFrames": 457,
+  "hookFrames": 557,
   "monitorFrames": 373,
   "music": {
     "bpm": 80,
     "grooveFrom": 0,
-    "chords": { "hook": "Dm", "claude": "A", "facts": "F", "revenue": "F", "pop": "Bb", "different": "A", "calls": "Gm", "climax": "Bb", "biased": "A", "end": "F" },
+    "chords": { "hook": "Dm", "claude": "A", "facts": "F", "revenue": "F", "value": "Gm", "pop": "Bb", "different": "A", "calls": "Gm", "climax": "Bb", "biased": "A", "end": "F" },
     "busy": ["calls", "climax"],
     "hits": [90, 298]
   },
   "beats": [
-    { "id": "claude", "start": -351 },
-    { "id": "facts", "start": -301 },
-    { "id": "revenue", "start": -229 },
+    { "id": "claude", "start": -451 },
+    { "id": "facts", "start": -401 },
+    { "id": "revenue", "start": -329 },
+    { "id": "value", "start": -243 },
     { "id": "pop", "start": -143 },
     { "id": "different", "start": -68 },
     { "id": "calls", "start": 0 },
@@ -44,10 +45,11 @@
     { "text": "One of them is Claude.", "from": 90, "to": 140 },
     { "text": "Anthropic filed for an IPO.", "say": "Anthropic filed for an I.P.O.", "from": 140, "to": 212 },
     { "text": "Q3 revenue: about $17B.", "say": "Q3 revenue: about seventeen billion.", "from": 212, "to": 298 },
-    { "text": "Most IPOs pop.", "say": "Most I.P.O.s pop.", "from": 298, "to": 373 },
-    { "text": "Is this one different?", "from": 373, "to": 441 },
-    { "text": "All four say up, including Claude.", "from": 644, "to": 712 },
-    { "text": "Biased? Anthropic makes Claude.", "from": 712, "to": 802 },
-    { "text": "Will all four be right? Reply with your pick.", "from": 802, "voiceFrom": 806, "to": 907 }
+    { "text": "Valuation sought: up to $2T.", "say": "Valuation sought: up to two trillion dollars.", "from": 298, "to": 398 },
+    { "text": "Most IPOs pop.", "say": "Most I.P.O.s pop.", "from": 398, "to": 473 },
+    { "text": "Is this one different?", "from": 473, "to": 541 },
+    { "text": "All four say up, including Claude.", "from": 744, "to": 812 },
+    { "text": "Biased? Anthropic makes Claude.", "from": 812, "to": 902 },
+    { "text": "Will all four be right? Reply with your pick.", "from": 902, "voiceFrom": 906, "to": 1007 }
   ]
 }
