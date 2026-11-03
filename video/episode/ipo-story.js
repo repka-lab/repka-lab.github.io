@@ -57,14 +57,14 @@
     { at: REVENUE_AT, target: [300, 270] },
     { at: POP_AT, target: [300, 200] },
   ];
-  const POINT = { raiseAt: 2, raise: 6, move: 6 };
+  const POINT = { move: 6 };
   const NOD = { head: 1.5 };
   const LOOK = { eyes: 2.5, ramp: 4, hold: 16 }; // a glance at the screen as each caption lands
   const BROWS = { rest: 1, lift: 2.5, ramp: 4 };
   const GRAB = { frames: 30, reach: 6, shake: 5, shakeFrames: 10, left: [56, 52], right: [104, 52] }; // hands on his head
   const WAVE = { reach: 6, hand: [138, 88], wobble: 12, wobbleFrames: 7 }; // waves it off
-  // The four models in a row, Claude's grown and ringed from its caption on, the others dimmed.
-  const LOGO_ROW = { x: 40, step: 128, y: 150, size: 88, nameY: 266, nameSize: 22, nameGap: 8, right: 530, popAt: 2, popStep: 6, claudeScale: 1.15, dim: 0.35, ringPad: 6, ringRx: 14, ringWidth: 3 };
+  // The four models in a row from frame 0, Claude's grown and ringed from its caption on, the others dimmed.
+  const LOGO_ROW = { x: 40, step: 128, y: 150, size: 88, nameY: 266, nameSize: 22, nameGap: 8, right: 530, claudeScale: 1.15, dim: 0.35, ringPad: 6, ringRx: 14, ringWidth: 3 };
   const SCREEN_ROOM = { right: 530, top: 108, bottom: 328 }; // left of him and below the caption shade
   const TILE_PAD = 12;
   // When each tile of the hook's screen shows, by caption.
@@ -86,8 +86,7 @@
   const CLIMAX = { scrim: 0.85, fade: 4, leadY: [252, 306], size: 50, min: 40, stroke: 6, biasedY: 296, biasedSize: 84, biasedMin: 60, biasedStroke: 8, disclose: 18 };
   const LEAD_BAND = { gap: 4, fill: '#0a1526', opacity: 0.7 }; // over the scrim under the lead, so the reasons there all but vanish
   const DISCLOSURE_FIT = { pad: 12, head: 20, line: 16 }; // the smallest each line may shrink to, px
-  const END_LEAD = { size: 22, y: 220, fill: '#eef2f6', maxWidth: 424 };
-  const END_LEDGER_Y = 246;
+  const END_LEDGER_Y = 214;
   const END_DRAW = 8;
   const END_NOD = { depth: 4, ramp: 6 };
   const ASK_POINT = [196, 130]; // the left end of the question, where his finger aims
@@ -165,14 +164,9 @@
     return size;
   }
 
-  // The follow line is the one to read on the end card, so it grows; the ledger line moves under it.
+  // The end card has no follow line, so the ledger line moves up under the reply.
   function restyleEnd() {
-    const lead = $('s4', 'lead');
-    if (!lead.textContent.trim()) throw new Error('anthropic-ipo.json: end.lead, the follow line, is empty');
-    lead.setAttribute('y', END_LEAD.y);
-    Object.assign(lead.style, { fill: END_LEAD.fill, fontWeight: 700, fontSize: `${END_LEAD.size}px` });
-    const width = lead.getComputedTextLength();
-    if (width > END_LEAD.maxWidth) lead.style.fontSize = `${(END_LEAD.size * END_LEAD.maxWidth) / width}px`;
+    if ($('s4', 'lead').textContent.trim()) throw new Error('anthropic-ipo.json: the end card has no follow line, so end.lead must be ""');
     $('s4', 'ledger').setAttribute('y', END_LEDGER_Y);
   }
 
@@ -215,11 +209,10 @@
   function hookParts(h) {
     const top = hookY(Rig.STANDING);
     const point = LEFT_ARM.reach(toLocal(pointTarget(h), HOOK_SLOT.x, top, HOOK_SLOT.scale));
-    const raised = ease(progress(h, POINT.raiseAt, POINT.raise));
     const grab = { ...LEFT_ARM.reach(GRAB.left), ...reachRight(GRAB.right) };
     const grabbed = ease(progress(h, DIFFERENT_AT, GRAB.reach));
     const waved = ease(progress(h, DIFFERENT_AT + GRAB.frames, WAVE.reach));
-    const arms = blend(blend(blend({}, point, raised), grab, grabbed), reachRight(WAVE.hand), waved);
+    const arms = blend(blend(point, grab, grabbed), reachRight(WAVE.hand), waved);
     const shake = GRAB.shake * Math.sin((2 * Math.PI * h) / GRAB.shakeFrames) * grabbed * (1 - waved);
     const wobble = WAVE.wobble * Math.sin((2 * Math.PI * h) / WAVE.wobbleFrames) * waved;
     const nod = NOD.head * Math.sin((Math.PI * h) / BEAT) * (1 - grabbed);
@@ -257,16 +250,16 @@
     renderHookFigure(h);
   }
 
-  // The logos pop in one by one; from Claude's caption its logo grows and is ringed and the others dim.
+  // The logos are up from frame 0, so the first frame already shows the four; from Claude's caption its
+  // logo grows and is ringed and the others dim.
   function renderLogos(logos, f) {
     const gone = 1 - progress(f, FACTS_AT - BEAT_OUT, BEAT_OUT);
     const singled = ease(progress(f, CLAUDE_AT, BEAT_IN));
-    logos.forEach(({ node, ring, model, at, centre: [x, y] }, i) => {
-      const landed = ease(progress(f, at, BEAT_IN));
+    logos.forEach(({ node, ring, model, centre: [x, y] }) => {
       const isClaude = model === 'Claude';
-      const scale = (1 + BEAT_POP * (1 - landed)) * (isClaude ? lerp(1, LOGO_ROW.claudeScale, singled) : 1);
+      const scale = isClaude ? lerp(1, LOGO_ROW.claudeScale, singled) : 1;
       node.setAttribute('transform', `translate(${x} ${y}) scale(${scale}) translate(${-x} ${-y})`);
-      node.style.opacity = landed * gone * (isClaude ? 1 : lerp(1, LOGO_ROW.dim, singled));
+      node.style.opacity = gone * (isClaude ? 1 : lerp(1, LOGO_ROW.dim, singled));
       if (ring) ring.style.opacity = singled;
     });
   }
@@ -331,7 +324,7 @@
           'stroke-width': LOGO_ROW.ringWidth,
         }))
         : null;
-      return { node, ring, model, at: LOGO_ROW.popAt + i * LOGO_ROW.popStep, centre: [x + LOGO_ROW.size / 2, LOGO_ROW.y + LOGO_ROW.size / 2] };
+      return { node, ring, model, centre: [x + LOGO_ROW.size / 2, LOGO_ROW.y + LOGO_ROW.size / 2] };
     });
     const right = layer.getBBox().x + layer.getBBox().width;
     if (right > LOGO_ROW.right) throw new Error(`logos: the row runs to x ${right.toFixed(0)}, he stands from ${LOGO_ROW.right}`);
@@ -623,15 +616,16 @@
   // The end starts on its text, all of it at once; only he and the arrow move.
   function renderCallEnd(k) {
     poseCallEndFigure(k);
-    for (const id of ['place', 'text', 'kicker', 'cta', 'ask', 'reply', 'lead', 'ledger']) $('s4', id).style.opacity = 1;
-    for (const id of ['cta', 'ask', 'reply', 'lead', 'ledger']) $('s4', id).removeAttribute('transform');
+    for (const id of ['place', 'text', 'kicker', 'cta', 'ask', 'reply', 'ledger']) $('s4', id).style.opacity = 1;
+    for (const id of ['cta', 'ask', 'reply', 'ledger']) $('s4', id).removeAttribute('transform');
     bounceArrow(k);
   }
 
-  // The frames score.py clicks on: each logo popping in, each caption's screen changing, each card landing.
+  // The frames score.py clicks on: each caption's screen changing, each card landing. The logos are up
+  // from frame 0, so they have no click.
   function ipoClicks({ monitorStart }) {
     return {
-      lines: [...IDEAS.ideas.map((_, i) => LOGO_ROW.popAt + i * LOGO_ROW.popStep), CLAUDE_AT, FACTS_AT, REVENUE_AT, POP_AT],
+      lines: [CLAUDE_AT, FACTS_AT, REVENUE_AT, POP_AT],
       cards: IDEAS.ideas.map((_, i) => monitorStart + i * CALL_STEP),
     };
   }
