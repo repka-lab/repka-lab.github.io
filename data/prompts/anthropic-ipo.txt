@@ -1,0 +1,42 @@
+AI Prediction Lab: Anthropic IPO call, 2 November 2026
+
+You are taking part in a public experiment. Four AI models (ChatGPT, Claude, Gemini and Grok) get this same prompt, word for word. Each one calls one question about the Anthropic initial public offering. The calls go into a public, append-only ledger before the offer price is set, and each call is checked after the first day of trading. This is a record of forecasts, not financial advice.
+
+THE QUESTION
+
+Anthropic has filed to list its shares on Nasdaq under the ticker ANT. The offer price has not been set yet. As of 2 November 2026, no price range has been published and no first trading day has been announced; press reports point to the second half of November 2026.
+
+Will the closing price of ANT on its first day of trading be strictly higher than the IPO offer price?
+
+- UP: the first day's closing price is strictly higher than the offer price.
+- DOWN: anything else, a close exactly at the offer price included.
+
+The offer price is the price per share in Anthropic's announcement that the offering has been priced. The closing price is the Nasdaq Official Closing Price for ANT on its first trading day. If ANT has not started trading on Nasdaq by 31 December 2026, the call is void.
+
+There is no flat option. Pick one side.
+
+YOUR RESEARCH
+
+No data comes with this prompt. Find it yourself: search the web and use any tools you have. Look at whatever you judge relevant, for example the filings, reports on demand for the offering, how other large listings traded on their first day, or the market mood in the days before. You choose what matters.
+
+In your reasoning, name the sources you used (site and, if you can, the link) and give the date of the latest news on the offering that you saw. If you cannot search, say so and work from what you know, with the date your knowledge runs to.
+
+YOUR ANSWER
+
+First, explain your reasoning in your own words, at whatever length you need.
+
+Then end your answer with this block, filled in:
+
+CALL: UP or DOWN
+CONFIDENCE: a whole number from 50 to 100, how likely you think it is that your call is right
+REASON: your main reason in ten words or fewer
+FACTORS:
+- a factor in a few words | pulls UP or DOWN
+- a factor in a few words | pulls UP or DOWN
+- an optional third factor | pulls UP or DOWN
+
+Give the two or three factors that matter most to your call. They may pull either way.
+
+Rules for the whole answer:
+- Name a direction even if you are unsure. A low confidence is the way to show doubt.
+- Give no trading or investment advice. Do not use the words "buy", "sell", "should", "invest" or "guaranteed", or the phrases "will go up" and "will go down".

@@ -5,7 +5,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { after, describe, test } from 'node:test';
 
 import { CandleError } from '../candles.ts';
-import { MODELS } from '../ledger.ts';
+import { addPrediction, MODELS } from '../ledger.ts';
 import { SiteError } from './articles.ts';
 import { buildSite, MARKER } from './build.ts';
 import { DISCLAIMER, HOST_NOTE } from './html.ts';
@@ -63,6 +63,11 @@ describe('buildSite', () => {
       'avatar.svg',
       'data/ledger.json',
       'forecasts.html',
+      'img/anthropic-ipo-biased.jpg',
+      'img/anthropic-ipo-cards.jpg',
+      'img/anthropic-ipo-facts.jpg',
+      'img/anthropic-ipo-pop.jpg',
+      'img/anthropic-ipo-video.jpg',
       'img/binance-hack-drain.jpg',
       'img/binance-hack-launder.jpg',
       'img/binance-hack-setup.jpg',
@@ -84,6 +89,7 @@ describe('buildSite', () => {
       'logos/grok.svg',
       'news.html',
       'style.css',
+      'video/anthropic-ipo.mp4',
       'video/binance-hack.mp4',
       'video/btc-calls-2026-11-02.mp4',
       'video/gold-2025.mp4',
@@ -201,6 +207,31 @@ describe('buildSite', () => {
       () => buildSite({ ledgerPath, articlesDir: marketArticles, outDir: join(work, 'no-market'), includeDrafts: false }),
       { name: 'SiteError', message: /hack\.md: chart "market" has no price series for "bnb"/ },
     );
+  });
+
+  test('leaves event calls off the pages, while the raw ledger still holds them', () => {
+    const eventLedgerPath = join(work, 'event-ledger.json');
+    const withEvent = join(work, 'with-event');
+    const event = {
+      model: 'claude',
+      model_version: 'claude-test-1',
+      direction: 'up',
+      confidence: 60,
+      reasoning: 'The first day closes above the offer.',
+      prompt_hash: 'c'.repeat(64),
+      verify_date: '2026-11-01',
+      subject: 'anthropic-ipo',
+    } as const;
+    const ledger = addPrediction(sampleLedger(), event, new Date('2026-10-26T10:00:00Z'));
+    writeFileSync(eventLedgerPath, `${JSON.stringify(ledger, null, 2)}\n`);
+
+    buildSite({ ledgerPath: eventLedgerPath, articlesDir, outDir: withEvent, includeDrafts: false });
+
+    for (const page of ['index.html', 'ledger.html']) {
+      const html = readFileSync(join(withEvent, page), 'utf8');
+      assert.doesNotMatch(html, /P0003|closes above the offer/, `${page} shows the event call`);
+    }
+    assert.match(readFileSync(join(withEvent, 'data/ledger.json'), 'utf8'), /"subject": "anthropic-ipo"/);
   });
 
   test('draws the scoreboard as a chart, with the table one click away', () => {

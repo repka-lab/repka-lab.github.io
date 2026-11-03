@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import {
   addPrediction,
   addReview,
+  btcOnly,
   buildResults,
   classifyMove,
   dueForVerification,
@@ -139,6 +140,18 @@ describe('addPrediction', () => {
     assert.equal('factors' in ledger.predictions[0]!, false);
   });
 
+  test('keeps the subject of an event call', () => {
+    const ledger = recorded(forecast({ subject: 'anthropic-ipo' }));
+
+    assert.equal(ledger.predictions[0]?.subject, 'anthropic-ipo');
+  });
+
+  test('leaves the subject out of a BTC call', () => {
+    const ledger = recorded(forecast());
+
+    assert.equal('subject' in ledger.predictions[0]!, false);
+  });
+
   const rejected: [string, Json, RegExp][] = [
     ['an unknown model', { model: 'llama' }, /model must be one of chatgpt, claude, gemini, grok/],
     ['an unknown direction', { direction: 'sideways' }, /direction must be one of up, down$/],
@@ -162,6 +175,10 @@ describe('addPrediction', () => {
     ['a factor that is not an object', { factors: ['momentum', FACTORS[1]] }, /factors\[0\]: expected an object/],
     ['a blank factor', { factors: [FACTORS[0], { text: ' ', pulls: 'up' }] }, /factors\[1\]: text must be a non-empty string/],
     ['a factor that pulls sideways', { factors: [FACTORS[0], { text: 'Flat volume.', pulls: 'flat' }] }, /factors\[1\]: pulls must be one of up, down$/],
+    ['a subject that is not a slug', { subject: 'Anthropic IPO' }, /subject must be a lowercase slug such as anthropic-ipo/],
+    ['an empty subject', { subject: '' }, /subject must be a lowercase slug/],
+    ['a null subject', { subject: null }, /subject must be a lowercase slug/],
+    ['btc named as a subject', { subject: 'btc' }, /subject is left out for a BTC call/],
   ];
 
   for (const [what, overrides, message] of rejected) {
@@ -192,6 +209,21 @@ describe('addPrediction', () => {
     const ledger = recorded(...MODELS.map((model) => forecast({ model, model_version: `${model}-test` })));
 
     assert.deepEqual(ledger.predictions.map((p) => p.model), [...MODELS]);
+  });
+
+  test('lets a model make an event call beside its BTC call for the same verify date', () => {
+    const ledger = recorded(forecast(), forecast({ subject: 'anthropic-ipo' }));
+
+    assert.deepEqual(ledger.predictions.map((p) => p.subject), [undefined, 'anthropic-ipo']);
+  });
+
+  test('refuses a second event call for the same model, subject and verify date', () => {
+    const ledger = recorded(forecast(), forecast({ subject: 'anthropic-ipo' }));
+
+    assert.throws(() => addPrediction(ledger, forecast({ subject: 'anthropic-ipo', direction: 'down' }), RECORDED), {
+      ...LEDGER_ERROR,
+      message: /P0002 already holds claude on anthropic-ipo for 2026-11-02T21:00:00.000Z/,
+    });
   });
 });
 
@@ -449,6 +481,34 @@ describe('buildResults', () => {
   });
 });
 
+describe('btcOnly', () => {
+  test('drops event calls with their checks and reviews, and keeps every BTC call', () => {
+    const calls = recorded(
+      forecast({ factors: FACTORS }),
+      forecast({ subject: 'anthropic-ipo', factors: FACTORS }),
+      forecast({ verify_date: LATER_VERIFY }),
+    );
+    const verified = verifyPrediction(
+      verifyPrediction(calls, prices(2000, 2030), AFTER_VERIFY),
+      prices(350, 410, 'P0002'),
+      AFTER_VERIFY,
+    );
+    const reviewed = addReview(addReview(verified, review(), REVIEWED), review({ prediction_id: 'P0002' }), REVIEWED);
+
+    const btc = btcOnly(reviewed);
+
+    assert.deepEqual(btc.predictions.map((p) => p.id), ['P0001', 'P0003']);
+    assert.deepEqual(btc.verifications.map((v) => v.prediction_id), ['P0001']);
+    assert.deepEqual(btc.reviews.map((r) => r.prediction_id), ['P0001']);
+  });
+
+  test('returns a ledger of BTC calls unchanged', () => {
+    const ledger = addReview(checked(), review(), REVIEWED);
+
+    assert.deepEqual(btcOnly(ledger), ledger);
+  });
+});
+
 describe('parseLedger', () => {
   const verified = verifyPrediction(recorded(forecast(), forecast({ verify_date: LATER_VERIFY })), prices(2000, 2030), AFTER_VERIFY);
   const stored = asJson(verified);
@@ -471,6 +531,12 @@ describe('parseLedger', () => {
     const withFactors = recorded(forecast({ factors: FACTORS }));
 
     assert.deepEqual(parseLedger(asJson(withFactors)), withFactors);
+  });
+
+  test('round-trips an event call beside a BTC call in the same slot', () => {
+    const withSubject = recorded(forecast(), forecast({ subject: 'anthropic-ipo' }));
+
+    assert.deepEqual(parseLedger(asJson(withSubject)), withSubject);
   });
 
   test('round-trips the reviews of checked calls', () => {
@@ -502,6 +568,8 @@ describe('parseLedger', () => {
     ['a forecast verified twice', { ...stored, verifications: [verdict, verdict] }, /P0001 is verified twice/],
     ['a verification before the verify date', { ...stored, verifications: [{ ...verdict, verified_at: RECORDED.toISOString() }] }, /cannot be verified before/],
     ['a stored factor that pulls sideways', { ...stored, predictions: [{ ...first, factors: [FACTORS[0], { text: 'Flat volume.', pulls: 'flat' }] }, second] }, /predictions\[0\], factors\[1\]: pulls must be one of up, down/],
+    ['a stored subject that is not a slug', { ...stored, predictions: [{ ...first, subject: 'Anthropic IPO' }, second] }, /predictions\[0\]: subject must be a lowercase slug/],
+    ['two event calls in one slot', { ...stored, predictions: [{ ...first, subject: 'anthropic-ipo' }, { ...first, id: 'P0002', subject: 'anthropic-ipo' }] }, /two predictions share one slot: claude anthropic-ipo/],
   ];
 
   for (const [what, value, message] of rejected) {

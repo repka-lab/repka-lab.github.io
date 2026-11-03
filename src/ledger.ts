@@ -1,7 +1,8 @@
 // Append-only ledger of forecasts. Every prediction is written here BEFORE it is published,
 // and the ledger only grows: existing predictions, verifications and reviews are never edited or removed.
 //
-// Every forecast is a call on BTC: does the price end higher or lower than it started?
+// Every forecast is a call on BTC unless its subject names an event, such as the Anthropic IPO's
+// first-day close against its offer price: does the price end higher or lower than it started?
 // The recording time is taken from the clock, not from the caller, and the verify date is stored
 // in the prediction itself, so neither can be chosen after the outcome is known.
 // Once a call is checked, its model may add one review: which of its own factors held, and a short note.
@@ -23,6 +24,7 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{
 const MIN_FACTORS = 2;
 const MAX_FACTORS = 3;
 const MAX_NOTE_LENGTH = 280; // room for two sentences
+export const SUBJECT = /^[a-z0-9]+(-[a-z0-9]+)*$/; // an event call's slug; a BTC call has none
 
 // Published text documents calls and never gives advice, so these words stay out of it.
 export const FORBIDDEN_WORDS = /\b(buy|sell|should|invest|guaranteed|will go up|will go down)\b/i;
@@ -42,6 +44,7 @@ export interface Prediction {
   readonly confidence: number; // 0-100
   readonly reasoning: string;
   readonly factors?: readonly Factor[]; // 2-3, both sides allowed; absent on calls made without them
+  readonly subject?: string; // what an event call is about, e.g. anthropic-ipo; absent on a BTC call
   readonly prompt_hash: string;
   readonly verify_date: string; // ISO 8601, when the outcome is checked
 }
@@ -50,7 +53,7 @@ export interface Verification {
   readonly prediction_id: string;
   readonly verified_at: string; // ISO 8601
   readonly price_source: string;
-  readonly price_start: number; // price at the prediction's recording time
+  readonly price_start: number; // price at the prediction's recording time; an event call's own start, e.g. the offer price
   readonly price_end: number; // price at its verify_date
   readonly change_pct: number; // rounded to 4 decimals, for display
   readonly outcome: Direction; // read from the raw prices, so a rise too small for change_pct is still up
@@ -120,7 +123,10 @@ export function addPrediction(ledger: Ledger, input: NewPrediction, now: Date = 
   };
   checkDates(prediction, where);
   const taken = ledger.predictions.find((p) => slotOf(p) === slotOf(prediction));
-  if (taken) fail(where, `${taken.id} already holds ${prediction.model} for ${prediction.verify_date}`);
+  if (taken) {
+    const on = prediction.subject ? ` on ${prediction.subject}` : '';
+    fail(where, `${taken.id} already holds ${prediction.model}${on} for ${prediction.verify_date}`);
+  }
   return { ...ledger, predictions: [...ledger.predictions, prediction] };
 }
 
@@ -168,6 +174,19 @@ export function getStats(ledger: Ledger): Readonly<Record<Model, ModelStats>> {
 
 export function buildResults(ledger: Ledger, now: Date = new Date()): Results {
   return { schema_version: RESULTS_VERSION, updated_at: now.toISOString(), models: getStats(ledger) };
+}
+
+// The BTC calls alone, with their checks and reviews, for the scoreboard and charts.
+// A view for display, never saved: once an event call is dropped its ids skip, which parseLedger refuses.
+export function btcOnly(ledger: Ledger): Ledger {
+  const predictions = ledger.predictions.filter((p) => p.subject === undefined);
+  const kept = new Set(predictions.map((p) => p.id));
+  return {
+    ...ledger,
+    predictions,
+    verifications: ledger.verifications.filter((v) => kept.has(v.prediction_id)),
+    reviews: ledger.reviews.filter((r) => kept.has(r.prediction_id)),
+  };
 }
 
 export function parseLedger(value: unknown): Ledger {
@@ -285,6 +304,7 @@ function statsFor(predictions: readonly Prediction[], verdicts: ReadonlyMap<stri
 function readForecast(fields: Fields, where: string): Omit<NewPrediction, 'verify_date'> {
   const prompt_hash = readPromptHash(fields, where);
   const factors = readFactors(fields, where);
+  const subject = readSubject(fields, where);
   return {
     model: choice(fields, 'model', MODELS, where),
     model_version: text(fields, 'model_version', where),
@@ -292,8 +312,20 @@ function readForecast(fields: Fields, where: string): Omit<NewPrediction, 'verif
     confidence: number(fields, 'confidence', where, 0, 100),
     reasoning: text(fields, 'reasoning', where),
     ...(factors ? { factors } : {}),
+    ...(subject ? { subject } : {}),
     prompt_hash,
   };
+}
+
+// Optional: a BTC call has no subject, so every call recorded before events keeps canonicalising the same.
+function readSubject(fields: Fields, where: string): string | undefined {
+  const value = fields.subject;
+  if (value === undefined) return undefined;
+  if (typeof value !== 'string' || !SUBJECT.test(value)) {
+    fail(where, 'subject must be a lowercase slug such as anthropic-ipo');
+  }
+  if (value === 'btc') fail(where, 'subject is left out for a BTC call');
+  return value;
 }
 
 // Optional: calls recorded before factors existed have none, and must keep canonicalising the same.
@@ -472,8 +504,9 @@ function timestamp(fields: Fields, key: string, where: string): string {
   return value;
 }
 
-function slotOf(prediction: Pick<Prediction, 'model' | 'verify_date'>): string {
-  return `${prediction.model} ${prediction.verify_date}`;
+// One call per model and verify date on BTC, and one more per event.
+function slotOf({ model, subject, verify_date }: Pick<Prediction, 'model' | 'subject' | 'verify_date'>): string {
+  return subject ? `${model} ${subject} ${verify_date}` : `${model} ${verify_date}`;
 }
 
 function firstDuplicate(keys: readonly string[]): string | undefined {

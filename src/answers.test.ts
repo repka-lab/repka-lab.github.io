@@ -13,9 +13,10 @@ import {
   readCalls,
   reasonProblems,
   toPrediction,
+  writeEvent,
   writeWeek,
 } from './answers.ts';
-import type { WeekCall } from './answers.ts';
+import type { EventSchedule, WeekCall } from './answers.ts';
 import { addPrediction, emptyLedger, loadLedger, saveLedger } from './ledger.ts';
 import type { Factor } from './ledger.ts';
 
@@ -30,6 +31,10 @@ const WITH_CALL: Factor[] = [
   { text: 'Funding is hot', pulls: 'down' },
 ];
 const LONG_REASON = 'Rally is running out of steam as ETF demand fades fast'; // 11 words, a card fits 10
+const EVENT = 'anthropic-ipo';
+const IPO_CLOSE = '2026-11-17T21:00:00.000Z'; // a made-up first day's close
+const SCHEDULE: EventSchedule = { verifyDate: '2026-11-17T21:00:00Z', cutoff: '2026-11-16T22:00:00Z' };
+const BEFORE_PRICING = new Date('2026-11-12T12:00:00Z');
 
 const PLAIN_ANSWER = [
   'Spot ETF inflows stayed positive all week, while funding ran hot.',
@@ -171,6 +176,10 @@ describe('toPrediction', () => {
       verify_date: CHECK_DATE,
     });
   });
+
+  test('names the event an event call is about', () => {
+    assert.equal(toPrediction(call(), HASH, IPO_CLOSE, EVENT).subject, EVENT);
+  });
 });
 
 describe('reasonProblems', () => {
@@ -200,7 +209,7 @@ describe('ideasOf', () => {
   });
 });
 
-describe('readCalls and writeWeek', () => {
+describe('readCalls, writeWeek and writeEvent', () => {
   const root = mkdtempSync(join(tmpdir(), 'answers-test-'));
   after(() => rmSync(root, { recursive: true, force: true }));
 
@@ -282,6 +291,64 @@ describe('readCalls and writeWeek', () => {
     const files = ledgerFiles();
     writeWeek(WEEK, pair(), HASH, files, BEFORE_WEEK);
     assert.throws(() => writeWeek(WEEK, pair(), HASH, files, BEFORE_WEEK), { name: 'LedgerError', message: /P0001 already holds chatgpt/ });
+    assert.equal(loadLedger(files.ledger).predictions.length, 2);
+  });
+
+  test('appends an event call beside the BTC call of the same model, and writes no ideas file', () => {
+    const files = ledgerFiles();
+    writeWeek(WEEK, pair(), HASH, files, BEFORE_WEEK);
+    assert.deepEqual(writeEvent(EVENT, pair(), HASH, files.ledger, SCHEDULE, BEFORE_PRICING), [files.ledger]);
+    const { predictions } = loadLedger(files.ledger);
+    assert.deepEqual(predictions.map((p) => [p.id, p.model, p.subject, p.verify_date]), [
+      ['P0001', 'chatgpt', undefined, CHECK_DATE],
+      ['P0002', 'claude', undefined, CHECK_DATE],
+      ['P0003', 'chatgpt', EVENT, IPO_CLOSE],
+      ['P0004', 'claude', EVENT, IPO_CLOSE],
+    ]);
+  });
+
+  test('refuses an event call at or after the cutoff and leaves the ledger as it was', () => {
+    const files = ledgerFiles();
+    const before = readFileSync(files.ledger, 'utf8');
+    for (const now of [new Date(SCHEDULE.cutoff), new Date(IPO_CLOSE)]) {
+      assert.throws(() => writeEvent(EVENT, pair(), HASH, files.ledger, SCHEDULE, now), {
+        ...ANSWER_ERROR,
+        message: /calls on anthropic-ipo closed at 2026-11-16T22:00:00\.000Z/,
+      });
+    }
+    assert.equal(readFileSync(files.ledger, 'utf8'), before);
+  });
+
+  const badSchedules: [string, EventSchedule, RegExp][] = [
+    ['a cutoff at the verify date', { verifyDate: IPO_CLOSE, cutoff: IPO_CLOSE }, /cutoff .* must come before the verify date/],
+    ['a cutoff after the verify date', { ...SCHEDULE, cutoff: '2026-11-18T00:00:00Z' }, /must come before the verify date/],
+    ['a date without a time', { ...SCHEDULE, verifyDate: '2026-11-17' }, /verify date must be a UTC time/],
+    ['a time in another zone', { ...SCHEDULE, cutoff: '2026-11-16T17:00:00-05:00' }, /cutoff must be a UTC time/],
+    ['a day that does not exist', { ...SCHEDULE, verifyDate: '2026-11-31T21:00:00Z' }, /verify date must be a UTC time/],
+  ];
+  for (const [name, schedule, message] of badSchedules) {
+    test(`rejects ${name}`, () => {
+      const files = ledgerFiles();
+      assert.throws(() => writeEvent(EVENT, pair(), HASH, files.ledger, schedule, BEFORE_PRICING), { ...ANSWER_ERROR, message });
+      assert.equal(loadLedger(files.ledger).predictions.length, 0);
+    });
+  }
+
+  test('rejects an event that is not a slug', () => {
+    const files = ledgerFiles();
+    assert.throws(() => writeEvent('Anthropic IPO', pair(), HASH, files.ledger, SCHEDULE, BEFORE_PRICING), {
+      name: 'LedgerError',
+      message: /lowercase slug/,
+    });
+  });
+
+  test('refuses to log the same event twice', () => {
+    const files = ledgerFiles();
+    writeEvent(EVENT, pair(), HASH, files.ledger, SCHEDULE, BEFORE_PRICING);
+    assert.throws(() => writeEvent(EVENT, pair(), HASH, files.ledger, SCHEDULE, BEFORE_PRICING), {
+      name: 'LedgerError',
+      message: /P0001 already holds chatgpt on anthropic-ipo/,
+    });
     assert.equal(loadLedger(files.ledger).predictions.length, 2);
   });
 });

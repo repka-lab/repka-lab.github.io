@@ -113,7 +113,7 @@ const CARD_LABEL_GAP = 6;
 const REASON_BASELINES = [[48], [44, 59]];
 const REASON_LINES = REASON_BASELINES.length;
 const REASON_WORDS = 10; // what two rows hold at the smallest size; the card stays up after its 1.5 s
-const CARD_TEXT_ROOM = CARD.width - 28; // the reason rows, inside the card's padding
+const CARD_TEXT_INSET = 28; // the reason rows are this much narrower than their card, inside its padding
 // Every card reads its reason at one size: the largest of these that keeps each reason in its rows.
 const REASON_SIZES = [14, 13, 12, 11];
 const MODEL_COLORS = { ChatGPT: '#199e70', Claude: '#d95926', Gemini: '#3987e5', Grok: '#c98500' };
@@ -920,11 +920,11 @@ function wrapLines(probe, text, width) {
 }
 
 // The one reason size for all the cards, in px, measured on the page.
-function reasonSize(ideas, parent) {
+function reasonSize(ideas, parent, layout) {
   const probe = parent.appendChild(svgEl('text', { class: 'card-reason' }));
   const overflow = (size) => ideas.find(({ reason }) => {
     probe.style.fontSize = `${size}px`;
-    return wrapLines(probe, reason, CARD_TEXT_ROOM).length > REASON_LINES;
+    return wrapLines(probe, reason, layout.width - CARD_TEXT_INSET).length > REASON_LINES;
   });
   const size = REASON_SIZES.find((s) => overflow(s) === undefined);
   const tooLong = size === undefined && overflow(REASON_SIZES.at(-1));
@@ -933,25 +933,25 @@ function reasonSize(ideas, parent) {
   return size;
 }
 
-// All the week's cards, their reasons at one size.
-function drawIdeaCards(ideas, parent) {
-  const size = reasonSize(ideas, parent);
-  return ideas.map((idea, i) => drawIdeaCard(idea, i, parent, size));
+// All the week's cards, their reasons at one size. A screen without a chart can pass a wider column.
+function drawIdeaCards(ideas, parent, layout = CARD) {
+  const size = reasonSize(ideas, parent, layout);
+  return ideas.map((idea, i) => drawIdeaCard(idea, i, parent, size, layout));
 }
 
 // The card and the room left between the name and the call, measured on the page. The top row reads
 // name, call, confidence; the call sits just before the confidence so the two read together.
-function drawIdeaCard({ model, name: title, call, confidence, reason }, index, parent, size) {
+function drawIdeaCard({ model, name: title, call, confidence, reason }, index, parent, size, layout) {
   const color = MODEL_COLORS[model];
-  const { x } = CARD;
-  const y = CARD.y + index * (CARD.height + CARD.gap);
+  const { x, width, height } = layout;
+  const y = layout.y + index * (height + layout.gap);
   const nameX = x + 40;
   const card = parent.appendChild(svgEl('g'));
   const name = textEl(title ?? model, { class: 'card-name', x: nameX, y: y + 25 });
-  const conf = textEl(`${confidence}%`, { class: 'card-conf num', x: x + CARD.width - 12, y: y + 25, 'text-anchor': 'end' });
+  const conf = textEl(`${confidence}%`, { class: 'card-conf num', x: x + width - 12, y: y + 25, 'text-anchor': 'end' });
   card.append(
-    svgEl('rect', { class: 'card', x, y, width: CARD.width, height: CARD.height, rx: 6 }),
-    svgEl('rect', { x, y: y + 5, width: 4, height: CARD.height - 10, rx: 2, fill: color }),
+    svgEl('rect', { class: 'card', x, y, width, height, rx: 6 }),
+    svgEl('rect', { x, y: y + 5, width: 4, height: height - 10, rx: 2, fill: color }),
     name,
     conf,
   );
@@ -960,11 +960,11 @@ function drawIdeaCard({ model, name: title, call, confidence, reason }, index, p
   if (gap < CARD_LABEL_GAP) throw new Error(`ideas: ${model} and its call are ${gap.toFixed(1)} px apart, the card needs ${CARD_LABEL_GAP}`);
   card.appendChild(modelLogo(model, [x + CARD_LOGO.x, y + CARD_LOGO.y]));
   const text = card.appendChild(svgEl('text', { class: 'card-reason', style: `font-size: ${size}px` }));
-  const lines = wrapLines(text, reason, CARD_TEXT_ROOM);
+  const lines = wrapLines(text, reason, width - CARD_TEXT_INSET);
   if (lines.length > REASON_LINES) throw new Error(`ideas: ${model} reason needs ${lines.length} lines, the card fits ${REASON_LINES}`);
   text.textContent = '';
   text.append(...lines.map((line, i) => textEl(line, { x: x + 16, y: y + REASON_BASELINES[lines.length - 1][i] }, 'tspan')));
-  return { card, gap, centre: [x + CARD.width / 2, y + CARD.height / 2] };
+  return { card, gap, centre: [x + width / 2, y + height / 2] };
 }
 
 // One week everywhere: the board's question and the screen's title name the same Mon-Fri as the chart.

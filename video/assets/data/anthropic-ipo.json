@@ -1,0 +1,53 @@
+{
+  "note": "The Anthropic IPO video. The hook has him on from frame 0: four AIs on Anthropic's IPO, one of them Claude, then the filing, then its one figure growing into the same tile with its own caption (the rest of what is public is on the site), how US IPOs since 1980 closed day one (Ritter, Table 1a) for 2.5 s and 'Is this one different?'; the calls start at about 13 s. The pre-registered question is the header over the calls. Then the four calls of 2 November 2026 two by two, word for word from data/answers/anthropic-ipo via ideas-anthropic-ipo.json, and the climax: 'All four say up, including Claude.' on a dark band that all but hides the cards under it, then 'Biased?' for 3 s with Claude's conflict of interest on an opaque card, shown and spoken, while its own 'mega IPOs usually pop' is marked on its card. ipo-story.js plays it. The end card's follow line, 'Result after day one', is the reason to follow; its ledger line holds once P0005-P0008 are written.",
+  "sources": [
+    { "what": "Q3 revenue about $17B, up about 1,127% year on year; nine-month net loss $104B, mostly fair-value changes; roadshow being prepared, no date", "url": "https://www.cnbc.com/2026/11/02/anthropic-ant-s-1-quarter-financials.html" },
+    { "what": "S-1 public on 26 October 2026; Nasdaq, ticker ANT; last private valuation $965B in May", "url": "https://www.cnbc.com/2026/10/26/anthropic-ipo-live-updates-ai-s-1-filing.html" },
+    { "what": "reportedly seeks a $1.5-2T valuation", "url": "https://www.cnbc.com/2026/10/27/-anthropic-ipo-investors-growth-losses-s-1.html" },
+    { "what": "Fox Business (Liz Claman): could take place as soon as November 19 or 20; no price range yet", "url": "https://www.investing.com/news/stock-market-news/anthropic-said-to-plan-9-am-s1-filing-as-midnovember-ipo-remains-on-track-4972374" },
+    { "what": "US IPOs 1980-2025 (n = 9,345): 16.5% closed day one below the offer, 13.0% at it, so about 70.5% above (Table 1a)", "url": "https://site.warrington.ufl.edu/ritter/files/IPO-Statistics.pdf" }
+  ],
+  "title": "Grandpa IPO episode",
+  "html": "ipo.html",
+  "monitor": "monitor-ipo.svg",
+  "ideas": "ideas-anthropic-ipo.json",
+  "board": false,
+  "hookFigure": true,
+  "scripts": ["ipo-story.js"],
+  "hookFrames": 414,
+  "monitorFrames": 373,
+  "music": {
+    "bpm": 80,
+    "grooveFrom": 0,
+    "chords": { "hook": "Dm", "claude": "A", "facts": "F", "revenue": "F", "pop": "Bb", "different": "A", "calls": "Gm", "climax": "Bb", "biased": "A", "end": "F" },
+    "busy": ["calls", "climax"],
+    "hits": [79, 255]
+  },
+  "beats": [
+    { "id": "claude", "start": -319 },
+    { "id": "facts", "start": -263 },
+    { "id": "revenue", "start": -203 },
+    { "id": "pop", "start": -143 },
+    { "id": "different", "start": -68 },
+    { "id": "calls", "start": 0 },
+    { "id": "climax", "start": 203 },
+    { "id": "biased", "start": 271 }
+  ],
+  "end": {
+    "ask": "Will all four be right?",
+    "reply": "Reply with your pick",
+    "lead": "Result after day one · follow to see it",
+    "ledger": "Every call is logged first: repka-lab.github.io/ledger.html"
+  },
+  "voice": [
+    { "text": "4 AIs on Anthropic's IPO.", "say": "Four A.I.s on Anthropic's I.P.O.", "from": 0, "to": 79 },
+    { "text": "One of them is Claude.", "from": 79, "to": 135 },
+    { "text": "Anthropic filed for an IPO.", "say": "Anthropic filed for an I.P.O.", "from": 135, "to": 195 },
+    { "text": "Q3 revenue: about $17B.", "say": "Q3 revenue: about seventeen billion.", "from": 195, "to": 255 },
+    { "text": "Most IPOs pop.", "say": "Most I.P.O.s pop.", "from": 255, "to": 330 },
+    { "text": "Is this one different?", "from": 330, "to": 398 },
+    { "text": "All four say up, including Claude.", "from": 601, "to": 669 },
+    { "text": "Biased? Anthropic makes Claude.", "from": 669, "to": 759 },
+    { "text": "Will all four be right? Reply with your pick.", "from": 759, "to": 864 }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "note": "The four Anthropic IPO calls, asked on 2 November 2026 with data/prompts/anthropic-ipo.txt, word for word from data/answers/anthropic-ipo; ledger order.",
+  "ideas": [
+    { "model": "ChatGPT", "name": "ChatGPT", "call": "up", "confidence": 76, "reason": "AI demand and historical technology IPO performance favor a positive debut." },
+    { "model": "Claude", "name": "Claude", "call": "up", "confidence": 70, "reason": "Bankers likely price below market-implied value; mega IPOs usually pop" },
+    { "model": "Gemini", "name": "Gemini", "call": "up", "confidence": 72, "reason": "Strong AI market demand and conservative underwriter pricing favor a pop" },
+    { "model": "Grok", "name": "Grok Bot", "call": "up", "confidence": 70, "reason": "Mega-IPOs priced conservatively; strong demand for scarce AI equity" }
+  ]
+}

@@ -7,17 +7,22 @@
 // prompt asks for (CALL, CONFIDENCE, REASON, FACTORS); everything above it is kept as the reasoning.
 // A card shows the name models.json gives the model and its REASON line, word for word.
 //
+// An event call works the same way under the event's slug: data/prompts/<event>.txt and
+// data/answers/<event>/. It is logged before its cutoff, checked at its verify date, and has no cards.
+//
 // Usage:
 //   node src/answers.ts --week 2026-11-02           dry run: print what would be logged, write nothing
 //   node src/answers.ts --week 2026-11-02 --write   append the calls to the ledger and write
 //                                                   video/assets/data/ideas-2026-11-02.json
+//   node src/answers.ts --event anthropic-ipo --verify-date 2026-11-17T21:00:00Z --cutoff 2026-11-16T22:00:00Z [--write]
+//                                                   the same for an event: the ledger only, no ideas file
 
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { addPrediction, FORBIDDEN_WORDS, loadLedger, MODELS, saveLedger } from './ledger.ts';
+import { addPrediction, FORBIDDEN_WORDS, loadLedger, MODELS, saveLedger, SUBJECT } from './ledger.ts';
 import type { Direction, Factor, Ledger, Model, NewPrediction } from './ledger.ts';
 
 const PROJECT_ROOT = resolve(import.meta.dirname, '..');
@@ -28,6 +33,7 @@ const IDEAS_DIR = join(PROJECT_ROOT, 'video', 'assets', 'data');
 const MODELS_FILE = 'models.json';
 const ANSWER_EXT = '.md';
 const WEEK_DATE = /^\d{4}-\d{2}-\d{2}$/;
+const UTC_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?Z$/;
 const DAY_MS = 86_400_000;
 const CALL_DAYS = 5; // Monday 00:00 to Friday 23:59:59 UTC
 const LAST_SECOND_MS = 1000;
@@ -91,6 +97,11 @@ export interface WeekFiles {
   readonly ideas: string;
 }
 
+export interface EventSchedule {
+  readonly verifyDate: string; // when the outcome is known, such as the first day's close
+  readonly cutoff: string; // calls are logged before this, such as before the offer price is set
+}
+
 export function parseAnswer(model: Model, answer: string): ParsedAnswer {
   const lines = normalise(answer).split('\n').map(cleanLine);
   const callAt = lines.findLastIndex((line) => CALL_LINE.test(line));
@@ -129,7 +140,8 @@ export function checkDateOf(week: string): string {
   return new Date(weekStart(week).getTime() + CALL_DAYS * DAY_MS - LAST_SECOND_MS).toISOString();
 }
 
-export function toPrediction(call: WeekCall, promptHash: string, verifyDate: string): NewPrediction {
+// An event call also names its event; a BTC call names none.
+export function toPrediction(call: WeekCall, promptHash: string, verifyDate: string, subject?: string): NewPrediction {
   return {
     model: call.model,
     model_version: call.modelVersion,
@@ -139,6 +151,7 @@ export function toPrediction(call: WeekCall, promptHash: string, verifyDate: str
     factors: call.factors,
     prompt_hash: promptHash,
     verify_date: verifyDate,
+    ...(subject === undefined ? {} : { subject }),
   };
 }
 
@@ -197,11 +210,7 @@ export function writeWeek(
   if (now.getTime() >= weekStart(week).getTime()) {
     throw new AnswerError(`the week of ${week} has already opened; calls are logged before Monday 00:00 UTC`);
   }
-  const verifyDate = checkDateOf(week);
-  const ledger = calls.reduce<Ledger>(
-    (next, call) => addPrediction(next, toPrediction(call, promptHash, verifyDate), now),
-    loadLedger(files.ledger),
-  );
+  const ledger = appendCalls(loadLedger(files.ledger), calls, promptHash, checkDateOf(week), now);
   saveLedger(files.ledger, ledger);
   if (reasonProblems(calls).length > 0) return [files.ledger];
   const ids = ledger.predictions.slice(-calls.length).map((p) => p.id);
@@ -209,24 +218,91 @@ export function writeWeek(
   return [files.ledger, files.ideas];
 }
 
+// Both times as toISOString() writes them. The calls close before the outcome can be known.
+export function readSchedule(schedule: EventSchedule): EventSchedule {
+  const verifyDate = utcTime('verify date', schedule.verifyDate);
+  const cutoff = utcTime('cutoff', schedule.cutoff);
+  if (cutoff >= verifyDate) throw new AnswerError(`the cutoff ${cutoff} must come before the verify date ${verifyDate}`);
+  return { verifyDate, cutoff };
+}
+
+// Appends an event's calls in one save, each naming the event; an event has no ideas file.
+// Refuses at the cutoff: a call logged once its start is known, such as the offer price, isn't a call.
+export function writeEvent(
+  event: string,
+  calls: readonly WeekCall[],
+  promptHash: string,
+  ledgerPath: string,
+  schedule: EventSchedule,
+  now: Date = new Date(),
+): readonly string[] {
+  const { verifyDate, cutoff } = readSchedule(schedule);
+  if (now.toISOString() >= cutoff) {
+    throw new AnswerError(`the calls on ${event} closed at ${cutoff}; calls are logged before the cutoff`);
+  }
+  saveLedger(ledgerPath, appendCalls(loadLedger(ledgerPath), calls, promptHash, verifyDate, now, event));
+  return [ledgerPath];
+}
+
 function main(): void {
   const { values } = parseArgs({
-    options: { week: { type: 'string' }, write: { type: 'boolean', default: false } },
+    options: {
+      week: { type: 'string' },
+      event: { type: 'string' },
+      'verify-date': { type: 'string' },
+      cutoff: { type: 'string' },
+      write: { type: 'boolean', default: false },
+    },
     strict: true,
   });
-  if (values.week === undefined) throw new AnswerError('--week YYYY-MM-DD is required');
-  const week = values.week;
+  const { week, event, cutoff, write } = values;
+  const verifyDate = values['verify-date'];
+  if (week !== undefined && event !== undefined) throw new AnswerError('pass --week or --event, not both');
+  if (event !== undefined) {
+    if (verifyDate === undefined || cutoff === undefined) {
+      throw new AnswerError('--event needs --verify-date and --cutoff, UTC times such as 2026-11-17T21:00:00Z');
+    }
+    print(logEvent(event, { verifyDate, cutoff }, write));
+    return;
+  }
+  if (week === undefined) throw new AnswerError('--week YYYY-MM-DD or --event <slug> is required');
+  if (verifyDate !== undefined || cutoff !== undefined) throw new AnswerError('--verify-date and --cutoff go with --event');
+  print(logWeek(week, write));
+}
+
+function logWeek(week: string, write: boolean): object {
   const verifyDate = checkDateOf(week);
-  const promptPath = join(PROMPTS_DIR, `${week}.txt`);
-  if (!existsSync(promptPath)) throw new AnswerError(`no prompt at data/prompts/${week}.txt`);
-  const promptHash = createHash('sha256').update(readFileSync(promptPath)).digest('hex');
-  const calls = readCalls(join(ANSWERS_DIR, week));
+  const { promptHash, calls } = readSaved(week);
   const files = { ledger: LEDGER_PATH, ideas: join(IDEAS_DIR, `ideas-${week}.json`) };
-  const written = values.write ? writeWeek(week, calls, promptHash, files) : [];
-  const summary = {
+  const written = write ? writeWeek(week, calls, promptHash, files) : [];
+  return {
     week,
     prompt_hash: promptHash,
     verify_date: verifyDate,
+    ...callsSummary(calls),
+    ideasBlocked: reasonProblems(calls),
+    written: fromRoot(written),
+  };
+}
+
+function logEvent(event: string, schedule: EventSchedule, write: boolean): object {
+  if (!SUBJECT.test(event)) throw new AnswerError(`--event must be a lowercase slug such as anthropic-ipo, got "${event}"`);
+  const { verifyDate, cutoff } = readSchedule(schedule);
+  const { promptHash, calls } = readSaved(event);
+  const written = write ? writeEvent(event, calls, promptHash, LEDGER_PATH, schedule) : [];
+  return { event, prompt_hash: promptHash, verify_date: verifyDate, cutoff, ...callsSummary(calls), written: fromRoot(written) };
+}
+
+// A week's or an event's prompt is data/prompts/<name>.txt and its answers are in data/answers/<name>/.
+function readSaved(name: string): { readonly promptHash: string; readonly calls: readonly WeekCall[] } {
+  const promptPath = join(PROMPTS_DIR, `${name}.txt`);
+  if (!existsSync(promptPath)) throw new AnswerError(`no prompt at data/prompts/${name}.txt`);
+  const promptHash = createHash('sha256').update(readFileSync(promptPath)).digest('hex');
+  return { promptHash, calls: readCalls(join(ANSWERS_DIR, name)) };
+}
+
+function callsSummary(calls: readonly WeekCall[]): object {
+  return {
     calls: calls.map((c) => ({
       model: c.model,
       model_version: c.modelVersion,
@@ -240,10 +316,35 @@ function main(): void {
     forbidden: Object.fromEntries(
       calls.map((c) => [c.model, forbiddenWords(c.answer)] as const).filter(([, words]) => words.length > 0),
     ),
-    ideasBlocked: reasonProblems(calls),
-    written: written.map((path) => path.slice(PROJECT_ROOT.length + 1)),
   };
+}
+
+function fromRoot(paths: readonly string[]): readonly string[] {
+  return paths.map((path) => path.slice(PROJECT_ROOT.length + 1));
+}
+
+function print(summary: object): void {
   process.stdout.write(`${JSON.stringify(summary)}\n`);
+}
+
+function appendCalls(
+  ledger: Ledger,
+  calls: readonly WeekCall[],
+  promptHash: string,
+  verifyDate: string,
+  now: Date,
+  subject?: string,
+): Ledger {
+  return calls.reduce<Ledger>((next, call) => addPrediction(next, toPrediction(call, promptHash, verifyDate, subject), now), ledger);
+}
+
+// A date-time ending in Z; Date would roll an impossible day like November 31 into the next month.
+function utcTime(name: string, value: string): string {
+  const time = new Date(value);
+  if (!UTC_TIME.test(value) || Number.isNaN(time.getTime()) || time.toISOString().slice(0, 10) !== value.slice(0, 10)) {
+    throw new AnswerError(`${name} must be a UTC time such as 2026-11-17T21:00:00Z, got "${value}"`);
+  }
+  return time.toISOString();
 }
 
 function normalise(text: string): string {

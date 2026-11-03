@@ -14,7 +14,7 @@ import { parseArgs } from 'node:util';
 
 import { loadCandles, PRICES_FILE } from '../candles.ts';
 import { DEFAULT_SYMBOL, defaultOut } from '../fetch-binance-candles.ts';
-import { loadLedger } from '../ledger.ts';
+import { btcOnly, loadLedger } from '../ledger.ts';
 import { loadArticles, SiteError } from './articles.ts';
 import { renderArticle, renderIndex, renderLedgerPage, renderListPage } from './pages.ts';
 
@@ -44,6 +44,12 @@ const ASSETS = [
   'img/gold-2025-why.jpg',
   'img/gold-2025-record.jpg',
   'video/gold-2025.mp4',
+  'img/anthropic-ipo-video.jpg',
+  'img/anthropic-ipo-facts.jpg',
+  'img/anthropic-ipo-pop.jpg',
+  'img/anthropic-ipo-cards.jpg',
+  'img/anthropic-ipo-biased.jpg',
+  'video/anthropic-ipo.mp4',
 ] as const;
 const PROJECT_ROOT = resolve(import.meta.dirname, '../..');
 const PUBLIC_DIR = join(PROJECT_ROOT, 'docs');
@@ -64,7 +70,8 @@ interface OutputFile {
 
 // Returns the written files, relative to outDir and sorted.
 export function buildSite(options: BuildOptions): readonly string[] {
-  const ledger = loadLedger(options.ledgerPath);
+  // The scoreboard, the charts and the ledger page count BTC calls only; event calls ship in the raw ledger.
+  const ledger = btcOnly(loadLedger(options.ledgerPath));
   const { pricesPath } = options;
   const prices = pricesPath === undefined ? undefined : loadCandles(pricesPath);
   const marketPaths = Object.entries(options.marketPaths ?? {});
