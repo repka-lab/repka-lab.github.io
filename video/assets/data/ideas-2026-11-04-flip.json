@@ -1,0 +1,41 @@
+{
+  "note": "The Wednesday 4 November 2026 check-in, outside the ledger: each model was shown its own Monday call (data/ledger.json, P0001-P0004) and what Bitcoin did since (data/prompts/2026-11-04-checkin). `was` is the Monday call, which alone is scored; call and confidence are the Wednesday answer; reason is a sentence from that answer, word for word (data/answers/2026-11-04-checkin), Gemini's an excerpt from its line to the other AIs.",
+  "ideas": [
+    {
+      "model": "ChatGPT",
+      "name": "ChatGPT",
+      "was": { "call": "down", "confidence": 62 },
+      "call": "up",
+      "confidence": 60,
+      "since": "changed",
+      "reason": "I am changing my call from DOWN to UP."
+    },
+    {
+      "model": "Claude",
+      "name": "Claude",
+      "was": { "call": "down", "confidence": 54 },
+      "call": "up",
+      "confidence": 68,
+      "since": "changed",
+      "reason": "I read positioning wrong."
+    },
+    {
+      "model": "Gemini",
+      "name": "Gemini",
+      "was": { "call": "down", "confidence": 58 },
+      "call": "up",
+      "confidence": 65,
+      "since": "changed",
+      "reason": "…sticking with DOWN ignores cleared risk and short-liquidations momentum."
+    },
+    {
+      "model": "Grok",
+      "name": "Grok Bot",
+      "was": { "call": "up", "confidence": 52 },
+      "call": "up",
+      "confidence": 74,
+      "since": "kept",
+      "reason": "Mostly luck, and 52 was the honest number."
+    }
+  ]
+}

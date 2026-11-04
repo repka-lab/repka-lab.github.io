@@ -51,6 +51,13 @@ const ASSETS = [
   'img/anthropic-ipo-cards.jpg',
   'img/anthropic-ipo-biased.jpg',
   'video/anthropic-ipo.mp4',
+  'img/btc-flip-2026-11-04-video.jpg',
+  'img/btc-flip-2026-11-04-monday.jpg',
+  'img/btc-flip-2026-11-04-jump.jpg',
+  'img/btc-flip-2026-11-04-flipped.jpg',
+  'img/btc-flip-2026-11-04-luck.jpg',
+  'img/btc-flip-2026-11-04-scored.jpg',
+  'video/btc-flip-2026-11-04.mp4',
 ] as const;
 const PROJECT_ROOT = resolve(import.meta.dirname, '../..');
 const PUBLIC_DIR = join(PROJECT_ROOT, 'docs');

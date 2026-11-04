@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 3: the flip monitor</title>
+  <!--
+    Episode scene 3 for the flip episode, full frame. The hook plays over it and the check-in answers land on it.
+    #screen fills the frame; #room is kept empty for the desk, which maps its own screen onto #screen.
+
+    Everything is 1.5 times the weekly screen's size, and the hook's tiles run nearly the frame's width,
+    left of x 530 and below the hook's shade, so he stands at their right edge:
+      #logos        the four models with each Monday call under its name, filled by flip-story.js
+      #chart-tile   Coinbase 4h candles from the weekend on, drawn into #chart-candles by flip-story.js
+                    from the story's "btc" chart, with Monday's open dashed across them and the Monday
+                    calls as arrows from it; #monday-calls on the right gives way to #chart-figures,
+                    and both are checked against the candles and the ideas
+    Then the answers: #top states where Bitcoin stood when the models were asked, flip-story.js fills
+    #cards one at a time from assets/data/ideas-2026-11-04-flip.json, each card's call flipping from the
+    Monday one to the Wednesday one under a stamp.
+
+    Model colours, dark steps validated on the #0a1526 screen in this adjacent order:
+      ChatGPT #199e70, Claude #d95926, Gemini #3987e5, Grok #c98500.
+    Claude and Grok are too close to tell apart by colour alone, so every card names its model,
+    and the call is a word, never a colour.
+  -->
+  <style>
+    .t-primary { fill: #eef2f6; font: 600 13px system-ui, 'Segoe UI', sans-serif; }
+    .t-secondary { fill: #b9c6d8; font: 11px system-ui, 'Segoe UI', sans-serif; }
+    .t-muted { fill: #8193ad; font: 11px system-ui, 'Segoe UI', sans-serif; }
+    .num { font-variant-numeric: tabular-nums; }
+    .grid { stroke: #1b2c45; stroke-width: 1; }
+    .axis { stroke: #2b4365; stroke-width: 1; }
+    .candle-up { --tone: #26a69a; }
+    .candle-down { --tone: #ef5350; }
+    .candle-body, .toned { fill: var(--tone); }
+    .candle-wick { stroke: var(--tone); stroke-width: 1; }
+    .open-line { stroke: #b9c6d8; stroke-width: 1.5; stroke-dasharray: 4 3; }
+    .card { fill: #0f1d33; stroke: #1b2c45; stroke-width: 1; }
+    .card-name { fill: #eef2f6; font: 700 23px system-ui, 'Segoe UI', sans-serif; }
+    .card-call { font: 700 22px system-ui, 'Segoe UI', sans-serif; }
+    .card-up { fill: #2fc4b2; }
+    .card-down { fill: #ff6b66; }
+    .card-conf { fill: #8193ad; font: 600 20px system-ui, 'Segoe UI', sans-serif; }
+    .card-reason { fill: #b9c6d8; font: 19px system-ui, 'Segoe UI', sans-serif; }
+    .card-logo { fill: #0e0d0c; stroke: #2b4365; stroke-width: 1; }
+    .kicker { fill: #8193ad; font: 600 15px system-ui, 'Segoe UI', sans-serif; letter-spacing: 1px; }
+    .zone-text { fill: #b9c6d8; font: 19px system-ui, 'Segoe UI', sans-serif; }
+    .tile-big { fill: #eef2f6; font: 700 39px system-ui, 'Segoe UI', sans-serif; }
+    .tile-line { fill: #b9c6d8; font: 18px system-ui, 'Segoe UI', sans-serif; }
+    .tile-source { fill: #8193ad; font: 16px system-ui, 'Segoe UI', sans-serif; }
+    .top { fill: #eef2f6; font: 700 22px system-ui, 'Segoe UI', sans-serif; }
+    .stamp-box { fill: #0a1526; fill-opacity: 0.8; stroke-width: 4; }
+    .stamp-text { font: 900 34px 'Segoe UI', system-ui, sans-serif; letter-spacing: 3px; }
+  </style>
+
+  <g id="room"></g>
+  <rect id="screen" x="0" y="0" width="640" height="360" fill="#0a1526"/>
+
+  <text id="title" class="t-primary" x="626" y="28" text-anchor="end" style="font-size: 18px">AI PREDICTION LAB · BTC WEEK</text>
+  <line class="grid" x1="0" y1="40" x2="640" y2="40"/>
+
+  <g id="chart"></g>
+  <g id="week"></g>
+  <g id="ideas"></g>
+
+  <g id="logos"></g>
+
+  <g id="chart-tile">
+    <rect class="card" x="16" y="110" width="510" height="212" rx="8"/>
+    <text class="kicker" x="34" y="138">BTC-USD · COINBASE · 4H · OCT 31–NOV 4</text>
+    <g id="chart-candles"></g>
+    <g id="monday-calls">
+      <text class="kicker" x="364" y="170">MONDAY'S CALLS</text>
+      <text id="monday-open" class="tile-big num" x="364" y="210" style="font-size: 32px">$78,232</text>
+      <text class="tile-line" x="364" y="234">Monday open</text>
+      <line class="grid" x1="364" y1="250" x2="508" y2="250"/>
+      <text id="monday-tally" class="zone-text num" x="364" y="276" style="font-size: 20px">3 <tspan fill="#ff6b66" font-weight="700">down</tspan>, 1 <tspan fill="#2fc4b2" font-weight="700">up</tspan></text>
+    </g>
+    <g id="chart-figures">
+      <text class="kicker" x="364" y="170">NOV 4</text>
+      <text id="jump-big" class="tile-big num" x="364" y="210" fill="#2fc4b2" style="font-size: 42px">+7.3%</text>
+      <text class="tile-line" x="364" y="234">low to high</text>
+      <line class="grid" x1="364" y1="250" x2="508" y2="250"/>
+      <text class="zone-text num" x="364" y="276" style="font-size: 20px">high <tspan font-weight="700">$81,131</tspan></text>
+      <text class="zone-text num" x="364" y="302" style="font-size: 20px">low <tspan font-weight="700">$75,601</tspan></text>
+    </g>
+  </g>
+
+  <text id="top" class="top" x="16" y="68">Wed check-in: Bitcoin <tspan fill="#2fc4b2">+2.7%</tspan> since Monday's open</text>
+
+  <g id="cards"></g>
+
+  <line class="grid" x1="0" y1="328" x2="640" y2="328"/>
+  <text class="t-muted" x="320" y="347" text-anchor="middle" style="font-size: 10px">This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.</text>
+</svg>

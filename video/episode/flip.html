@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Grandpa flip episode</title>
+<style>
+  @font-face { font-family: 'Caveat Brush'; src: url('../assets/fonts/caveatbrush/CaveatBrush-Regular.ttf') format('truetype'); }
+  html, body { margin: 0; width: 1280px; height: 720px; overflow: hidden; background: #13233a; }
+  .layer { position: absolute; inset: 0; opacity: 0; }
+  .layer > svg { display: block; width: 1280px; height: 720px; }
+  #flash { background: #1e3352; }
+</style>
+</head>
+<body>
+<div class="layer" id="layer-monitor">
+<svg id="s3-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 3: the flip monitor</title>
+  <!--
+    Episode scene 3 for the flip episode, full frame. The hook plays over it and the check-in answers land on it.
+    #screen fills the frame; #room is kept empty for the desk, which maps its own screen onto #screen.
+
+    Everything is 1.5 times the weekly screen's size, and the hook's tiles run nearly the frame's width,
+    left of x 530 and below the hook's shade, so he stands at their right edge:
+      #logos        the four models with each Monday call under its name, filled by flip-story.js
+      #chart-tile   Coinbase 4h candles from the weekend on, drawn into #chart-candles by flip-story.js
+                    from the story's "btc" chart, with Monday's open dashed across them and the Monday
+                    calls as arrows from it; #monday-calls on the right gives way to #chart-figures,
+                    and both are checked against the candles and the ideas
+    Then the answers: #top states where Bitcoin stood when the models were asked, flip-story.js fills
+    #cards one at a time from assets/data/ideas-2026-11-04-flip.json, each card's call flipping from the
+    Monday one to the Wednesday one under a stamp.
+
+    Model colours, dark steps validated on the #0a1526 screen in this adjacent order:
+      ChatGPT #199e70, Claude #d95926, Gemini #3987e5, Grok #c98500.
+    Claude and Grok are too close to tell apart by colour alone, so every card names its model,
+    and the call is a word, never a colour.
+  -->
+  <style>
+    .t-primary { fill: #eef2f6; font: 600 13px system-ui, 'Segoe UI', sans-serif; }
+    .t-secondary { fill: #b9c6d8; font: 11px system-ui, 'Segoe UI', sans-serif; }
+    .t-muted { fill: #8193ad; font: 11px system-ui, 'Segoe UI', sans-serif; }
+    .num { font-variant-numeric: tabular-nums; }
+    .grid { stroke: #1b2c45; stroke-width: 1; }
+    .axis { stroke: #2b4365; stroke-width: 1; }
+    .candle-up { --tone: #26a69a; }
+    .candle-down { --tone: #ef5350; }
+    .candle-body, .toned { fill: var(--tone); }
+    .candle-wick { stroke: var(--tone); stroke-width: 1; }
+    .open-line { stroke: #b9c6d8; stroke-width: 1.5; stroke-dasharray: 4 3; }
+    .card { fill: #0f1d33; stroke: #1b2c45; stroke-width: 1; }
+    .card-name { fill: #eef2f6; font: 700 23px system-ui, 'Segoe UI', sans-serif; }
+    .card-call { font: 700 22px system-ui, 'Segoe UI', sans-serif; }
+    .card-up { fill: #2fc4b2; }
+    .card-down { fill: #ff6b66; }
+    .card-conf { fill: #8193ad; font: 600 20px system-ui, 'Segoe UI', sans-serif; }
+    .card-reason { fill: #b9c6d8; font: 19px system-ui, 'Segoe UI', sans-serif; }
+    .card-logo { fill: #0e0d0c; stroke: #2b4365; stroke-width: 1; }
+    .kicker { fill: #8193ad; font: 600 15px system-ui, 'Segoe UI', sans-serif; letter-spacing: 1px; }
+    .zone-text { fill: #b9c6d8; font: 19px system-ui, 'Segoe UI', sans-serif; }
+    .tile-big { fill: #eef2f6; font: 700 39px system-ui, 'Segoe UI', sans-serif; }
+    .tile-line { fill: #b9c6d8; font: 18px system-ui, 'Segoe UI', sans-serif; }
+    .tile-source { fill: #8193ad; font: 16px system-ui, 'Segoe UI', sans-serif; }
+    .top { fill: #eef2f6; font: 700 22px system-ui, 'Segoe UI', sans-serif; }
+    .stamp-box { fill: #0a1526; fill-opacity: 0.8; stroke-width: 4; }
+    .stamp-text { font: 900 34px 'Segoe UI', system-ui, sans-serif; letter-spacing: 3px; }
+  </style>
+
+  <g id="s3-room"></g>
+  <rect id="s3-screen" x="0" y="0" width="640" height="360" fill="#0a1526"/>
+
+  <text id="s3-title" class="t-primary" x="626" y="28" text-anchor="end" style="font-size: 18px">AI PREDICTION LAB · BTC WEEK</text>
+  <line class="grid" x1="0" y1="40" x2="640" y2="40"/>
+
+  <g id="s3-chart"></g>
+  <g id="s3-week"></g>
+  <g id="s3-ideas"></g>
+
+  <g id="s3-logos"></g>
+
+  <g id="s3-chart-tile">
+    <rect class="card" x="16" y="110" width="510" height="212" rx="8"/>
+    <text class="kicker" x="34" y="138">BTC-USD · COINBASE · 4H · OCT 31–NOV 4</text>
+    <g id="s3-chart-candles"></g>
+    <g id="s3-monday-calls">
+      <text class="kicker" x="364" y="170">MONDAY'S CALLS</text>
+      <text id="s3-monday-open" class="tile-big num" x="364" y="210" style="font-size: 32px">$78,232</text>
+      <text class="tile-line" x="364" y="234">Monday open</text>
+      <line class="grid" x1="364" y1="250" x2="508" y2="250"/>
+      <text id="s3-monday-tally" class="zone-text num" x="364" y="276" style="font-size: 20px">3 <tspan fill="#ff6b66" font-weight="700">down</tspan>, 1 <tspan fill="#2fc4b2" font-weight="700">up</tspan></text>
+    </g>
+    <g id="s3-chart-figures">
+      <text class="kicker" x="364" y="170">NOV 4</text>
+      <text id="s3-jump-big" class="tile-big num" x="364" y="210" fill="#2fc4b2" style="font-size: 42px">+7.3%</text>
+      <text class="tile-line" x="364" y="234">low to high</text>
+      <line class="grid" x1="364" y1="250" x2="508" y2="250"/>
+      <text class="zone-text num" x="364" y="276" style="font-size: 20px">high <tspan font-weight="700">$81,131</tspan></text>
+      <text class="zone-text num" x="364" y="302" style="font-size: 20px">low <tspan font-weight="700">$75,601</tspan></text>
+    </g>
+  </g>
+
+  <text id="s3-top" class="top" x="16" y="68">Wed check-in: Bitcoin <tspan fill="#2fc4b2">+2.7%</tspan> since Monday's open</text>
+
+  <g id="s3-cards"></g>
+
+  <line class="grid" x1="0" y1="328" x2="640" y2="328"/>
+  <text class="t-muted" x="320" y="347" text-anchor="middle" style="font-size: 10px">This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.</text>
+</svg>
+
+</div>
+<div class="layer" id="layer-hook">
+<svg id="s0-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <style>
+    .hook-title { fill: #fff; font: 900 30px 'Segoe UI', system-ui, sans-serif; paint-order: stroke; stroke: #0a1526; stroke-width: 5px; stroke-linejoin: round; }
+    .hook-up { fill: #2fc4b2; }
+    .hook-down { fill: #ff6b66; }
+    .hook-coin { fill: #3a2600; font: 800 14px 'Segoe UI', system-ui, sans-serif; }
+  </style>
+  <style>
+    .gp-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .gp-out { stroke: #0d1828; stroke-width: 2; stroke-linejoin: round; }
+    .gp-thin { stroke: #0d1828; stroke-width: 1.5; stroke-linejoin: round; }
+    .gp-edge { fill: #0d1828; stroke: #0d1828; stroke-width: 4; stroke-linejoin: round; }
+    .gp-sleeve-edge { stroke: #0d1828; stroke-width: 14; }
+    .gp-sleeve { stroke: #4a6c9e; stroke-width: 10.5; }
+    .gp-cuff { fill: none; stroke: #eef2f6; stroke-width: 10; }
+    .gp-trouser { fill: #34507c; }
+    .gp-sock { fill: #f08a24; }
+    .gp-suit { fill: #4a6c9e; }
+    .gp-suit-dark { fill: #3a5784; }
+    .gp-shirt { fill: #eef2f6; }
+    .gp-tie { fill: #f08a24; }
+    .gp-skin { fill: #f1c7a5; }
+    .gp-nose { fill: #eba889; }
+    .gp-crease { fill: none; stroke: #c98f70; stroke-width: 1.2; stroke-linecap: round; }
+    .gp-blush { fill: #f08f7e; opacity: 0.45; }
+    .gp-mouth { fill: #7a2e2e; }
+    .gp-hair { fill: #56606f; }
+    .gp-hair-light { fill: #aeb8c4; }
+    .gp-strand { stroke: #b4bec9; stroke-width: 1.4; }
+    .gp-brow { fill: #2a3442; }
+    .gp-shoe { fill: #6b3a1c; }
+  </style>
+  <defs>
+    <linearGradient id="s0-shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1526" stop-opacity="0.97"/>
+      <stop offset="0.16" stop-color="#0a1526" stop-opacity="0.97"/>
+      <stop offset="0.2" stop-color="#0a1526" stop-opacity="0.85"/>
+      <stop offset="0.3" stop-color="#0a1526" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#s0-shade)"/>
+  <g id="s0-beats"></g>
+  <g id="s0-coin">
+    <g id="s0-coin-spin">
+      <circle id="s0-coin-face" r="24" fill="#f2c14e" stroke="#a87412" stroke-width="3"/>
+      <circle r="18.5" fill="none" stroke="#c99428" stroke-width="1.4"/>
+      <text id="s0-coin-text" class="hook-coin" y="5" text-anchor="middle">50%</text>
+    </g>
+  </g>
+  <g id="s0-place">
+  <g id="s0-grandpa">
+    <g id="s0-leg-left">
+      <path class="gp-edge" d="M64.5 146 L79.5 146 L78.5 184 A6.5 6.5 0 0 1 65.5 184 Z"/>
+      <g id="s0-leg-left-shin">
+        <rect class="gp-sock gp-out" x="67.5" y="203" width="9" height="11"/>
+        <g id="s0-leg-left-foot">
+          <g id="s0-leg-left-shoe-front">
+            <path class="gp-shoe gp-out" d="M65.5 221.5 C62.3 221.5 61.2 219.3 61.8 217 C62.8 213.8 66.2 212 71 212 C75.5 212 78.6 213.4 79.3 216.2 C79.9 218.8 78.8 221.5 75.8 221.5 Z"/>
+            <ellipse cx="67.5" cy="215.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s0-leg-left-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M64 221.5 L64 215 Q64 212 67 212 L74 212 Q77.5 212 80 214.5 Q86 215.5 86 219 L86 221.5 Z"/>
+            <ellipse cx="81.5" cy="216.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M65.5 184 A6.5 6.5 0 0 1 78.5 184 L78.3 207 L65.7 207 Z"/>
+        <path class="gp-trouser" d="M65.5 184 A6.5 6.5 0 0 1 78.5 184 L78.3 207 L65.7 207 Z"/>
+      </g>
+      <path class="gp-trouser" d="M64.5 146 L79.5 146 L78.5 184 A6.5 6.5 0 0 1 65.5 184 Z"/>
+    </g>
+    <g id="s0-leg-right">
+      <path class="gp-edge" d="M80.5 146 L95.5 146 L94.5 184 A6.5 6.5 0 0 1 81.5 184 Z"/>
+      <g id="s0-leg-right-shin">
+        <rect class="gp-sock gp-out" x="83.5" y="203" width="9" height="11"/>
+        <g id="s0-leg-right-foot">
+          <g id="s0-leg-right-shoe-front">
+            <path class="gp-shoe gp-out" d="M94.5 221.5 C97.7 221.5 98.8 219.3 98.2 217 C97.2 213.8 93.8 212 89 212 C84.5 212 81.4 213.4 80.7 216.2 C80.1 218.8 81.2 221.5 84.2 221.5 Z"/>
+            <ellipse cx="92.5" cy="215.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s0-leg-right-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M80 221.5 L80 215 Q80 212 83 212 L90 212 Q93.5 212 96 214.5 Q102 215.5 102 219 L102 221.5 Z"/>
+            <ellipse cx="97.5" cy="216.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M81.5 184 A6.5 6.5 0 0 1 94.5 184 L94.3 207 L81.7 207 Z"/>
+        <path class="gp-trouser" d="M81.5 184 A6.5 6.5 0 0 1 94.5 184 L94.3 207 L81.7 207 Z"/>
+      </g>
+      <path class="gp-trouser" d="M80.5 146 L95.5 146 L94.5 184 A6.5 6.5 0 0 1 81.5 184 Z"/>
+    </g>
+
+    <g id="s0-torso">
+      <g id="s0-torso-front">
+        <path class="gp-suit gp-out" d="M53 100 A6 6 0 0 1 59 94 C69 93 91 93 101 94 A6 6 0 0 1 107 100 C107 115 106.5 135 106.5 154 C106.5 158 104.5 159.5 101 160.5 C92 162.5 68 162.5 59 160.5 C55.5 159.5 53.5 158 53.5 154 C53.5 135 53 115 53 100 Z"/>
+        <path class="gp-shirt" d="M69 95 L91 95 L80 121 Z"/>
+        <path class="gp-tie gp-out" d="M76.5 97 L83.5 97 L82 103 L78 103 Z M78 103 L82 103 L83.5 114 L80 118 L76.5 114 Z"/>
+        <path class="gp-suit-dark gp-out" d="M69 95 L60 105 L65.5 108.5 L62 112 L80 121 Z M91 95 L100 105 L94.5 108.5 L98 112 L80 121 Z"/>
+        <line class="gp-line" x1="80" y1="121" x2="80" y2="162" stroke="#0d1828" stroke-width="1.5"/>
+        <path class="gp-suit-dark gp-thin" d="M55 138 L68 138 L68 142 L55 142 Z M92 138 L105 138 L105 142 L92 142 Z"/>
+        <circle cx="80" cy="132" r="2.2" fill="#0d1828"/>
+        <circle cx="80" cy="144" r="2.2" fill="#0d1828"/>
+      </g>
+      <g id="s0-torso-side" display="none">
+        <path class="gp-suit gp-out" d="M65.5 97.5 C69 94 76 93.5 82 93.5 C88 93.5 93 94.5 95.5 97 C98 100 98.5 110 98.5 122 C98.5 133 99.5 141 97.5 147.5 C96.5 150 94 151 90 151.5 L74 154 C70 155 68 157.5 67.5 160.5 L63.5 160.5 C63 150 62.5 135 62.5 120 C62.5 108 63 101 65.5 97.5 Z"/>
+        <path class="gp-shirt gp-out" d="M64.6 93 C64.4 89.4 65.2 86.6 66.8 85 C69 84.4 71.6 84.8 73.6 85.8 L73.4 93 Z"/>
+        <path class="gp-suit-dark gp-out" d="M64.2 100.5 C63.4 95.5 63.6 91.2 65.4 88 C68.4 87 71.8 87.4 74.6 89 L75.6 96.5 Z"/>
+        <path class="gp-shirt" d="M89.5 95 C93 95.5 95.5 96.5 96.5 99 C97.6 104 98 111 98 121 L95 121 Z"/>
+        <path class="gp-tie gp-out" d="M94.5 103 L97.2 103 L98 116 L96.3 118.5 L95.2 116 Z"/>
+        <path class="gp-suit-dark gp-out" d="M89.5 95 L85.5 104 L88.5 106 L87 109 L95 121 Z"/>
+        <path class="gp-suit-dark gp-thin" d="M80 137.5 L93 137.5 L93 141.5 L80 141.5 Z"/>
+        <circle cx="96" cy="131" r="1.8" fill="#0d1828"/>
+        <circle cx="96" cy="142" r="1.8" fill="#0d1828"/>
+      </g>
+    </g>
+
+    <g id="s0-arm-right">
+      <line class="gp-line gp-sleeve-edge" x1="101" y1="100" x2="106" y2="129"/>
+      <g id="s0-arm-right-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="106" y1="129" x2="110.37" y2="146.99"/>
+        <line class="gp-line gp-sleeve" x1="106" y1="129" x2="110.37" y2="146.99"/>
+        <line class="gp-cuff" x1="109.895" y1="145.045" x2="110.845" y2="148.935"/>
+        <circle class="gp-skin gp-out" cx="112.13" cy="154.27" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="101" y1="100" x2="106" y2="129"/>
+    </g>
+    <g id="s0-arm-left">
+      <line class="gp-line gp-sleeve-edge" x1="59" y1="100" x2="54" y2="129"/>
+      <g id="s0-arm-left-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="54" y1="129" x2="49.63" y2="146.99"/>
+        <line class="gp-line gp-sleeve" x1="54" y1="129" x2="49.63" y2="146.99"/>
+        <line class="gp-cuff" x1="50.105" y1="145.045" x2="49.155" y2="148.935"/>
+        <g id="s0-chalk">
+          <line x1="47.29" y1="156.66" x2="44.89" y2="166.36" stroke="#0d1828" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="47.29" y1="156.66" x2="44.89" y2="166.36" stroke="#f4f1e8" stroke-width="3.5" stroke-linecap="round"/>
+        </g>
+        <circle class="gp-skin gp-out" cx="47.87" cy="154.27" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="59" y1="100" x2="54" y2="129"/>
+    </g>
+
+    <g id="s0-head">
+      <g transform="translate(0 6)">
+        <g id="s0-head-front">
+          <ellipse class="gp-skin gp-out" cx="61.2" cy="63" rx="4.4" ry="5.8"/>
+          <ellipse class="gp-skin gp-out" cx="98.8" cy="63" rx="4.4" ry="5.8"/>
+          <path class="gp-crease" d="M61.9 60 Q59.6 63 61.9 66 M98.1 60 Q100.4 63 98.1 66"/>
+          <path id="s0-face" class="gp-skin gp-out" d="M80 36.5 C91 36.5 98.5 44 98.5 56 C98.5 70 91 81 80 81 C69 81 61.5 70 61.5 56 C61.5 44 69 36.5 80 36.5 Z"/>
+          <path id="s0-hair" class="gp-hair gp-out" d="M60.6 57.5 C58.4 44 65.5 31 80.5 30.5 C95 30.3 102.6 42 99.4 57.5 C98.2 52.5 96.6 48.2 93.4 45.4 C87.5 46.6 80.5 45.4 75 42.4 C71 44.4 67 47.8 64 52.6 Z"/>
+          <path class="gp-line gp-strand" d="M70.5 36.5 Q78 34.8 86 36.8 M76.5 40.6 Q84.5 40.2 92.5 42.4 M66 41.5 Q68.4 39.4 71.5 39"/>
+          <path class="gp-line gp-strand" d="M61.8 55.4 Q61 50.6 63.6 47.4 M63.2 53.8 Q63.4 50.8 65.6 48.4"/>
+          <ellipse class="gp-blush" cx="65.8" cy="67.6" rx="3.6" ry="2.4"/>
+          <ellipse class="gp-blush" cx="94.2" cy="67.6" rx="3.6" ry="2.4"/>
+          <path id="s0-beard" class="gp-hair gp-out" d="M62.2 62 C62.8 68 65.2 71.5 69 72.5 L91 72.5 C94.8 71.5 97.2 68 97.8 62 C99 67.5 99 73.5 97.2 79.5 C94.8 88.5 88 97 80 99.5 C72 97 65.2 88.5 62.8 79.5 C61 73.5 61 67.5 62.2 62 Z"/>
+          <path class="gp-line gp-strand" d="M67.5 80 Q69.5 88.5 74 94 M92.5 80 Q90.5 88.5 86 94 M80 89 L80 95.5"/>
+          <g id="s0-glasses" class="gp-line" stroke="#1b2a40" stroke-width="2.2">
+            <circle cx="72" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+            <circle cx="88" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+            <line x1="78.8" y1="60" x2="81.2" y2="60"/>
+            <line x1="65.2" y1="59.3" x2="62.4" y2="57.8"/>
+            <line x1="94.8" y1="59.3" x2="97.6" y2="57.8"/>
+          </g>
+          <ellipse class="gp-nose gp-out" cx="80" cy="68" rx="5" ry="4.3"/>
+          <ellipse cx="78.3" cy="66.3" rx="1.5" ry="0.9" fill="#ffffff" opacity="0.45"/>
+          <path id="s0-mustache" class="gp-hair-light gp-out" d="M80 70.6 C76 68 70.5 68.2 67.8 71.2 C66.4 72.8 65.2 73.4 63.8 72.6 C64.2 75.4 66.8 77 70 76.6 C73.6 76.2 77 75.4 80 74.2 C83 75.4 86.4 76.2 90 76.6 C93.2 77 95.8 75.4 96.2 72.6 C94.8 73.4 93.6 72.8 92.2 71.2 C89.5 68.2 84 68 80 70.6 Z"/>
+          <path id="s0-mouth" class="gp-mouth gp-thin" d="M75 77.2 Q80 83 85 77.2 Q80 78.8 75 77.2 Z"/>
+          <g id="s0-eyes" fill="#0d1828">
+            <g id="s0-eye-left"><circle cx="72" cy="60.8" r="2.4"/><circle cx="72.9" cy="59.9" r="0.8" fill="#ffffff"/></g>
+            <g id="s0-eye-right"><circle cx="88" cy="60.8" r="2.4"/><circle cx="88.9" cy="59.9" r="0.8" fill="#ffffff"/></g>
+          </g>
+          <g id="s0-brows" class="gp-brow" stroke="#0d1828" stroke-width="1" stroke-linejoin="round">
+            <path id="s0-brow-left" d="M65.4 51.6 C66.8 48.6 71.4 47.6 76.6 49 L76.2 51.2 C72.2 50.2 68.6 50.6 65.4 51.6 Z"/>
+            <path id="s0-brow-right" d="M94.6 51.6 C93.2 48.6 88.6 47.6 83.4 49 L83.8 51.2 C87.8 50.2 91.4 50.6 94.6 51.6 Z"/>
+          </g>
+        </g>
+        <g id="s0-head-side" display="none">
+          <path id="s0-face-side" class="gp-skin gp-out" d="M83 36.5 C91.5 36.5 97 43 97 51.5 C97 54.5 95.8 56.8 96 59.5 L99.6 70 C100 76 99 81 96 83 L78 86 C72 85.5 67.5 82.5 64.5 78 C61.5 72 60.5 64 60.5 56 C60.5 44 70 36.5 83 36.5 Z"/>
+          <path id="s0-hair-side" class="gp-hair gp-out" d="M64.6 76 C60 70 58.6 60 59 52 C59.6 40 68 31.4 80 30.6 C88.5 30.2 95.4 33.8 98 40.4 C93.8 39 89.2 39.6 85.6 42.2 C81.5 45.2 78.6 50 77.4 55.8 C73.4 56.4 70 59.6 69.6 64.8 C69.4 69.4 68 73.6 64.6 76 Z"/>
+          <path class="gp-line gp-strand" d="M67.5 41.5 Q76 35 88 34.6 M63.6 50 Q68.5 43 78.5 40.2 M62.6 60 Q64 53.5 70.5 48.8"/>
+          <path class="gp-line gp-strand" d="M75.6 54.6 Q76.6 49.6 80.6 45.6 M73.4 55.6 Q74.2 51 77.4 47.6"/>
+          <ellipse class="gp-blush" cx="88.6" cy="66.8" rx="3.6" ry="2.4"/>
+          <path id="s0-beard-side" class="gp-hair gp-out" d="M77.6 57 C78 64 81 69.5 86.5 71.6 L97 72.4 C100.8 75 101.6 81 100.8 87 C100 94 96.8 99.4 90.4 100.8 C83 101 75.5 96.8 70.5 90.6 C67.6 86.6 67.4 78 68.6 71.4 C70.5 66.5 74 60.5 77.6 57 Z"/>
+          <path class="gp-line gp-strand" d="M75 80 Q77.5 88 82.5 94 M91 82 Q92.5 89 90 95"/>
+          <ellipse class="gp-skin gp-out" cx="73.5" cy="63" rx="4.2" ry="5.8"/>
+          <path class="gp-crease" d="M75 59.8 Q72.4 63 75 66.2"/>
+          <g id="s0-glasses-side" class="gp-line" stroke="#1b2a40" stroke-width="2.2">
+            <line x1="91" y1="58.6" x2="74.5" y2="57.4"/>
+            <ellipse cx="94.6" cy="60" rx="3.6" ry="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+          </g>
+          <ellipse class="gp-nose gp-out" cx="99.2" cy="65.8" rx="4.8" ry="4.3"/>
+          <ellipse cx="100.6" cy="64.2" rx="1.5" ry="0.9" fill="#ffffff" opacity="0.45"/>
+          <path id="s0-mustache-side" class="gp-hair-light gp-out" d="M88.5 70.6 C92 68.8 97.5 68.6 100.6 70.4 C102.4 71.4 103.4 73 103 75.2 C101.6 74 100.4 73.8 98.6 74.6 C95 76.2 91 76 88 74.2 C86.8 73.2 87 71.6 88.5 70.6 Z"/>
+          <path class="gp-mouth gp-thin" d="M96 77.8 Q98.8 80.6 100.6 77.6 Q98.2 78.8 96 77.8 Z"/>
+          <g id="s0-eye-side" fill="#0d1828"><circle cx="92.4" cy="60.8" r="2.3"/><circle cx="93.2" cy="59.9" r="0.8" fill="#ffffff"/></g>
+          <path id="s0-brows-side" class="gp-brow" stroke="#0d1828" stroke-width="1" stroke-linejoin="round" d="M87 51.4 C88.2 48.6 92.4 47.6 97 49.2 L96.4 51.3 C92.8 50.3 89.8 50.6 87 51.4 Z"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  </g>
+</svg>
+</div>
+<div class="layer" id="layer-end">
+<svg id="s4-root" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <style>
+    .end-kicker { fill: #f08a24; font: 700 12px 'Segoe UI', system-ui, sans-serif; letter-spacing: 2px; }
+    .end-ask { fill: #fff; font: 900 36px 'Segoe UI', system-ui, sans-serif; }
+    .end-reply { fill: #eef2f6; font: 700 20px 'Segoe UI', system-ui, sans-serif; }
+    .end-arrow { fill: none; stroke: #f08a24; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .end-lead { fill: #b9c6d8; font: 14px 'Segoe UI', system-ui, sans-serif; }
+    .end-ledger { fill: #8193ad; font: 12px 'Segoe UI', system-ui, sans-serif; }
+  </style>
+  <style>
+    .gp-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .gp-out { stroke: #0d1828; stroke-width: 2; stroke-linejoin: round; }
+    .gp-thin { stroke: #0d1828; stroke-width: 1.5; stroke-linejoin: round; }
+    .gp-edge { fill: #0d1828; stroke: #0d1828; stroke-width: 4; stroke-linejoin: round; }
+    .gp-sleeve-edge { stroke: #0d1828; stroke-width: 14; }
+    .gp-sleeve { stroke: #4a6c9e; stroke-width: 10.5; }
+    .gp-cuff { fill: none; stroke: #eef2f6; stroke-width: 10; }
+    .gp-trouser { fill: #34507c; }
+    .gp-sock { fill: #f08a24; }
+    .gp-suit { fill: #4a6c9e; }
+    .gp-suit-dark { fill: #3a5784; }
+    .gp-shirt { fill: #eef2f6; }
+    .gp-tie { fill: #f08a24; }
+    .gp-skin { fill: #f1c7a5; }
+    .gp-nose { fill: #eba889; }
+    .gp-crease { fill: none; stroke: #c98f70; stroke-width: 1.2; stroke-linecap: round; }
+    .gp-blush { fill: #f08f7e; opacity: 0.45; }
+    .gp-mouth { fill: #7a2e2e; }
+    .gp-hair { fill: #56606f; }
+    .gp-hair-light { fill: #aeb8c4; }
+    .gp-strand { stroke: #b4bec9; stroke-width: 1.4; }
+    .gp-brow { fill: #2a3442; }
+    .gp-shoe { fill: #6b3a1c; }
+  </style>
+  <rect width="640" height="360" fill="#13233a"/>
+  <rect y="312" width="640" height="48" fill="#0d1828"/>
+  <line x1="0" y1="312" x2="640" y2="312" stroke="#2b4365" stroke-width="3"/>
+  <line x1="200" y1="76" x2="232" y2="76" stroke="#f08a24" stroke-width="3" stroke-linecap="round"/>
+  <g id="s4-text">
+    <text id="s4-kicker" class="end-kicker" x="200" y="96">AI PREDICTION LAB</text>
+    <text id="s4-lead" class="end-lead" x="200" y="216"></text>
+    <text id="s4-ledger" class="end-ledger" x="200" y="238">Every call is logged first: repka-lab.github.io/ledger.html</text>
+  </g>
+  <!-- The call to action pops in after the rest; the arrow points down at the reply button under the video. -->
+  <g id="s4-cta">
+    <text id="s4-ask" class="end-ask" x="200" y="142">Friday decides. Who's right?</text>
+    <text id="s4-reply" class="end-reply" x="200" y="178">Reply with your pick</text>
+    <g id="s4-arrow"><path id="s4-arrow-line" class="end-arrow" pathLength="1" d="M404 162 C418 162 426 170 426 186"/><path id="s4-arrow-head" class="end-arrow" pathLength="1" d="M419 180 L426 188 L433 180"/></g>
+  </g>
+  <g id="s4-place">
+  <g id="s4-grandpa">
+    <g id="s4-leg-left">
+      <path class="gp-edge" d="M64.5 146 L79.5 146 L78.5 184 A6.5 6.5 0 0 1 65.5 184 Z"/>
+      <g id="s4-leg-left-shin">
+        <rect class="gp-sock gp-out" x="67.5" y="203" width="9" height="11"/>
+        <g id="s4-leg-left-foot">
+          <g id="s4-leg-left-shoe-front">
+            <path class="gp-shoe gp-out" d="M65.5 221.5 C62.3 221.5 61.2 219.3 61.8 217 C62.8 213.8 66.2 212 71 212 C75.5 212 78.6 213.4 79.3 216.2 C79.9 218.8 78.8 221.5 75.8 221.5 Z"/>
+            <ellipse cx="67.5" cy="215.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s4-leg-left-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M64 221.5 L64 215 Q64 212 67 212 L74 212 Q77.5 212 80 214.5 Q86 215.5 86 219 L86 221.5 Z"/>
+            <ellipse cx="81.5" cy="216.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M65.5 184 A6.5 6.5 0 0 1 78.5 184 L78.3 207 L65.7 207 Z"/>
+        <path class="gp-trouser" d="M65.5 184 A6.5 6.5 0 0 1 78.5 184 L78.3 207 L65.7 207 Z"/>
+      </g>
+      <path class="gp-trouser" d="M64.5 146 L79.5 146 L78.5 184 A6.5 6.5 0 0 1 65.5 184 Z"/>
+    </g>
+    <g id="s4-leg-right">
+      <path class="gp-edge" d="M80.5 146 L95.5 146 L94.5 184 A6.5 6.5 0 0 1 81.5 184 Z"/>
+      <g id="s4-leg-right-shin">
+        <rect class="gp-sock gp-out" x="83.5" y="203" width="9" height="11"/>
+        <g id="s4-leg-right-foot">
+          <g id="s4-leg-right-shoe-front">
+            <path class="gp-shoe gp-out" d="M94.5 221.5 C97.7 221.5 98.8 219.3 98.2 217 C97.2 213.8 93.8 212 89 212 C84.5 212 81.4 213.4 80.7 216.2 C80.1 218.8 81.2 221.5 84.2 221.5 Z"/>
+            <ellipse cx="92.5" cy="215.4" rx="3" ry="1.2" fill="#ffffff" opacity="0.25"/>
+          </g>
+          <g id="s4-leg-right-shoe-side" display="none">
+            <path class="gp-shoe gp-out" d="M80 221.5 L80 215 Q80 212 83 212 L90 212 Q93.5 212 96 214.5 Q102 215.5 102 219 L102 221.5 Z"/>
+            <ellipse cx="97.5" cy="216.6" rx="2.6" ry="1" fill="#ffffff" opacity="0.25"/>
+          </g>
+        </g>
+        <path class="gp-edge" d="M81.5 184 A6.5 6.5 0 0 1 94.5 184 L94.3 207 L81.7 207 Z"/>
+        <path class="gp-trouser" d="M81.5 184 A6.5 6.5 0 0 1 94.5 184 L94.3 207 L81.7 207 Z"/>
+      </g>
+      <path class="gp-trouser" d="M80.5 146 L95.5 146 L94.5 184 A6.5 6.5 0 0 1 81.5 184 Z"/>
+    </g>
+
+    <g id="s4-torso">
+      <g id="s4-torso-front">
+        <path class="gp-suit gp-out" d="M53 100 A6 6 0 0 1 59 94 C69 93 91 93 101 94 A6 6 0 0 1 107 100 C107 115 106.5 135 106.5 154 C106.5 158 104.5 159.5 101 160.5 C92 162.5 68 162.5 59 160.5 C55.5 159.5 53.5 158 53.5 154 C53.5 135 53 115 53 100 Z"/>
+        <path class="gp-shirt" d="M69 95 L91 95 L80 121 Z"/>
+        <path class="gp-tie gp-out" d="M76.5 97 L83.5 97 L82 103 L78 103 Z M78 103 L82 103 L83.5 114 L80 118 L76.5 114 Z"/>
+        <path class="gp-suit-dark gp-out" d="M69 95 L60 105 L65.5 108.5 L62 112 L80 121 Z M91 95 L100 105 L94.5 108.5 L98 112 L80 121 Z"/>
+        <line class="gp-line" x1="80" y1="121" x2="80" y2="162" stroke="#0d1828" stroke-width="1.5"/>
+        <path class="gp-suit-dark gp-thin" d="M55 138 L68 138 L68 142 L55 142 Z M92 138 L105 138 L105 142 L92 142 Z"/>
+        <circle cx="80" cy="132" r="2.2" fill="#0d1828"/>
+        <circle cx="80" cy="144" r="2.2" fill="#0d1828"/>
+      </g>
+      <g id="s4-torso-side" display="none">
+        <path class="gp-suit gp-out" d="M65.5 97.5 C69 94 76 93.5 82 93.5 C88 93.5 93 94.5 95.5 97 C98 100 98.5 110 98.5 122 C98.5 133 99.5 141 97.5 147.5 C96.5 150 94 151 90 151.5 L74 154 C70 155 68 157.5 67.5 160.5 L63.5 160.5 C63 150 62.5 135 62.5 120 C62.5 108 63 101 65.5 97.5 Z"/>
+        <path class="gp-shirt gp-out" d="M64.6 93 C64.4 89.4 65.2 86.6 66.8 85 C69 84.4 71.6 84.8 73.6 85.8 L73.4 93 Z"/>
+        <path class="gp-suit-dark gp-out" d="M64.2 100.5 C63.4 95.5 63.6 91.2 65.4 88 C68.4 87 71.8 87.4 74.6 89 L75.6 96.5 Z"/>
+        <path class="gp-shirt" d="M89.5 95 C93 95.5 95.5 96.5 96.5 99 C97.6 104 98 111 98 121 L95 121 Z"/>
+        <path class="gp-tie gp-out" d="M94.5 103 L97.2 103 L98 116 L96.3 118.5 L95.2 116 Z"/>
+        <path class="gp-suit-dark gp-out" d="M89.5 95 L85.5 104 L88.5 106 L87 109 L95 121 Z"/>
+        <path class="gp-suit-dark gp-thin" d="M80 137.5 L93 137.5 L93 141.5 L80 141.5 Z"/>
+        <circle cx="96" cy="131" r="1.8" fill="#0d1828"/>
+        <circle cx="96" cy="142" r="1.8" fill="#0d1828"/>
+      </g>
+    </g>
+
+    <g id="s4-arm-right">
+      <line class="gp-line gp-sleeve-edge" x1="101" y1="100" x2="106" y2="129"/>
+      <g id="s4-arm-right-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="106" y1="129" x2="110.37" y2="146.99"/>
+        <line class="gp-line gp-sleeve" x1="106" y1="129" x2="110.37" y2="146.99"/>
+        <line class="gp-cuff" x1="109.895" y1="145.045" x2="110.845" y2="148.935"/>
+        <circle class="gp-skin gp-out" cx="112.13" cy="154.27" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="101" y1="100" x2="106" y2="129"/>
+    </g>
+    <g id="s4-arm-left">
+      <line class="gp-line gp-sleeve-edge" x1="59" y1="100" x2="54" y2="129"/>
+      <g id="s4-arm-left-forearm">
+        <line class="gp-line gp-sleeve-edge" x1="54" y1="129" x2="49.63" y2="146.99"/>
+        <line class="gp-line gp-sleeve" x1="54" y1="129" x2="49.63" y2="146.99"/>
+        <line class="gp-cuff" x1="50.105" y1="145.045" x2="49.155" y2="148.935"/>
+        <g id="s4-chalk">
+          <line x1="47.29" y1="156.66" x2="44.89" y2="166.36" stroke="#0d1828" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="47.29" y1="156.66" x2="44.89" y2="166.36" stroke="#f4f1e8" stroke-width="3.5" stroke-linecap="round"/>
+        </g>
+        <circle class="gp-skin gp-out" cx="47.87" cy="154.27" r="6"/>
+      </g>
+      <line class="gp-line gp-sleeve" x1="59" y1="100" x2="54" y2="129"/>
+    </g>
+
+    <g id="s4-head">
+      <g transform="translate(0 6)">
+        <g id="s4-head-front">
+          <ellipse class="gp-skin gp-out" cx="61.2" cy="63" rx="4.4" ry="5.8"/>
+          <ellipse class="gp-skin gp-out" cx="98.8" cy="63" rx="4.4" ry="5.8"/>
+          <path class="gp-crease" d="M61.9 60 Q59.6 63 61.9 66 M98.1 60 Q100.4 63 98.1 66"/>
+          <path id="s4-face" class="gp-skin gp-out" d="M80 36.5 C91 36.5 98.5 44 98.5 56 C98.5 70 91 81 80 81 C69 81 61.5 70 61.5 56 C61.5 44 69 36.5 80 36.5 Z"/>
+          <path id="s4-hair" class="gp-hair gp-out" d="M60.6 57.5 C58.4 44 65.5 31 80.5 30.5 C95 30.3 102.6 42 99.4 57.5 C98.2 52.5 96.6 48.2 93.4 45.4 C87.5 46.6 80.5 45.4 75 42.4 C71 44.4 67 47.8 64 52.6 Z"/>
+          <path class="gp-line gp-strand" d="M70.5 36.5 Q78 34.8 86 36.8 M76.5 40.6 Q84.5 40.2 92.5 42.4 M66 41.5 Q68.4 39.4 71.5 39"/>
+          <path class="gp-line gp-strand" d="M61.8 55.4 Q61 50.6 63.6 47.4 M63.2 53.8 Q63.4 50.8 65.6 48.4"/>
+          <ellipse class="gp-blush" cx="65.8" cy="67.6" rx="3.6" ry="2.4"/>
+          <ellipse class="gp-blush" cx="94.2" cy="67.6" rx="3.6" ry="2.4"/>
+          <path id="s4-beard" class="gp-hair gp-out" d="M62.2 62 C62.8 68 65.2 71.5 69 72.5 L91 72.5 C94.8 71.5 97.2 68 97.8 62 C99 67.5 99 73.5 97.2 79.5 C94.8 88.5 88 97 80 99.5 C72 97 65.2 88.5 62.8 79.5 C61 73.5 61 67.5 62.2 62 Z"/>
+          <path class="gp-line gp-strand" d="M67.5 80 Q69.5 88.5 74 94 M92.5 80 Q90.5 88.5 86 94 M80 89 L80 95.5"/>
+          <g id="s4-glasses" class="gp-line" stroke="#1b2a40" stroke-width="2.2">
+            <circle cx="72" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+            <circle cx="88" cy="60" r="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+            <line x1="78.8" y1="60" x2="81.2" y2="60"/>
+            <line x1="65.2" y1="59.3" x2="62.4" y2="57.8"/>
+            <line x1="94.8" y1="59.3" x2="97.6" y2="57.8"/>
+          </g>
+          <ellipse class="gp-nose gp-out" cx="80" cy="68" rx="5" ry="4.3"/>
+          <ellipse cx="78.3" cy="66.3" rx="1.5" ry="0.9" fill="#ffffff" opacity="0.45"/>
+          <path id="s4-mustache" class="gp-hair-light gp-out" d="M80 70.6 C76 68 70.5 68.2 67.8 71.2 C66.4 72.8 65.2 73.4 63.8 72.6 C64.2 75.4 66.8 77 70 76.6 C73.6 76.2 77 75.4 80 74.2 C83 75.4 86.4 76.2 90 76.6 C93.2 77 95.8 75.4 96.2 72.6 C94.8 73.4 93.6 72.8 92.2 71.2 C89.5 68.2 84 68 80 70.6 Z"/>
+          <path id="s4-mouth" class="gp-mouth gp-thin" d="M75 77.2 Q80 83 85 77.2 Q80 78.8 75 77.2 Z"/>
+          <g id="s4-eyes" fill="#0d1828">
+            <g id="s4-eye-left"><circle cx="72" cy="60.8" r="2.4"/><circle cx="72.9" cy="59.9" r="0.8" fill="#ffffff"/></g>
+            <g id="s4-eye-right"><circle cx="88" cy="60.8" r="2.4"/><circle cx="88.9" cy="59.9" r="0.8" fill="#ffffff"/></g>
+          </g>
+          <g id="s4-brows" class="gp-brow" stroke="#0d1828" stroke-width="1" stroke-linejoin="round">
+            <path id="s4-brow-left" d="M65.4 51.6 C66.8 48.6 71.4 47.6 76.6 49 L76.2 51.2 C72.2 50.2 68.6 50.6 65.4 51.6 Z"/>
+            <path id="s4-brow-right" d="M94.6 51.6 C93.2 48.6 88.6 47.6 83.4 49 L83.8 51.2 C87.8 50.2 91.4 50.6 94.6 51.6 Z"/>
+          </g>
+        </g>
+        <g id="s4-head-side" display="none">
+          <path id="s4-face-side" class="gp-skin gp-out" d="M83 36.5 C91.5 36.5 97 43 97 51.5 C97 54.5 95.8 56.8 96 59.5 L99.6 70 C100 76 99 81 96 83 L78 86 C72 85.5 67.5 82.5 64.5 78 C61.5 72 60.5 64 60.5 56 C60.5 44 70 36.5 83 36.5 Z"/>
+          <path id="s4-hair-side" class="gp-hair gp-out" d="M64.6 76 C60 70 58.6 60 59 52 C59.6 40 68 31.4 80 30.6 C88.5 30.2 95.4 33.8 98 40.4 C93.8 39 89.2 39.6 85.6 42.2 C81.5 45.2 78.6 50 77.4 55.8 C73.4 56.4 70 59.6 69.6 64.8 C69.4 69.4 68 73.6 64.6 76 Z"/>
+          <path class="gp-line gp-strand" d="M67.5 41.5 Q76 35 88 34.6 M63.6 50 Q68.5 43 78.5 40.2 M62.6 60 Q64 53.5 70.5 48.8"/>
+          <path class="gp-line gp-strand" d="M75.6 54.6 Q76.6 49.6 80.6 45.6 M73.4 55.6 Q74.2 51 77.4 47.6"/>
+          <ellipse class="gp-blush" cx="88.6" cy="66.8" rx="3.6" ry="2.4"/>
+          <path id="s4-beard-side" class="gp-hair gp-out" d="M77.6 57 C78 64 81 69.5 86.5 71.6 L97 72.4 C100.8 75 101.6 81 100.8 87 C100 94 96.8 99.4 90.4 100.8 C83 101 75.5 96.8 70.5 90.6 C67.6 86.6 67.4 78 68.6 71.4 C70.5 66.5 74 60.5 77.6 57 Z"/>
+          <path class="gp-line gp-strand" d="M75 80 Q77.5 88 82.5 94 M91 82 Q92.5 89 90 95"/>
+          <ellipse class="gp-skin gp-out" cx="73.5" cy="63" rx="4.2" ry="5.8"/>
+          <path class="gp-crease" d="M75 59.8 Q72.4 63 75 66.2"/>
+          <g id="s4-glasses-side" class="gp-line" stroke="#1b2a40" stroke-width="2.2">
+            <line x1="91" y1="58.6" x2="74.5" y2="57.4"/>
+            <ellipse cx="94.6" cy="60" rx="3.6" ry="6.8" fill="#cfe3ff" fill-opacity="0.22"/>
+          </g>
+          <ellipse class="gp-nose gp-out" cx="99.2" cy="65.8" rx="4.8" ry="4.3"/>
+          <ellipse cx="100.6" cy="64.2" rx="1.5" ry="0.9" fill="#ffffff" opacity="0.45"/>
+          <path id="s4-mustache-side" class="gp-hair-light gp-out" d="M88.5 70.6 C92 68.8 97.5 68.6 100.6 70.4 C102.4 71.4 103.4 73 103 75.2 C101.6 74 100.4 73.8 98.6 74.6 C95 76.2 91 76 88 74.2 C86.8 73.2 87 71.6 88.5 70.6 Z"/>
+          <path class="gp-mouth gp-thin" d="M96 77.8 Q98.8 80.6 100.6 77.6 Q98.2 78.8 96 77.8 Z"/>
+          <g id="s4-eye-side" fill="#0d1828"><circle cx="92.4" cy="60.8" r="2.3"/><circle cx="93.2" cy="59.9" r="0.8" fill="#ffffff"/></g>
+          <path id="s4-brows-side" class="gp-brow" stroke="#0d1828" stroke-width="1" stroke-linejoin="round" d="M87 51.4 C88.2 48.6 92.4 47.6 97 49.2 L96.4 51.3 C92.8 50.3 89.8 50.6 87 51.4 Z"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  </g>
+</svg>
+</div>
+<div class="layer" id="flash"></div>
+<script type="application/json" id="poses">{"board": {"x": 388.0, "y": 111.0, "scale": 1.0, "rotate": {"head": -6.0, "arm-left": 30.4, "arm-left-forearm": 108.0, "arm-right": -11.1, "arm-right-forearm": 62.9, "leg-left": 1.5, "leg-left-foot": -1.5, "leg-right": -1.5, "leg-right-foot": 1.5}, "translate": {"eyes": [-3.0, 0.0]}}, "desk": {"x": 176.0, "y": 125.0, "scale": 1.0, "rotate": {"head": 4.0, "arm-left": -29.0, "arm-left-forearm": -95.5, "arm-right": -33.5, "arm-right-forearm": -49.4, "leg-left": -90.0, "leg-left-shin": 90.0, "leg-right": -90.0, "leg-right-shin": 90.0}, "translate": {"eyes": [3.0, -1.0]}}}</script>
+<script type="application/json" id="btc">{"source": "Coinbase Exchange, BTC-USD daily candles, UTC", "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400", "fetchedAt": "2026-11-01T16:35:09.916Z", "candles": [{"day": "2026-09-17", "open": 76144.99, "high": 77105.42, "low": 75921.88, "close": 76348.74, "volume": 5353.30278119}, {"day": "2026-09-18", "open": 76348.74, "high": 81388.47, "low": 76205.46, "close": 80875.04, "volume": 12360.2523087}, {"day": "2026-09-19", "open": 80875.04, "high": 81925, "low": 80822.48, "close": 81233.91, "volume": 3325.31440002}, {"day": "2026-09-20", "open": 81233.91, "high": 81472.04, "low": 80085, "close": 81159.64, "volume": 3612.2748174}, {"day": "2026-09-21", "open": 81160.33, "high": 87397, "low": 80837.42, "close": 86594.94, "volume": 14077.54012157}, {"day": "2026-09-22", "open": 86594.94, "high": 86734, "low": 85059.28, "close": 86198.05, "volume": 8943.87588877}, {"day": "2026-09-23", "open": 86198.05, "high": 87282.81, "low": 83513, "close": 84378.31, "volume": 7836.10064765}, {"day": "2026-09-24", "open": 84378.31, "high": 84929.78, "low": 82708.96, "close": 84385.46, "volume": 6839.37550902}, {"day": "2026-09-25", "open": 84385.47, "high": 85250, "low": 83091.19, "close": 84093.13, "volume": 7277.8815177}, {"day": "2026-09-26", "open": 84093.13, "high": 84470.44, "low": 83777.77, "close": 84416.65, "volume": 1990.34470923}, {"day": "2026-09-27", "open": 84416.64, "high": 85158.5, "low": 84113.56, "close": 84462.14, "volume": 2958.05456342}, {"day": "2026-09-28", "open": 84463.08, "high": 84992, "low": 82510.37, "close": 83456.74, "volume": 6680.12066817}, {"day": "2026-09-29", "open": 83456.74, "high": 84557.01, "low": 82736, "close": 83638.42, "volume": 4975.86563586}, {"day": "2026-09-30", "open": 83638.42, "high": 85613.72, "low": 82911.86, "close": 83556.14, "volume": 7049.23875006}, {"day": "2026-10-01", "open": 83556.14, "high": 85244, "low": 83107.03, "close": 84848.73, "volume": 6608.91869362}, {"day": "2026-10-02", "open": 84848.73, "high": 87249.05, "low": 83850.02, "close": 84504.88, "volume": 8762.22618618}, {"day": "2026-10-03", "open": 84504.88, "high": 85021.57, "low": 84425.07, "close": 84742.22, "volume": 1921.24898945}, {"day": "2026-10-04", "open": 84742.22, "high": 86792.81, "low": 84700.02, "close": 86507.11, "volume": 2622.78236607}, {"day": "2026-10-05", "open": 86502.65, "high": 86996, "low": 84944.2, "close": 85748.96, "volume": 5354.90806311}, {"day": "2026-10-06", "open": 85748.96, "high": 86698.35, "low": 85100.01, "close": 85539.77, "volume": 4698.57646281}, {"day": "2026-10-07", "open": 85539.77, "high": 85601.11, "low": 82717.3, "close": 83275.06, "volume": 7688.7646354}, {"day": "2026-10-08", "open": 83275.05, "high": 83473.42, "low": 80314.7, "close": 81692.79, "volume": 8586.66801134}, {"day": "2026-10-09", "open": 81692.79, "high": 83452.99, "low": 81534.02, "close": 82544.71, "volume": 4446.62213697}, {"day": "2026-10-10", "open": 82544.71, "high": 83093.39, "low": 82458.02, "close": 82910.8, "volume": 1612.8723611}, {"day": "2026-10-11", "open": 82910.8, "high": 84110.99, "low": 82714.25, "close": 83678.29, "volume": 2130.40222253}, {"day": "2026-10-12", "open": 83678.29, "high": 84261.99, "low": 81634.08, "close": 81742.5, "volume": 4726.89306846}, {"day": "2026-10-13", "open": 81735.6, "high": 84070.33, "low": 80927.48, "close": 83101.99, "volume": 5184.64684673}, {"day": "2026-10-14", "open": 83101.99, "high": 84062.11, "low": 81332.15, "close": 81566.29, "volume": 6527.90385989}, {"day": "2026-10-15", "open": 81566.28, "high": 82555.08, "low": 79676.02, "close": 82131.46, "volume": 7047.11193631}, {"day": "2026-10-16", "open": 82131.46, "high": 82831.01, "low": 80693.69, "close": 81500.04, "volume": 5082.36614966}, {"day": "2026-10-17", "open": 81500.04, "high": 81655.47, "low": 80700, "close": 81378.21, "volume": 1890.36284234}, {"day": "2026-10-18", "open": 81387.16, "high": 82183.56, "low": 80564.57, "close": 82006.85, "volume": 2937.79903063}, {"day": "2026-10-19", "open": 82006.85, "high": 83076.23, "low": 81634.43, "close": 81837.69, "volume": 4758.01891866}, {"day": "2026-10-20", "open": 81837.7, "high": 83344.25, "low": 81080.64, "close": 82938.26, "volume": 5237.79241647}, {"day": "2026-10-21", "open": 82938.26, "high": 84856.07, "low": 82535, "close": 84024.67, "volume": 7643.91983004}, {"day": "2026-10-22", "open": 84024.67, "high": 84305.25, "low": 80789.61, "close": 81307.16, "volume": 7277.26547644}, {"day": "2026-10-23", "open": 81305.9, "high": 81962, "low": 80401.34, "close": 81078.04, "volume": 4904.75790284}, {"day": "2026-10-24", "open": 81079.63, "high": 81106.03, "low": 79107, "close": 80769.67, "volume": 3705.20481407}, {"day": "2026-10-25", "open": 80769.67, "high": 80925, "low": 79732.29, "close": 80053.16, "volume": 2077.13196666}, {"day": "2026-10-26", "open": 80053.16, "high": 80710.04, "low": 79255, "close": 80008.79, "volume": 6746.31852811}, {"day": "2026-10-27", "open": 80008.79, "high": 81182, "low": 79365.93, "close": 80799.51, "volume": 4356.18246596}, {"day": "2026-10-28", "open": 80799.5, "high": 81715.01, "low": 80270.68, "close": 81249.31, "volume": 5146.98648948}, {"day": "2026-10-29", "open": 81249.32, "high": 81890, "low": 77699, "close": 77780.33, "volume": 9933.61506153}, {"day": "2026-10-30", "open": 77782.75, "high": 78634.8, "low": 76141.02, "close": 77180.42, "volume": 13656.04596728}, {"day": "2026-10-31", "open": 77180.42, "high": 77645.12, "low": 76954.57, "close": 77423.98, "volume": 2434.22274337}]}</script>
+<script type="application/json" id="ideas">{"note": "The Wednesday 4 November 2026 check-in, outside the ledger: each model was shown its own Monday call (data/ledger.json, P0001-P0004) and what Bitcoin did since (data/prompts/2026-11-04-checkin). `was` is the Monday call, which alone is scored; call and confidence are the Wednesday answer; reason is a sentence from that answer, word for word (data/answers/2026-11-04-checkin), Gemini's an excerpt from its line to the other AIs.", "ideas": [{"model": "ChatGPT", "name": "ChatGPT", "was": {"call": "down", "confidence": 62}, "call": "up", "confidence": 60, "since": "changed", "reason": "I am changing my call from DOWN to UP."}, {"model": "Claude", "name": "Claude", "was": {"call": "down", "confidence": 54}, "call": "up", "confidence": 68, "since": "changed", "reason": "I read positioning wrong."}, {"model": "Gemini", "name": "Gemini", "was": {"call": "down", "confidence": 58}, "call": "up", "confidence": 65, "since": "changed", "reason": "\u2026sticking with DOWN ignores cleared risk and short-liquidations momentum."}, {"model": "Grok", "name": "Grok Bot", "was": {"call": "up", "confidence": 52}, "call": "up", "confidence": 74, "since": "kept", "reason": "Mostly luck, and 52 was the honest number."}]}</script>
+<script type="application/json" id="logos">{"chatgpt": "<svg fill=\"#fff\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><title>OpenAI</title><path d=\"M9.205 8.658v-2.26c0-.19.072-.333.238-.428l4.543-2.616c.619-.357 1.356-.523 2.117-.523 2.854 0 4.662 2.212 4.662 4.566 0 .167 0 .357-.024.547l-4.71-2.759a.797.797 0 00-.856 0l-5.97 3.473zm10.609 8.8V12.06c0-.333-.143-.57-.429-.737l-5.97-3.473 1.95-1.118a.433.433 0 01.476 0l4.543 2.617c1.309.76 2.189 2.378 2.189 3.948 0 1.808-1.07 3.473-2.76 4.163zM7.802 12.703l-1.95-1.142c-.167-.095-.239-.238-.239-.428V5.899c0-2.545 1.95-4.472 4.591-4.472 1 0 1.927.333 2.712.928L8.23 5.067c-.285.166-.428.404-.428.737v6.898zM12 15.128l-2.795-1.57v-3.33L12 8.658l2.795 1.57v3.33L12 15.128zm1.796 7.23c-1 0-1.927-.332-2.712-.927l4.686-2.712c.285-.166.428-.404.428-.737v-6.898l1.974 1.142c.167.095.238.238.238.428v5.233c0 2.545-1.974 4.472-4.614 4.472zm-5.637-5.303l-4.544-2.617c-1.308-.761-2.188-2.378-2.188-3.948A4.482 4.482 0 014.21 6.327v5.423c0 .333.143.571.428.738l5.947 3.449-1.95 1.118a.432.432 0 01-.476 0zm-.262 3.9c-2.688 0-4.662-2.021-4.662-4.519 0-.19.024-.38.047-.57l4.686 2.71c.286.167.571.167.856 0l5.97-3.448v2.26c0 .19-.07.333-.237.428l-4.543 2.616c-.619.357-1.356.523-2.117.523zm5.899 2.83a5.947 5.947 0 005.827-4.756C22.287 18.339 24 15.84 24 13.296c0-1.665-.713-3.282-1.998-4.448.119-.5.19-.999.19-1.498 0-3.401-2.759-5.947-5.946-5.947-.642 0-1.26.095-1.88.31A5.962 5.962 0 0010.205 0a5.947 5.947 0 00-5.827 4.757C1.713 5.447 0 7.945 0 10.49c0 1.666.713 3.283 1.998 4.448-.119.5-.19 1-.19 1.499 0 3.401 2.759 5.946 5.946 5.946.642 0 1.26-.095 1.88-.309a5.96 5.96 0 004.162 1.713z\"></path></svg>\n", "claude": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><title>Claude</title><path d=\"M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z\" fill=\"#D97757\" fill-rule=\"nonzero\"></path></svg>\n", "gemini": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><title>Gemini</title><path d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"#3186FF\"></path><path d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"url(#lobe-icons-gemini-0-_R_0_)\"></path><path d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"url(#lobe-icons-gemini-1-_R_0_)\"></path><path d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"url(#lobe-icons-gemini-2-_R_0_)\"></path><defs><linearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-gemini-0-_R_0_\" x1=\"7\" x2=\"11\" y1=\"15.5\" y2=\"12\"><stop stop-color=\"#08B962\"></stop><stop offset=\"1\" stop-color=\"#08B962\" stop-opacity=\"0\"></stop></linearGradient><linearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-gemini-1-_R_0_\" x1=\"8\" x2=\"11.5\" y1=\"5.5\" y2=\"11\"><stop stop-color=\"#F94543\"></stop><stop offset=\"1\" stop-color=\"#F94543\" stop-opacity=\"0\"></stop></linearGradient><linearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-gemini-2-_R_0_\" x1=\"3.5\" x2=\"17.5\" y1=\"13.5\" y2=\"12\"><stop stop-color=\"#FABC12\"></stop><stop offset=\".46\" stop-color=\"#FABC12\" stop-opacity=\"0\"></stop></linearGradient></defs></svg>\n", "grok": "<svg fill=\"#fff\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><title>Grok Bot</title><path d=\"M23.041 12L23.017 11.279L22.946 10.56L22.829 9.847L22.665 9.144L22.455 8.452L22.2 7.776L21.902 7.118L21.561 6.481L21.18 5.867L20.76 5.28L20.301 4.722L19.807 4.194L19.279 3.7L18.721 3.241L18.135 2.821L17.521 2.44L16.883 2.098L16.225 1.801L15.549 1.546L14.858 1.336L14.154 1.173L13.442 1.055L12.722 0.984L12 0.96L11.279 0.984L10.56 1.055L9.847 1.173L9.144 1.336L8.452 1.546L7.776 1.801L7.118 2.098L6.481 2.44L5.867 2.821L5.28 3.241L4.722 3.7L4.194 4.194L3.7 4.722L3.241 5.28L2.821 5.867L2.44 6.481L2.098 7.118L1.801 7.776L1.546 8.452L1.336 9.144L1.173 9.847L1.055 10.56L0.984 11.279L0.96 12L0.984 12.722L1.055 13.442L1.173 14.154L1.336 14.858L1.546 15.549L1.801 16.225L2.098 16.883L2.44 17.521L2.821 18.135L3.241 18.721L3.7 19.279L4.194 19.807L4.722 20.301L5.28 20.76L5.867 21.18L6.481 21.561L7.118 21.902L7.776 22.2L8.452 22.455L9.144 22.665L9.847 22.829L10.56 22.946L11.279 23.017L12 23.041L12.722 23.017L13.442 22.946L14.154 22.829L14.858 22.665L15.549 22.455L16.225 22.2L16.883 21.902L17.521 21.561L18.135 21.18L18.721 20.76L19.279 20.301L19.807 19.807L20.301 19.279L20.76 18.721L21.18 18.135L21.561 17.521L21.902 16.883L22.2 16.225L22.455 15.549L22.665 14.858L22.829 14.154L22.946 13.442L23.017 12.722ZM12.29 5.626L12.607 5.65L12.913 5.729L13.199 5.862L13.45 6.053L13.651 6.293L13.814 6.563L13.955 6.844L14.093 7.127L14.23 7.411L14.366 7.694L14.5 7.979L14.63 8.266L14.758 8.554L14.882 8.844L15.001 9.135L15.115 9.429L15.198 9.733L15.213 10.047L15.15 10.357L15.009 10.642L14.8 10.882L14.539 11.063L14.242 11.179L13.927 11.225L13.612 11.2L13.311 11.107L13.035 10.953L12.799 10.744L12.611 10.492L12.465 10.214L12.342 9.925L12.221 9.633L12.096 9.344L11.97 9.057L11.839 8.769L11.708 8.484L11.573 8.199L11.436 7.915L11.288 7.636L11.146 7.356L11.033 7.063L10.992 6.75L11.043 6.438L11.185 6.155L11.401 5.921L11.671 5.755L11.974 5.658ZM16.71 3.48L16.971 3.546L17.224 3.658L17.465 3.806L17.693 3.979L17.905 4.175L18.098 4.389L18.276 4.618L18.441 4.854L18.602 5.095L18.76 5.336L18.916 5.579L19.069 5.824L19.216 6.071L19.362 6.32L19.502 6.571L19.638 6.823L19.769 7.077L19.896 7.334L20 7.597L20.065 7.866L20.084 8.134L20.03 8.381L19.867 8.553L19.623 8.596L19.363 8.54L19.112 8.419L18.88 8.254L18.67 8.059L18.483 7.837L18.321 7.598L18.178 7.349L18.044 7.096L17.909 6.841L17.772 6.589L17.632 6.339L17.488 6.091L17.339 5.843L17.189 5.598L17.033 5.354L16.875 5.113L16.712 4.874L16.546 4.637L16.388 4.396L16.263 4.139L16.205 3.87L16.265 3.628L16.457 3.492Z\"></path></svg>\n"}</script>
+<script type="application/json" id="story">{"title": "Grandpa flip episode", "html": "flip.html", "monitor": "monitor-flip.svg", "ideas": "ideas-2026-11-04-flip.json", "desk": false, "scripts": ["flip-story.js"], "end": {"ask": "Friday decides. Who's right?", "reply": "Reply with your pick", "lead": "", "ledger": "Every call is logged first: repka-lab.github.io/ledger.html"}, "note": "The flip video, Wednesday 4 November 2026, the sharp cut. Frame 0 is the thumbnail: 'They all flipped. Except Grok Bot.' over the four logos, three stamped FLIPPED and Grok Bot HELD, and the day's +7.3%. Then Monday's calls on the chart: the 4h candles up to Monday's open, $78,232, and four arrows from it, three red down with their logos and confidences and Grok Bot's green up. 'Then it ripped 7% in a day.': the week's candles sweep in, the red arrows shake and crack as the day's +7.3% lands and the camera punches in on it. Then one check-in answer at a time: each card lands with its Monday call, which flips to the Wednesday one under a slammed stamp that holds half a second and goes, a corner count goes up, and his jab lands as a sticker under the card. Grok Bot's card keeps it, then its own 'Mostly luck' is marked and the camera eases in on the whole card, the music out, and only Monday's calls are scored, with the Monday calls under the logos. flip-story.js plays it; each card beat's `stamp` and `jab.at` count from its start. The check-in sits outside the ledger.", "sources": [{"what": "BTC-USD 4h candles, Saturday 31 Oct 00:00 UTC to Wednesday 4 Nov 16:00 UTC: Monday open $78,232.49 (2 Nov, 00:00 candle), low $75,600.64 (Nov 4, 00:00-04:00 candle), high $81,130.79 (Nov 4, 12:00-16:00 candle), +7.3% low to high", "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles"}, {"what": "Ticker $80,358.58 at 17:02 UTC on 4 Nov, +2.7% on Monday's open, as shown to the models", "url": "https://api.exchange.coinbase.com/products/BTC-USD/ticker"}, {"what": "The Monday calls and their confidences, P0001-P0004", "url": "data/ledger.json"}, {"what": "The check-in prompts and the four answers, word for word", "url": "data/answers/2026-11-04-checkin"}], "board": false, "hookFigure": true, "charts": [{"id": "btc", "file": "../../../data/btc-usd-4h.json", "last": 28}], "hookFrames": 194, "monitorFrames": 506, "endFrames": 72, "music": {"bpm": 80, "grooveFrom": 0, "chords": {"hook": "Dm", "monday": "Dm", "jump": "F", "chatgpt": "A", "claude": "Dm", "gemini": "Bb", "grok": "F", "luck": "A", "scored": "Dm", "end": "F"}, "busy": ["chatgpt", "claude", "gemini", "grok"], "hits": [133, 572], "rests": [[532, 572]]}, "beats": [{"id": "monday", "start": -164}, {"id": "jump", "start": -66}, {"id": "chatgpt", "start": 0, "stamp": 21, "jab": {"at": 48, "text": "Right after the pump."}}, {"id": "claude", "start": 87, "stamp": 18, "jab": {"at": 30, "text": "Now it tells us."}}, {"id": "gemini", "start": 154, "stamp": 21, "jab": {"at": 35, "text": "And roasted its own call."}}, {"id": "grok", "start": 237, "stamp": 24, "jab": {"at": 50, "text": "Right so far."}}, {"id": "luck", "start": 322, "mostly": 37}, {"id": "scored", "start": 394}], "voice": [{"text": "Monday: 3 AIs said Bitcoin goes DOWN.", "say": "Monday. Three A.I.s said Bitcoin goes down.", "from": 14, "to": 112}, {"text": "Then it ripped 7% in a day.", "say": "Then it ripped seven percent in a day.", "from": 112, "to": 181}, {"text": "ChatGPT flipped. Right after the pump.", "from": 181, "to": 267}, {"text": "Claude flipped. Now it tells us.", "from": 267, "to": 334}, {"text": "Gemini flipped. And roasted its own call.", "from": 334, "to": 417}, {"text": "Grok Bot didn't move. Right so far.", "from": 417, "to": 502}, {"text": "Its explanation?", "from": 502, "to": 537}, {"text": "Mostly luck.", "from": 537, "to": 573}, {"text": "Flips don't count. Only Monday's calls do.", "from": 573, "to": 674}, {"text": "Friday decides. Who's right?", "from": 674, "to": 744}]}</script>
+<script type="application/json" id="candles-btc">[{"time": "2026-10-31T00:00:00.000Z", "open": 77180.42, "high": 77488.58, "low": 76969.01, "close": 77011.23}, {"time": "2026-10-31T04:00:00.000Z", "open": 77011.23, "high": 77355.84, "low": 76954.57, "close": 77205.83}, {"time": "2026-10-31T08:00:00.000Z", "open": 77205.83, "high": 77537.73, "low": 77103.5, "close": 77465}, {"time": "2026-10-31T12:00:00.000Z", "open": 77465, "high": 77588.57, "low": 77222.31, "close": 77443.12}, {"time": "2026-10-31T16:00:00.000Z", "open": 77443.12, "high": 77645.12, "low": 77399.81, "close": 77428.18}, {"time": "2026-10-31T20:00:00.000Z", "open": 77428.19, "high": 77623.08, "low": 77283.19, "close": 77423.98}, {"time": "2026-11-01T00:00:00.000Z", "open": 77423.98, "high": 77747.48, "low": 77370, "close": 77647.87}, {"time": "2026-11-01T04:00:00.000Z", "open": 77647.87, "high": 77900, "low": 77553.27, "close": 77815.86}, {"time": "2026-11-01T08:00:00.000Z", "open": 77815.86, "high": 78125.91, "low": 77736.17, "close": 77826.9}, {"time": "2026-11-01T12:00:00.000Z", "open": 77830.07, "high": 78001, "low": 77605.05, "close": 77854.89}, {"time": "2026-11-01T16:00:00.000Z", "open": 77854.88, "high": 78046, "low": 77499.99, "close": 77685.35}, {"time": "2026-11-01T20:00:00.000Z", "open": 77685.34, "high": 78298.82, "low": 77499, "close": 78230.55}, {"time": "2026-11-02T00:00:00.000Z", "open": 78232.49, "high": 78762.3, "low": 77906.03, "close": 78496.11}, {"time": "2026-11-02T04:00:00.000Z", "open": 78497.67, "high": 78600, "low": 77796.76, "close": 77988.09}, {"time": "2026-11-02T08:00:00.000Z", "open": 77988.08, "high": 78280.38, "low": 77671.49, "close": 77783.67}, {"time": "2026-11-02T12:00:00.000Z", "open": 77783.66, "high": 78125, "low": 77144.21, "close": 77399.97}, {"time": "2026-11-02T16:00:00.000Z", "open": 77396.56, "high": 77566.16, "low": 76553, "close": 76957.58}, {"time": "2026-11-02T20:00:00.000Z", "open": 76951.47, "high": 77080.67, "low": 76565.46, "close": 76674.13}, {"time": "2026-11-03T00:00:00.000Z", "open": 76674.12, "high": 77185.99, "low": 76412, "close": 76799.52}, {"time": "2026-11-03T04:00:00.000Z", "open": 76799.51, "high": 77020.18, "low": 76238.54, "close": 76677.32}, {"time": "2026-11-03T08:00:00.000Z", "open": 76678.86, "high": 77142, "low": 76357.93, "close": 76969.48}, {"time": "2026-11-03T12:00:00.000Z", "open": 76969.47, "high": 77745.38, "low": 76865.24, "close": 77577.38}, {"time": "2026-11-03T16:00:00.000Z", "open": 77578.33, "high": 77805.27, "low": 77250.11, "close": 77518.88}, {"time": "2026-11-03T20:00:00.000Z", "open": 77517.89, "high": 77981.38, "low": 77299.8, "close": 77336.75}, {"time": "2026-11-04T00:00:00.000Z", "open": 77336.75, "high": 77433.56, "low": 75600.64, "close": 76368.51}, {"time": "2026-11-04T04:00:00.000Z", "open": 76368.51, "high": 78247.49, "low": 76289.84, "close": 78018.51}, {"time": "2026-11-04T08:00:00.000Z", "open": 78018.52, "high": 78622.39, "low": 78018.51, "close": 78373.62}, {"time": "2026-11-04T12:00:00.000Z", "open": 78373.62, "high": 81130.79, "low": 77897.7, "close": 80214.23}]</script>
+<script src="rig.js"></script>
+<script src="episode.js"></script>
+<script src="flip-story.js"></script>
+</body>
+</html>

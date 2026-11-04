@@ -1,0 +1,56 @@
+{
+  "note": "The flip video, Wednesday 4 November 2026, the sharp cut. Frame 0 is the thumbnail: 'They all flipped. Except Grok Bot.' over the four logos, three stamped FLIPPED and Grok Bot HELD, and the day's +7.3%. Then Monday's calls on the chart: the 4h candles up to Monday's open, $78,232, and four arrows from it, three red down with their logos and confidences and Grok Bot's green up. 'Then it ripped 7% in a day.': the week's candles sweep in, the red arrows shake and crack as the day's +7.3% lands and the camera punches in on it. Then one check-in answer at a time: each card lands with its Monday call, which flips to the Wednesday one under a slammed stamp that holds half a second and goes, a corner count goes up, and his jab lands as a sticker under the card. Grok Bot's card keeps it, then its own 'Mostly luck' is marked and the camera eases in on the whole card, the music out, and only Monday's calls are scored, with the Monday calls under the logos. flip-story.js plays it; each card beat's `stamp` and `jab.at` count from its start. The check-in sits outside the ledger.",
+  "sources": [
+    { "what": "BTC-USD 4h candles, Saturday 31 Oct 00:00 UTC to Wednesday 4 Nov 16:00 UTC: Monday open $78,232.49 (2 Nov, 00:00 candle), low $75,600.64 (Nov 4, 00:00-04:00 candle), high $81,130.79 (Nov 4, 12:00-16:00 candle), +7.3% low to high", "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles" },
+    { "what": "Ticker $80,358.58 at 17:02 UTC on 4 Nov, +2.7% on Monday's open, as shown to the models", "url": "https://api.exchange.coinbase.com/products/BTC-USD/ticker" },
+    { "what": "The Monday calls and their confidences, P0001-P0004", "url": "data/ledger.json" },
+    { "what": "The check-in prompts and the four answers, word for word", "url": "data/answers/2026-11-04-checkin" }
+  ],
+  "title": "Grandpa flip episode",
+  "html": "flip.html",
+  "monitor": "monitor-flip.svg",
+  "ideas": "ideas-2026-11-04-flip.json",
+  "board": false,
+  "hookFigure": true,
+  "scripts": ["flip-story.js"],
+  "charts": [{ "id": "btc", "file": "../../../data/btc-usd-4h.json", "last": 28 }],
+  "hookFrames": 194,
+  "monitorFrames": 506,
+  "endFrames": 72,
+  "music": {
+    "bpm": 80,
+    "grooveFrom": 0,
+    "chords": { "hook": "Dm", "monday": "Dm", "jump": "F", "chatgpt": "A", "claude": "Dm", "gemini": "Bb", "grok": "F", "luck": "A", "scored": "Dm", "end": "F" },
+    "busy": ["chatgpt", "claude", "gemini", "grok"],
+    "hits": [133, 572],
+    "rests": [[532, 572]]
+  },
+  "beats": [
+    { "id": "monday", "start": -164 },
+    { "id": "jump", "start": -66 },
+    { "id": "chatgpt", "start": 0, "stamp": 21, "jab": { "at": 48, "text": "Right after the pump." } },
+    { "id": "claude", "start": 87, "stamp": 18, "jab": { "at": 30, "text": "Now it tells us." } },
+    { "id": "gemini", "start": 154, "stamp": 21, "jab": { "at": 35, "text": "And roasted its own call." } },
+    { "id": "grok", "start": 237, "stamp": 24, "jab": { "at": 50, "text": "Right so far." } },
+    { "id": "luck", "start": 322, "mostly": 37 },
+    { "id": "scored", "start": 394 }
+  ],
+  "end": {
+    "ask": "Friday decides. Who's right?",
+    "reply": "Reply with your pick",
+    "lead": "",
+    "ledger": "Every call is logged first: repka-lab.github.io/ledger.html"
+  },
+  "voice": [
+    { "text": "Monday: 3 AIs said Bitcoin goes DOWN.", "say": "Monday. Three A.I.s said Bitcoin goes down.", "from": 14, "to": 112 },
+    { "text": "Then it ripped 7% in a day.", "say": "Then it ripped seven percent in a day.", "from": 112, "to": 181 },
+    { "text": "ChatGPT flipped. Right after the pump.", "from": 181, "to": 267 },
+    { "text": "Claude flipped. Now it tells us.", "from": 267, "to": 334 },
+    { "text": "Gemini flipped. And roasted its own call.", "from": 334, "to": 417 },
+    { "text": "Grok Bot didn't move. Right so far.", "from": 417, "to": 502 },
+    { "text": "Its explanation?", "from": 502, "to": 537 },
+    { "text": "Mostly luck.", "from": 537, "to": 573 },
+    { "text": "Flips don't count. Only Monday's calls do.", "from": 573, "to": 674 },
+    { "text": "Friday decides. Who's right?", "from": 674, "to": 744 }
+  ]
+}

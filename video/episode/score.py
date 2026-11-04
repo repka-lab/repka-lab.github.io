@@ -8,7 +8,8 @@ a pad holds the chord of each section ("music.chords" in the story, keyed by "ho
 has one, the beat ids and "end"), bass, kick and ticks pulse from the cut to the monitor (or "music.grooveFrom")
 until the end card. On top of that bed, a riser swells into a low boom on every cut, a glitch crackle lands on
 each frame in "music.hits", and a click on each frame the page reports in "clicks" (the monitor's arrows and
-cards, the standard one's or a story's own).
+cards, the standard one's or a story's own; its "stamps" slam instead). The bed falls silent over each
+"music.rests" span, [from, to] in frames.
 The voice dir holds line-<i>.wav per subtitle cue, 44.1 kHz mono 16-bit (episode/voice.mjs writes them);
 "-" scores the episode without a voice, the music alone under the subtitles. The cues are the story's "voice"
 when it draws its own captions, else its "subs".
@@ -55,6 +56,7 @@ CRACK_TAPS, CRACK_GAP_S = 3, 0.035  # a glitch hit stutters this many crackles a
 CLICKS = {"lines": (0.18, 1250), "cards": (0.28, 1870)}  # amp, blip Hz
 CLICK_TAP_S, CLICK_BLIP_S, CLICK_DECAY_S = 0.003, 0.06, 0.015
 FADE_OUT_S = 0.8
+REST_FADE_S = 0.05  # the bed cuts out and back in this fast around a rest
 
 VOICE_GAP_S = 0.15  # pause kept between two lines that run into each other
 SILENCE = 0.01  # below this share of full scale a sample is silence when a line is trimmed
@@ -193,6 +195,12 @@ def click(buf: array.array, at: int, amp: float, hz: float, rng: random.Random) 
     tone(buf, BLIP, hz, at, int(CLICK_BLIP_S * RATE), amp * 0.5, attack_s=0.001, decay_s=CLICK_DECAY_S)
 
 
+def slam(buf: array.array, at: int, rng: random.Random) -> None:
+    """A low thud under one sharp crack, for a stamp slammed on the screen."""
+    thump(buf, at, BOOM_AMP * 0.8, 90, 40, 0.05, 0.15)
+    tick(buf, at, CRACK_AMP, rng, decay_s=0.03)
+
+
 def sections(story: dict, scenes: dict, monitor_start: int, total: int) -> list:
     """The beats count from monitor frame 0, as the page renders them, not from the cut to the monitor."""
     end = scenes["end"][0]
@@ -231,7 +239,7 @@ def groove(buf: array.array, part: Section, at: int, step: int, eighth: int, rng
 
 def accents(buf: array.array, parts: list, hits: list, clicks: dict, rng: random.Random) -> None:
     """The opening hit with a stab of its chord, a riser into a boom on every cut, a crackle on every hit frame,
-    a click on every click frame."""
+    a click on every click frame and a slam on every stamp frame."""
     first, *cuts = parts
     thump(buf, 0, BOOM_AMP * 1.2, 80, 30, 0.12, 0.5)
     for note in CHORDS[first.chord][1]:
@@ -242,9 +250,18 @@ def accents(buf: array.array, parts: list, hits: list, clicks: dict, rng: random
     for at in hits:
         glitch(buf, samples(at), rng)
     for kind, frames in clicks.items():
-        amp, hz = CLICKS[kind]
         for at in frames:
-            click(buf, samples(at), amp, hz, rng)
+            if kind == "stamps":
+                slam(buf, samples(at), rng)
+            else:
+                click(buf, samples(at), *CLICKS[kind], rng)
+
+
+def rest(buf: array.array, start: int, end: int) -> None:
+    """Silence from start to end, cut out and back in over REST_FADE_S."""
+    fade = int(REST_FADE_S * RATE)
+    for i in range(max(0, start - fade), min(len(buf), end + fade)):
+        buf[i] *= min(1.0, max(0, start - i, i - end) / fade)
 
 
 def fade_out(buf: array.array) -> None:
@@ -267,6 +284,8 @@ def music(story: dict, parts: list, grid: int, clicks: dict, total: int) -> tupl
         groove(bed, part, at, step, eighth, rng, part.id in busy)
     tone(bed, BASS, midi_hz(CHORDS[outro.chord][0]), outro.start, outro.end - outro.start, BASS_AMP, decay_s=OUTRO_DECAY_S)
     accents(hits, parts, story["music"].get("hits", []), clicks, rng)
+    for start, end in story["music"].get("rests", []):
+        rest(bed, samples(start), samples(end))
     fade_out(bed)
     fade_out(hits)
     return bed, hits

@@ -1198,7 +1198,7 @@ function setup() {
   // Subtitles come with a story script (subtitles.js) that plans and plays them.
   const subs = hasLayer('subs') ? story.planSubs() : null;
   episode = { story, hook: story.planHook(), board, desk, monitor: story.planMonitor(), questionStart, subs, ...times };
-  window.TOTAL_FRAMES = endStart + END;
+  window.TOTAL_FRAMES = endStart + (story.endFrames ?? END); // a story may hold its end card shorter
   // Frame ranges, end exclusive, for rendering one scene at a time.
   window.SCENES = {
     hook: [0, hookEnd],

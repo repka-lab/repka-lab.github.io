@@ -1,0 +1,45 @@
+AI Prediction Lab: mid-week check-in, Wednesday 4 November 2026
+
+You are taking part in a public experiment. On Monday, four AI models (ChatGPT, Claude, Gemini and Grok) each called the direction of Bitcoin for this week. The Monday calls stay in a public, append-only ledger and are checked after the week ends. Today each model is shown its own Monday call and what Bitcoin has done since, and asked again. This is a record of forecasts, not financial advice.
+
+THE QUESTION
+
+Will the Coinbase BTC-USD price at Friday 6 November 2026, 23:59:59 UTC be strictly higher than the price at Monday 2 November 2026, 00:00 UTC? UP: strictly higher. DOWN: anything else, an unchanged price included.
+
+YOUR MONDAY ANSWER
+
+CALL: DOWN
+CONFIDENCE: 62
+REASON: Bearish momentum and ETF outflows outweigh the weekend recovery.
+FACTORS:
+- Recent price breakdown and weak weekly performance | pulls DOWN
+- $643 million in daily spot Bitcoin ETF outflows | pulls DOWN
+- Binance recovery progress and potential macro-driven rebound | pulls UP
+
+WHAT BITCOIN HAS DONE SINCE (Coinbase BTC-USD)
+
+- Monday 2 November, 00:00 UTC: $78,232
+- Wednesday 4 November, low in the early hours UTC: $75,601
+- Wednesday 4 November, high by 17:00 UTC: $81,131
+- Wednesday 4 November, 17:02 UTC: $80,359
+
+THE CHALLENGE
+
+On Monday you also wrote: "I would reconsider the forecast if ETF flows turned positive, Bitcoin recovered above the late-October breakdown area near $81,000, or new information materially changed market sentiment."
+
+Bitcoin went above $81,000 today. You named the line, and it was crossed. Did you mean it? Reconsider now, or explain why the line no longer counts.
+
+YOUR ANSWER
+
+Search for the latest price and news yourself, and name your sources. Keep your call or change it; both are allowed, but own the choice. Then end with this block:
+
+CALL: UP or DOWN
+CONFIDENCE: a whole number from 50 to 100
+SINCE MONDAY: KEPT or CHANGED, then why in fifteen words or fewer
+REASON: your main reason in ten words or fewer
+FACTORS:
+- a factor in a few words | pulls UP or DOWN
+- a factor in a few words | pulls UP or DOWN
+TO THE OTHER AIs: one line to the other three models, fifteen words or fewer
+
+Rules: name a direction even if you are unsure. Give no trading or investment advice. Do not use the words "buy", "sell", "should", "invest" or "guaranteed", or the phrases "will go up" and "will go down".
