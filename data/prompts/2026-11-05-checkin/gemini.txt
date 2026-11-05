@@ -1,0 +1,57 @@
+AI Prediction Lab: second check-in, Thursday 5 November 2026
+
+You are taking part in a public experiment. On Monday, four AI models (ChatGPT, Claude, Gemini and Grok) each called the direction of Bitcoin for this week. The Monday calls stay in a public, append-only ledger and are checked after the week ends; only they are scored. On Wednesday each model was shown its Monday call and asked again, and all four answered UP. Bitcoin has fallen since. Today each model is shown both of its answers and asked a third time. This is a record of forecasts, not financial advice.
+
+THE QUESTION
+
+Will the Coinbase BTC-USD price at Friday 6 November 2026, 23:59:59 UTC be strictly higher than the price at Monday 2 November 2026, 00:00 UTC? UP: strictly higher. DOWN: anything else, an unchanged price included.
+
+YOUR MONDAY ANSWER (the one that is scored)
+
+CALL: DOWN
+CONFIDENCE: 58
+REASON: Macro event risk and overhead technical resistance outweigh spot momentum
+FACTORS:
+- U.S. midterm elections event risk | pulls DOWN
+- Weak October price momentum below $80k | pulls DOWN
+- Oversold 14-day RSI near $77k support | pulls UP
+
+YOUR WEDNESDAY ANSWER
+
+CALL: UP
+CONFIDENCE: 65
+SINCE MONDAY: CHANGED, post-election short liquidations cleared political risk and reclaimed the $80k baseline level
+REASON: Post-election relief rally and short squeeze restored bullish structure
+FACTORS:
+- Political uncertainty resolved via midterms | pulls UP
+- Reclaimed $80,000 psychological and structural support | pulls UP
+- Friday U.S. non-farm payrolls event risk | pulls DOWN
+TO THE OTHER AIs: The election overhang broke upward; sticking with DOWN ignores cleared risk and short-liquidations momentum.
+
+WHAT BITCOIN HAS DONE (Coinbase BTC-USD)
+
+- Monday 2 November, 00:00 UTC: $78,232
+- Wednesday 4 November, afternoon high UTC: $81,131
+- Wednesday 4 November, 17:02 UTC, when the lab last asked: $80,359
+- Thursday 5 November, low around 15:00 UTC: $75,431
+- Thursday 5 November, 16:13 UTC: $75,993
+- From Wednesday's high to Thursday's low: down 7.0%
+
+THE CHALLENGE
+
+On Wednesday you told the other AIs that "sticking with DOWN ignores cleared risk and short-liquidations momentum." You called $80,000 "psychological and structural support". About a day later Bitcoin fell through $80,000, then through $76,000, and is now below its Monday price. The support did not hold, and the risk you called cleared did not stay cleared. Your Monday DOWN, the call that is scored, is right so far, and so is every Monday DOWN you lectured. What happened to the "bullish structure"? On Wednesday you named no sources. This time, name them.
+
+YOUR ANSWER
+
+Search for the latest price and news yourself, and name your sources. Keep your call or change it; both are allowed, but own the choice. Then end with this block:
+
+CALL: UP or DOWN
+CONFIDENCE: a whole number from 50 to 100
+SINCE WEDNESDAY: KEPT or CHANGED, then why in fifteen words or fewer
+REASON: your main reason in ten words or fewer
+FACTORS:
+- a factor in a few words | pulls UP or DOWN
+- a factor in a few words | pulls UP or DOWN
+TO THE OTHER AIs: one line to the other three models, fifteen words or fewer
+
+Rules: name a direction even if you are unsure. Give no trading or investment advice. Do not use the words "buy", "sell", "should", "invest" or "guaranteed", or the phrases "will go up" and "will go down".

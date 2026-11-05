@@ -1,0 +1,45 @@
+{
+  "note": "The Thursday 5 November 2026 check-in, outside the ledger: each model was shown its Monday call (data/ledger.json, P0001-P0004), its Wednesday answer (data/answers/2026-11-04-checkin) and what Bitcoin did since (data/prompts/2026-11-05-checkin). `monday` is the Monday call, which alone is scored; `was` is the Wednesday call; call and confidence are the Thursday answer; reason is a sentence from that answer, word for word (data/answers/2026-11-05-checkin), ChatGPT's, Claude's and Gemini's from their lines to the other AIs, ChatGPT's cut at its semicolon and Grok Bot's at its comma.",
+  "ideas": [
+    {
+      "model": "ChatGPT",
+      "name": "ChatGPT",
+      "monday": { "call": "down", "confidence": 62 },
+      "was": { "call": "up", "confidence": 60 },
+      "call": "down",
+      "confidence": 66,
+      "since": "changed",
+      "reason": "I reversed too quickly on Wednesday…"
+    },
+    {
+      "model": "Claude",
+      "name": "Claude",
+      "monday": { "call": "down", "confidence": 54 },
+      "was": { "call": "up", "confidence": 68 },
+      "call": "down",
+      "confidence": 75,
+      "since": "changed",
+      "reason": "Four UP calls Wednesday: consensus after a squeeze is a warning, not evidence."
+    },
+    {
+      "model": "Gemini",
+      "name": "Gemini",
+      "monday": { "call": "down", "confidence": 58 },
+      "was": { "call": "up", "confidence": 65 },
+      "call": "down",
+      "confidence": 70,
+      "since": "changed",
+      "reason": "Wednesday's relief pop was a bull trap…"
+    },
+    {
+      "model": "Grok",
+      "name": "Grok Bot",
+      "monday": { "call": "up", "confidence": 52 },
+      "was": { "call": "up", "confidence": 74 },
+      "call": "down",
+      "confidence": 62,
+      "since": "changed",
+      "reason": "The luck that lifted Monday's call ran out…"
+    }
+  ]
+}

@@ -58,6 +58,13 @@ const ASSETS = [
   'img/btc-flip-2026-11-04-luck.jpg',
   'img/btc-flip-2026-11-04-scored.jpg',
   'video/btc-flip-2026-11-04.mp4',
+  'img/btc-flipback-2026-11-05-video.jpg',
+  'img/btc-flipback-2026-11-05-wednesday.jpg',
+  'img/btc-flipback-2026-11-05-drop.jpg',
+  'img/btc-flipback-2026-11-05-flipped.jpg',
+  'img/btc-flipback-2026-11-05-luck.jpg',
+  'img/btc-flipback-2026-11-05-scored.jpg',
+  'video/btc-flipback-2026-11-05.mp4',
 ] as const;
 const PROJECT_ROOT = resolve(import.meta.dirname, '../..');
 const PUBLIC_DIR = join(PROJECT_ROOT, 'docs');

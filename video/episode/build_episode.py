@@ -229,6 +229,7 @@ def json_script(element_id: str, data) -> str:
 
 
 # What only a story page carries: the story itself, the last 4h candles of each chart, its own scripts after episode.js.
+# A chart's optional "until" pins its last candle, so a later price refresh can't move a finished episode.
 # The charts sit side by side, so they must end on the same candle.
 def story_extras(story: dict) -> tuple:
     if story_path is None:
@@ -236,7 +237,12 @@ def story_extras(story: dict) -> tuple:
     data = json_script("story", story)
     ends = set()
     for chart in story.get("charts", []):
-        candles = json.loads(read(assets / "data" / chart["file"]))["candles"][-chart["last"]:]
+        candles = json.loads(read(assets / "data" / chart["file"]))["candles"]
+        if "until" in chart:
+            candles = [c for c in candles if c["time"] <= chart["until"]]
+            if not candles or candles[-1]["time"] != chart["until"]:
+                raise SystemExit(f"chart {chart['id']}: no candle at {chart['until']}")
+        candles = candles[-chart["last"]:]
         ends.add(candles[-1]["time"])
         data += json_script(f"candles-{chart['id']}", candles)
     if len(ends) > 1:

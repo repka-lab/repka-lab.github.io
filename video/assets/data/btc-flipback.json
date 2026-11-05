@@ -1,0 +1,58 @@
+{
+  "note": "The flip-back video, Thursday 5 November 2026. Frame 0 is the thumbnail: '4 AIs. 7 FLIPS.' / 'Bitcoin −7% in a day.' over the four logos, all stamped FLIPPED, each with its Monday, Wednesday and Thursday calls as triangles under its name: 3 flips on Wednesday, 4 on Thursday. Then Wednesday's calls on the chart: the 4h candles from Tuesday up to the check-in, $80,359, and four green arrows up from it with their logos and confidences. 'Then it dumped 7% in a day.': the candles since the check-in sweep in, the arrows shake and crack as the day's −7.0% lands and the camera punches in on it. Then one Thursday answer at a time: each card lands with its Wednesday call, which flips to the Thursday one under a slammed stamp, FLIPPED BACK for the three back on their Monday call and FLIPPED for Grok Bot, a corner count goes up, and a jab lands as a sticker under the card. Then Grok Bot's own 'The luck that lifted Monday's call ran out' is marked and the camera eases in on the whole card, the music out, and only Monday's calls are scored, with the Monday calls under the logos. flipback-story.js plays it; each card beat's `stamp` and `jab.at` count from its start, the luck beat's `ranOut` from its start. The check-ins sit outside the ledger.",
+  "sources": [
+    { "what": "BTC-USD 4h candles, Tuesday 3 Nov 00:00 UTC to Thursday 5 Nov 16:00 UTC: high $81,130.79 (Nov 4, 12:00-16:00 candle, 15:00 UTC hour), low $75,431.17 (Nov 5, 12:00-16:00 candle, 15:00 UTC hour), −7.0% high to low", "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles" },
+    { "what": "Ticker $80,358.58 at 17:02 UTC on 4 Nov, the Wednesday check-in price, as shown to the models", "url": "https://api.exchange.coinbase.com/products/BTC-USD/ticker" },
+    { "what": "Ticker $75,993 at 16:13 UTC on 5 Nov, −2.9% on Monday's open $78,232.49, as shown to the models (data/prompts/2026-11-05-checkin)", "url": "https://api.exchange.coinbase.com/products/BTC-USD/ticker" },
+    { "what": "The Monday calls and their confidences, P0001-P0004", "url": "data/ledger.json" },
+    { "what": "The Wednesday check-in answers, word for word", "url": "data/answers/2026-11-04-checkin" },
+    { "what": "The Thursday check-in prompts and the four answers, word for word", "url": "data/answers/2026-11-05-checkin" }
+  ],
+  "title": "Grandpa flip-back episode",
+  "html": "flipback.html",
+  "monitor": "monitor-flipback.svg",
+  "ideas": "ideas-2026-11-05-flipback.json",
+  "board": false,
+  "hookFigure": true,
+  "scripts": ["flipback-story.js"],
+  "charts": [{ "id": "btc", "file": "../../../data/btc-usd-4h.json", "last": 16, "until": "2026-11-05T12:00:00.000Z" }],
+  "hookFrames": 216,
+  "monitorFrames": 649,
+  "endFrames": 72,
+  "music": {
+    "bpm": 80,
+    "grooveFrom": 0,
+    "chords": { "hook": "Dm", "wednesday": "F", "drop": "Dm", "chatgpt": "A", "claude": "Dm", "gemini": "Bb", "grok": "F", "luck": "A", "scored": "Dm", "end": "F" },
+    "busy": ["chatgpt", "claude", "gemini", "grok"],
+    "hits": [156, 737],
+    "rests": [[652, 737]]
+  },
+  "beats": [
+    { "id": "wednesday", "start": -186 },
+    { "id": "drop", "start": -66 },
+    { "id": "chatgpt", "start": 0, "stamp": 20, "jab": { "at": 50, "text": "It reversed its reversal." } },
+    { "id": "claude", "start": 96, "stamp": 20, "jab": { "at": 38, "text": "It was one of the four." } },
+    { "id": "gemini", "start": 185, "stamp": 20, "jab": { "at": 72, "text": "From inside it." } },
+    { "id": "grok", "start": 295, "stamp": 22, "jab": { "at": 42, "text": "74% sure. For one day." } },
+    { "id": "luck", "start": 425, "ranOut": 32 },
+    { "id": "scored", "start": 537 }
+  ],
+  "end": {
+    "ask": "Friday decides. Who's right?",
+    "reply": "Reply with your pick",
+    "lead": "",
+    "ledger": "Every call is logged first: repka-lab.github.io/ledger.html"
+  },
+  "voice": [
+    { "text": "Wednesday: all 4 AIs said Bitcoin goes UP.", "say": "Wednesday. All four A.I.s said Bitcoin goes up.", "from": 14, "to": 134 },
+    { "text": "Then it dumped 7% in a day.", "say": "Then it dumped seven percent in a day.", "from": 135, "to": 203 },
+    { "text": "ChatGPT flipped back. It reversed its reversal.", "from": 203, "to": 296 },
+    { "text": "Claude flipped back. It was one of the four.", "from": 298, "to": 385 },
+    { "text": "Gemini flipped back. Spotted the trap. From inside it.", "from": 387, "to": 492 },
+    { "text": "Grok Bot flipped too. 74% sure. For one day.", "say": "Grok Bot flipped too. Seventy-four percent sure. For one day.", "from": 497, "to": 623 },
+    { "text": "Its excuse?", "from": 625, "to": 655 },
+    { "text": "The luck that lifted Monday's call ran out.", "from": 658, "to": 735 },
+    { "text": "Good thing flips don't count. Only Monday's calls do.", "from": 738, "to": 837 },
+    { "text": "Friday decides. Who's right?", "from": 837, "to": 907 }
+  ]
+}

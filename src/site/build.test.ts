@@ -83,6 +83,12 @@ describe('buildSite', () => {
       'img/btc-flip-2026-11-04-monday.jpg',
       'img/btc-flip-2026-11-04-scored.jpg',
       'img/btc-flip-2026-11-04-video.jpg',
+      'img/btc-flipback-2026-11-05-drop.jpg',
+      'img/btc-flipback-2026-11-05-flipped.jpg',
+      'img/btc-flipback-2026-11-05-luck.jpg',
+      'img/btc-flipback-2026-11-05-scored.jpg',
+      'img/btc-flipback-2026-11-05-video.jpg',
+      'img/btc-flipback-2026-11-05-wednesday.jpg',
       'img/gold-2025-race.jpg',
       'img/gold-2025-record.jpg',
       'img/gold-2025-video.jpg',
@@ -100,6 +106,7 @@ describe('buildSite', () => {
       'video/binance-hack.mp4',
       'video/btc-calls-2026-11-02.mp4',
       'video/btc-flip-2026-11-04.mp4',
+      'video/btc-flipback-2026-11-05.mp4',
       'video/gold-2025.mp4',
     ]);
     assert.deepEqual(written, filesIn(out));

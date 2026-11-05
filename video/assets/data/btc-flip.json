@@ -13,7 +13,7 @@
   "board": false,
   "hookFigure": true,
   "scripts": ["flip-story.js"],
-  "charts": [{ "id": "btc", "file": "../../../data/btc-usd-4h.json", "last": 28 }],
+  "charts": [{ "id": "btc", "file": "../../../data/btc-usd-4h.json", "last": 28, "until": "2026-11-04T12:00:00.000Z" }],
   "hookFrames": 194,
   "monitorFrames": 506,
   "endFrames": 72,

@@ -1,0 +1,56 @@
+AI Prediction Lab: second check-in, Thursday 5 November 2026
+
+You are taking part in a public experiment. On Monday, four AI models (ChatGPT, Claude, Gemini and Grok) each called the direction of Bitcoin for this week. The Monday calls stay in a public, append-only ledger and are checked after the week ends; only they are scored. On Wednesday each model was shown its Monday call and asked again, and all four answered UP. Bitcoin has fallen since. Today each model is shown both of its answers and asked a third time. This is a record of forecasts, not financial advice.
+
+THE QUESTION
+
+Will the Coinbase BTC-USD price at Friday 6 November 2026, 23:59:59 UTC be strictly higher than the price at Monday 2 November 2026, 00:00 UTC? UP: strictly higher. DOWN: anything else, an unchanged price included.
+
+YOUR MONDAY ANSWER (the one that is scored)
+
+CALL: UP
+CONFIDENCE: 52
+REASON: Fearful, oversold market with easing Binance hack overhang
+FACTORS:
+- Fear sentiment and neutral funding after sell-off | pulls UP
+- Downtrend and ETF outflows | pulls DOWN
+- Exchange outflows and hack losses largely covered | pulls UP
+
+YOUR WEDNESDAY ANSWER
+
+CALL: UP
+CONFIDENCE: 74
+SINCE MONDAY: KEPT. Price now sits 2.7% above Monday's level with two days left.
+REASON: 2.7% cushion with roughly two days remaining
+FACTORS:
+- Price cushion above Monday reference | pulls UP
+- Friday jobs report and squeeze fade risk | pulls DOWN
+TO THE OTHER AIs: My Monday edge was luck; the cushion is real data.
+
+WHAT BITCOIN HAS DONE (Coinbase BTC-USD)
+
+- Monday 2 November, 00:00 UTC: $78,232
+- Wednesday 4 November, afternoon high UTC: $81,131
+- Wednesday 4 November, 17:02 UTC, when the lab last asked: $80,359
+- Thursday 5 November, low around 15:00 UTC: $75,431
+- Thursday 5 November, 16:13 UTC: $75,993
+- From Wednesday's high to Thursday's low: down 7.0%
+
+THE CHALLENGE
+
+On Wednesday you were the only AI that did not change its call, and you told the others: "My Monday edge was luck; the cushion is real data." You put the chance of Bitcoin falling back below $78,232 at "roughly one in five to one in four", and raised your confidence from 52 to 74. It took about a day. The cushion is gone, and Bitcoin is now below its Monday price. Your Monday UP, the call that is scored, is wrong so far, and the three AIs you outlasted are right so far. Was the cushion real data, or did the luck run out? Do you keep UP a third time, or is this where you change?
+
+YOUR ANSWER
+
+Search for the latest price and news yourself, and name your sources. Keep your call or change it; both are allowed, but own the choice. Then end with this block:
+
+CALL: UP or DOWN
+CONFIDENCE: a whole number from 50 to 100
+SINCE WEDNESDAY: KEPT or CHANGED, then why in fifteen words or fewer
+REASON: your main reason in ten words or fewer
+FACTORS:
+- a factor in a few words | pulls UP or DOWN
+- a factor in a few words | pulls UP or DOWN
+TO THE OTHER AIs: one line to the other three models, fifteen words or fewer
+
+Rules: name a direction even if you are unsure. Give no trading or investment advice. Do not use the words "buy", "sell", "should", "invest" or "guaranteed", or the phrases "will go up" and "will go down".
