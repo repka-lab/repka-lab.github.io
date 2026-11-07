@@ -102,6 +102,47 @@
       "verify_date": "2026-11-06T23:59:59.000Z"
     }
   ],
-  "verifications": [],
+  "verifications": [
+    {
+      "prediction_id": "P0001",
+      "verified_at": "2026-11-07T10:44:12.144Z",
+      "price_source": "Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-02T00:00Z; close of the 4h candle at 2026-11-06T20:00Z, the same as the 1-minute candle at 23:59Z",
+      "price_start": 78232.49,
+      "price_end": 75731.04,
+      "change_pct": -3.1975,
+      "outcome": "down",
+      "hit": true
+    },
+    {
+      "prediction_id": "P0002",
+      "verified_at": "2026-11-07T10:44:12.144Z",
+      "price_source": "Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-02T00:00Z; close of the 4h candle at 2026-11-06T20:00Z, the same as the 1-minute candle at 23:59Z",
+      "price_start": 78232.49,
+      "price_end": 75731.04,
+      "change_pct": -3.1975,
+      "outcome": "down",
+      "hit": true
+    },
+    {
+      "prediction_id": "P0003",
+      "verified_at": "2026-11-07T10:44:12.144Z",
+      "price_source": "Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-02T00:00Z; close of the 4h candle at 2026-11-06T20:00Z, the same as the 1-minute candle at 23:59Z",
+      "price_start": 78232.49,
+      "price_end": 75731.04,
+      "change_pct": -3.1975,
+      "outcome": "down",
+      "hit": true
+    },
+    {
+      "prediction_id": "P0004",
+      "verified_at": "2026-11-07T10:44:12.144Z",
+      "price_source": "Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-02T00:00Z; close of the 4h candle at 2026-11-06T20:00Z, the same as the 1-minute candle at 23:59Z",
+      "price_start": 78232.49,
+      "price_end": 75731.04,
+      "change_pct": -3.1975,
+      "outcome": "down",
+      "hit": false
+    }
+  ],
   "reviews": []
 }

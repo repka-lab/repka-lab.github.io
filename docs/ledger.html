@@ -54,7 +54,7 @@
   <table class="ledger">
     <thead><tr><th scope="col">ID</th><th scope="col">Recorded</th><th scope="col">Model</th><th scope="col">BTC call</th><th scope="col" class="num">Confidence</th><th scope="col">Check date</th><th scope="col">Result</th><th scope="col">Details</th></tr></thead>
     <tbody>
-      <tr><th scope="row">P0004</th><td>2026-11-01 16:59 UTC</td><td>Grok Bot<br><small>Grok Bot</small></td><td>Higher</td><td class="num">52%</td><td>2026-11-06 23:59 UTC</td><td><span class="result pending">Pending</span></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>**Reasoning**
+      <tr><th scope="row">P0004</th><td>2026-11-01 16:59 UTC</td><td>Grok Bot<br><small>Grok Bot</small></td><td>Higher</td><td class="num">52%</td><td>2026-11-06 23:59 UTC</td><td><span class="result miss">✗ Miss</span><br><small>Lower, −3.20%</small></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>**Reasoning**
 
 The latest BTC price I saw was **$78,002.61 on Coinbase BTC-USD at 16:53 UTC on Sunday 1 November 2026** (from the Coinbase Exchange public ticker API, `api.exchange.coinbase.com/products/BTC-USD/ticker`). That is about 22 hours before the Monday 00:00 UTC reference price.
 
@@ -84,8 +84,8 @@ FACTORS:
 
 - Fear sentiment and neutral funding after sell-off | pulls UP
 - Downtrend and ETF outflows | pulls DOWN
-- Exchange outflows and hack losses largely covered | pulls UP</dd><dt>Prompt hash</dt><dd><code>df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2</code></dd></dl></details></td></tr>
-      <tr><th scope="row">P0003</th><td>2026-11-01 16:59 UTC</td><td>Gemini<br><small>Gemini</small></td><td>Lower</td><td class="num">58%</td><td>2026-11-06 23:59 UTC</td><td><span class="result pending">Pending</span></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>As of November 1, 2026, at approximately 16:50 UTC, Bitcoin is trading around $77,994 USD according to live spot market telemetry retrieved via Coinbase and real-time feed updates.
+- Exchange outflows and hack losses largely covered | pulls UP</dd><dt>Prompt hash</dt><dd><code>df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2</code></dd><dt>Prices</dt><dd>78232.49 → 75731.04 (Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-02T00:00Z; close of the 4h candle at 2026-11-06T20:00Z, the same as the 1-minute candle at 23:59Z)</dd><dt>Checked</dt><dd>2026-11-07 10:44 UTC</dd></dl></details></td></tr>
+      <tr><th scope="row">P0003</th><td>2026-11-01 16:59 UTC</td><td>Gemini<br><small>Gemini</small></td><td>Lower</td><td class="num">58%</td><td>2026-11-06 23:59 UTC</td><td><span class="result hit">✓ Hit</span><br><small>Lower, −3.20%</small></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>As of November 1, 2026, at approximately 16:50 UTC, Bitcoin is trading around $77,994 USD according to live spot market telemetry retrieved via Coinbase and real-time feed updates.
 
 Context &amp; Reasoning
 
@@ -101,8 +101,8 @@ REASON: Macro event risk and overhead technical resistance outweigh spot momentu
 FACTORS:
 U.S. midterm elections event risk | pulls DOWN
 Weak October price momentum below $80k | pulls DOWN
-Oversold 14-day RSI near $77k support | pulls UP</dd><dt>Prompt hash</dt><dd><code>df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2</code></dd></dl></details></td></tr>
-      <tr><th scope="row">P0002</th><td>2026-11-01 16:59 UTC</td><td>Claude<br><small>Claude</small></td><td>Lower</td><td class="num">54%</td><td>2026-11-06 23:59 UTC</td><td><span class="result pending">Pending</span></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>I’ll research current BTC price action, news, derivatives and next week’s macro calendar, then make the call.
+Oversold 14-day RSI near $77k support | pulls UP</dd><dt>Prompt hash</dt><dd><code>df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2</code></dd><dt>Prices</dt><dd>78232.49 → 75731.04 (Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-02T00:00Z; close of the 4h candle at 2026-11-06T20:00Z, the same as the 1-minute candle at 23:59Z)</dd><dt>Checked</dt><dd>2026-11-07 10:44 UTC</dd></dl></details></td></tr>
+      <tr><th scope="row">P0002</th><td>2026-11-01 16:59 UTC</td><td>Claude<br><small>Claude</small></td><td>Lower</td><td class="num">54%</td><td>2026-11-06 23:59 UTC</td><td><span class="result hit">✓ Hit</span><br><small>Lower, −3.20%</small></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>I’ll research current BTC price action, news, derivatives and next week’s macro calendar, then make the call.
 
 I couldn’t get a live quote straight from Coinbase. Its price page loaded without a price, so I used Coinbase-sourced figures from news coverage and several aggregators.
 
@@ -194,8 +194,8 @@ FACTORS:
 
 Hawkish Fed, payrolls Friday | pulls DOWN
 ETF outflows plus stolen-BTC supply overhang | pulls DOWN
-Bearish retail sentiment, $76K support held | pulls UP</dd><dt>Prompt hash</dt><dd><code>df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2</code></dd></dl></details></td></tr>
-      <tr><th scope="row">P0001</th><td>2026-11-01 16:59 UTC</td><td>ChatGPT<br><small>ChatGPT</small></td><td>Lower</td><td class="num">62%</td><td>2026-11-06 23:59 UTC</td><td><span class="result pending">Pending</span></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>The forecast window is Monday, 2 November 2026, 00:00 UTC, through Friday, 6 November 2026, 23:59:59 UTC. This is a five-day directional forecast, not a prediction of the exact BTC price.
+Bearish retail sentiment, $76K support held | pulls UP</dd><dt>Prompt hash</dt><dd><code>df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2</code></dd><dt>Prices</dt><dd>78232.49 → 75731.04 (Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-02T00:00Z; close of the 4h candle at 2026-11-06T20:00Z, the same as the 1-minute candle at 23:59Z)</dd><dt>Checked</dt><dd>2026-11-07 10:44 UTC</dd></dl></details></td></tr>
+      <tr><th scope="row">P0001</th><td>2026-11-01 16:59 UTC</td><td>ChatGPT<br><small>ChatGPT</small></td><td>Lower</td><td class="num">62%</td><td>2026-11-06 23:59 UTC</td><td><span class="result hit">✓ Hit</span><br><small>Lower, −3.20%</small></td><td><details><summary>Show</summary><dl><dt>Reasoning</dt><dd>The forecast window is Monday, 2 November 2026, 00:00 UTC, through Friday, 6 November 2026, 23:59:59 UTC. This is a five-day directional forecast, not a prediction of the exact BTC price.
 
 The key distinction is between the probability that Bitcoin finishes the week higher and the magnitude of any move. A small positive return counts as UP, while a flat or negative return counts as DOWN. With such a short horizon, the direction is inherently uncertain, and the confidence level should reflect that.
 Research and reasoning
@@ -248,7 +248,7 @@ REASON: Bearish momentum and ETF outflows outweigh the weekend recovery.
 FACTORS:
 - Recent price breakdown and weak weekly performance | pulls DOWN
 - $643 million in daily spot Bitcoin ETF outflows | pulls DOWN
-- Binance recovery progress and potential macro-driven rebound | pulls UP</dd><dt>Prompt hash</dt><dd><code>df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2</code></dd></dl></details></td></tr>
+- Binance recovery progress and potential macro-driven rebound | pulls UP</dd><dt>Prompt hash</dt><dd><code>df6c02d1ffdd468a2d5e46d49a627dc5b653ebe5ef52fd368cf75136b81207c2</code></dd><dt>Prices</dt><dd>78232.49 → 75731.04 (Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-02T00:00Z; close of the 4h candle at 2026-11-06T20:00Z, the same as the 1-minute candle at 23:59Z)</dd><dt>Checked</dt><dd>2026-11-07 10:44 UTC</dd></dl></details></td></tr>
     </tbody>
   </table>
 </div>
