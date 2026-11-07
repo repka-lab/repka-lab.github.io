@@ -1,5 +1,42 @@
 {
   "schema_version": 1,
-  "updated_at": null,
-  "models": {}
+  "updated_at": "2026-11-07T10:44:12.148Z",
+  "models": {
+    "chatgpt": {
+      "predictions": 1,
+      "verified": 1,
+      "pending": 0,
+      "hits": 1,
+      "misses": 0,
+      "hit_rate": 1,
+      "avg_confidence": 62
+    },
+    "claude": {
+      "predictions": 1,
+      "verified": 1,
+      "pending": 0,
+      "hits": 1,
+      "misses": 0,
+      "hit_rate": 1,
+      "avg_confidence": 54
+    },
+    "gemini": {
+      "predictions": 1,
+      "verified": 1,
+      "pending": 0,
+      "hits": 1,
+      "misses": 0,
+      "hit_rate": 1,
+      "avg_confidence": 58
+    },
+    "grok": {
+      "predictions": 1,
+      "verified": 1,
+      "pending": 0,
+      "hits": 0,
+      "misses": 1,
+      "hit_rate": 0,
+      "avg_confidence": 52
+    }
+  }
 }

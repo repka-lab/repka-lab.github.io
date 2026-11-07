@@ -17,6 +17,7 @@ video/remotion/out/
 # Preview tooling: frames, sheets and headless Edge profiles
 video/episode/out/
 video/character/out/
+video/chart/out/
 video/tools/.edge/
 
 # Local site preview with draft articles; the public build goes to docs/

@@ -243,10 +243,11 @@ describe('renderChart: factors', () => {
 describe('renderChart: check', () => {
   const html = renderChart(`check ${WEEK}`, weekChecked());
 
-  test('shows the start and end price and the move between them', () => {
+  test('shows the start and end price and the move between them, the start at the week open, not when the calls were logged', () => {
     assert.match(html, /100,000\.00/);
     assert.match(html, /102,480\.00/);
-    assert.match(html, /2026-11-02 09:00 UTC/);
+    assert.match(html, /Start price<\/span><span class="move-price">[^<]*<\/span><span class="move-time">2026-11-02 00:00 UTC</);
+    assert.doesNotMatch(html, /2026-11-02 09:00 UTC/);
     assert.match(html, /2026-11-06 20:00 UTC/);
     assert.match(html, /▲<\/span> Higher/);
     assert.match(html, /\+2\.48%/);
@@ -309,12 +310,12 @@ describe('renderChart: check', () => {
 describe('renderChart: check, in candles', () => {
   const html = renderChart(`check ${WEEK}`, weekChecked(), weekPrices());
 
-  test('draws BTC from a week before the call to the check', () => {
-    assert.match(html, /<title>2026-10-26 08:00 UTC: /);
+  test('draws BTC from a week before the week opens to the check', () => {
+    assert.match(html, /<title>2026-10-26 00:00 UTC: /);
     assert.match(html, /<title>2026-11-06 16:00 UTC: open 102,080\.00, high 102,610\.00, low 101,930\.00, close 102,460\.00<\/title>/);
-    assert.doesNotMatch(html, /<title>2026-10-26 04:00 UTC/);
+    assert.doesNotMatch(html, /<title>2026-10-25 20:00 UTC/);
     assert.doesNotMatch(html, /<title>2026-11-06 20:00 UTC/);
-    assert.match(html, /aria-label="BTC in 4-hour candles, 2026-10-26 08:00 UTC to 2026-11-06 20:00 UTC"/);
+    assert.match(html, /aria-label="BTC in 4-hour candles, 2026-10-26 00:00 UTC to 2026-11-06 20:00 UTC"/);
   });
 
   test('tells a candle that rose from one that fell by its shape, and says which is which', () => {

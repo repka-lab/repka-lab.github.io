@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tech week chart</title>
+<style>
+  @font-face { font-family: 'Kalam'; font-weight: 700; src: url('../assets/fonts/kalam/Kalam-Bold.ttf') format('truetype'); }
+  :root {
+    /* The navy every episode stands on (episode/result.html), and its neutrals stepped up from it. */
+    --bg: #13233a;
+    --surface: #1b304d;
+    --ink: #eef2f7;
+    --ink-2: #c6d1e0;
+    --muted: #8fa1b9;
+    --line: #2c4568;
+    --grid: #22395a;
+    --base: #5d7597;
+    --tile: #0b1626;
+    --btc: #d0780c;
+    --cover: #091321; /* the cover only: darker than the navy, so the words carry it */
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1080px; overflow: hidden; background: var(--bg); color: var(--ink); }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; font-variant-numeric: tabular-nums; position: relative; }
+  .abs { position: absolute; }
+  #brand { left: 48px; top: 30px; font-size: 20px; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; }
+  #title { left: 46px; top: 58px; font-family: 'Kalam', cursive; font-weight: 700; font-size: 54px; line-height: 1.05; }
+  #legend { left: 48px; top: 184px; display: flex; gap: 30px; font-size: 22px; color: var(--ink-2); }
+  #legend span { display: flex; align-items: center; gap: 10px; }
+  #legend .ctx { color: var(--muted); margin-left: 6px; margin-right: -16px; }
+  .swatch { display: inline-block; width: 26px; height: 4px; border-radius: 2px; }
+  svg { position: absolute; left: 0; top: 0; }
+  .axis { font-size: 19px; color: var(--muted); }
+  .day { font-size: 20px; color: var(--ink-2); font-weight: 600; letter-spacing: 0.06em; transform: translateX(-50%); white-space: nowrap; }
+  .day small { display: block; text-align: center; font-size: 17px; font-weight: 400; letter-spacing: 0; color: var(--muted); }
+  .stem-label { font-size: 16px; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; text-transform: uppercase; white-space: nowrap; }
+  .head { font-size: 23px; white-space: nowrap; display: flex; align-items: center; gap: 8px; color: var(--ink); transform: translateY(-50%); }
+  .head b { font-weight: 700; }
+  .head.main { font-size: 26px; }
+  .tile { width: 26px; height: 26px; border-radius: 6px; background: var(--tile); display: flex; align-items: center; justify-content: center; flex: none; }
+  .tile img { width: 18px; height: 18px; }
+
+  /* An AI's own words, big, in the plot's empty lower left. */
+  .quote { left: 104px; top: 512px; width: 500px; padding: 14px 20px 16px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); opacity: 0; transform-origin: left bottom; }
+  .quote .who { display: flex; align-items: center; gap: 12px; font-size: 21px; font-weight: 700; color: var(--ink-2); margin-bottom: 8px; }
+  .quote .who .tile { width: 36px; height: 36px; border-radius: 8px; }
+  .quote .who .tile img { width: 24px; height: 24px; }
+  .quote .said { font-size: 31px; line-height: 1.2; }
+
+  #caption { left: 48px; top: 760px; width: 984px; font-size: 29px; line-height: 1.25; }
+  #caption .lead { font-weight: 700; }
+  #caption.big { font-family: 'Kalam', cursive; font-weight: 700; font-size: 50px; line-height: 1.1; top: 768px; }
+
+  /* The calls, check-in by check-in: DOWN -> UP -> DOWN, then what was scored. */
+  .colhead { font-size: 17px; letter-spacing: 0.12em; color: var(--muted); font-weight: 600; text-transform: uppercase; text-align: center; white-space: nowrap; }
+  .who-cell { display: flex; align-items: center; gap: 8px; height: 50px; }
+  .who-cell .tile { width: 40px; height: 40px; border-radius: 9px; }
+  .who-cell .tile img { width: 27px; height: 27px; }
+  .call { height: 50px; border-radius: 25px; background: var(--surface); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center;
+    font-size: 29px; font-weight: 700; white-space: nowrap; opacity: 0; }
+  .arrow { font-size: 30px; color: var(--muted); text-align: center; line-height: 50px; opacity: 0; }
+  .call.score { background: transparent; border-color: var(--base); letter-spacing: 0.1em; font-size: 26px; }
+
+  #disclaimer { left: 48px; top: 1004px; width: 984px; font-size: 19px; line-height: 1.35; color: var(--muted); z-index: 6; }
+  #note { left: 48px; top: 1038px; font-size: 16px; color: var(--muted); white-space: nowrap; }
+  .card { z-index: 5; left: 0; top: 0; width: 1080px; height: 1080px; background: var(--bg); padding: 0 48px; }
+  .card h2 { margin: 0 0 28px; font-family: 'Kalam', cursive; font-weight: 700; font-size: 50px; line-height: 1.1; }
+  #end { display: flex; flex-direction: column; justify-content: center; padding-bottom: 90px; }
+  #end .site { font-size: 34px; color: var(--ink-2); margin-top: 8px; }
+  #end .what { font-size: 30px; line-height: 1.35; margin-top: 40px; max-width: 900px; }
+  #end .ask { font-family: 'Kalam', cursive; font-weight: 700; font-size: 50px; margin-top: 44px; color: var(--ink); }
+
+  /* The cover: the first frame X shows, held while the hook is said, then faded into the chart. Big words only. */
+  #cover { padding: 0; overflow: hidden; background: var(--cover); }
+  #cover .push { position: absolute; left: 0; top: 0; width: 1080px; height: 1080px; transform-origin: 50% 40%; }
+  #cover .art { -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 42%); mask-image: linear-gradient(to right, transparent 0%, #000 42%); opacity: 0.55; }
+  #cover h1 { position: absolute; left: 50px; top: 40px; margin: 0; font-family: 'Kalam', cursive; font-weight: 700; font-size: 150px; line-height: 0.92; white-space: nowrap; }
+  #cover h1 .fall { color: var(--btc); }
+  #cover .then { position: absolute; left: 340px; top: 716px; font-family: 'Kalam', cursive; font-weight: 700; font-size: 58px; line-height: 84px; white-space: nowrap; }
+  #cover .mark { position: absolute; display: flex; align-items: center; transform: translateY(-50%); }
+  #cover .mark svg { position: static; width: 84px; height: 84px; }
+  #cover .ndq { height: 54px; padding: 0 20px; border-radius: 27px; background: #9085e9; color: #fff; font-size: 28px; line-height: 54px; font-weight: 800; letter-spacing: 0.05em; }
+  #cover .who { position: absolute; left: 56px; top: 716px; display: flex; gap: 14px; }
+  #cover .who .tile { width: 76px; height: 76px; border-radius: 17px; background: var(--bg); }
+  #cover .who .tile img { width: 50px; height: 50px; }
+  #cover .flips { position: absolute; left: 56px; top: 812px; display: flex; }
+  #cover .pill { width: 272px; height: 116px; border-radius: 58px; background: var(--bg); border: 3px solid #233a5a; display: flex; align-items: center;
+    justify-content: center; font-size: 52px; font-weight: 800; white-space: nowrap; }
+  #cover .pill.scored { border: 5px solid var(--btc); }
+  #cover .to { width: 64px; height: 116px; line-height: 116px; font-size: 48px; color: var(--muted); text-align: center; }
+  #cover .stamp { position: absolute; left: 150px; top: 902px; padding: 0 24px; border: 6px solid var(--btc); border-radius: 14px; background: var(--cover);
+    color: var(--btc); font-size: 62px; font-weight: 800; letter-spacing: 0.12em; transform: rotate(-9deg); }
+</style>
+</head>
+<body>
+  <div id="brand" class="abs t">AI PREDICTION LAB · REPKA</div>
+  <div id="title" class="abs t"></div>
+  <div id="legend" class="abs t"></div>
+  <svg id="plot" width="1080" height="1080" viewBox="0 0 1080 1080"></svg>
+  <div id="labels"></div>
+  <div id="caption" class="abs t"></div>
+  <div id="tracker"></div>
+  <div id="note" class="abs t">% change from the week's start: stocks from Fri 30 Oct's close, Bitcoin from Mon 00:00 UTC. Dotted: no trading data.</div>
+  <div id="end" class="abs card"></div>
+  <div id="cover" class="abs card"></div>
+  <div id="disclaimer" class="abs t">This is an experiment and documentation, not financial advice. I do not recommend buying or selling anything.</div>
+  <script src="tech-week-data.js"></script>
+  <script src="tech-week-story.js"></script>
+  <script src="tech-week.js"></script>
+</body>
+</html>

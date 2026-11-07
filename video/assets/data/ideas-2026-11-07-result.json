@@ -1,0 +1,37 @@
+{
+  "note": "The week of 2-6 November 2026, the only scored calls being Monday's (data/ledger.json, P0001-P0004); `wednesday` and `thursday` are the check-ins outside the ledger (data/answers/2026-11-04-checkin and 2026-11-05-checkin). reason is a sentence from the Thursday answer, word for word, as in ideas-2026-11-05-flipback.json.",
+  "ideas": [
+    {
+      "model": "ChatGPT",
+      "name": "ChatGPT",
+      "monday": { "call": "down", "confidence": 62 },
+      "wednesday": { "call": "up", "confidence": 60 },
+      "thursday": { "call": "down", "confidence": 66 },
+      "reason": "I reversed too quickly on Wednesday…"
+    },
+    {
+      "model": "Claude",
+      "name": "Claude",
+      "monday": { "call": "down", "confidence": 54 },
+      "wednesday": { "call": "up", "confidence": 68 },
+      "thursday": { "call": "down", "confidence": 75 },
+      "reason": "Four UP calls Wednesday: consensus after a squeeze is a warning, not evidence."
+    },
+    {
+      "model": "Gemini",
+      "name": "Gemini",
+      "monday": { "call": "down", "confidence": 58 },
+      "wednesday": { "call": "up", "confidence": 65 },
+      "thursday": { "call": "down", "confidence": 70 },
+      "reason": "Wednesday's relief pop was a bull trap…"
+    },
+    {
+      "model": "Grok",
+      "name": "Grok Bot",
+      "monday": { "call": "up", "confidence": 52 },
+      "wednesday": { "call": "up", "confidence": 74 },
+      "thursday": { "call": "down", "confidence": 62 },
+      "reason": "The luck that lifted Monday's call ran out…"
+    }
+  ]
+}

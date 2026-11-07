@@ -462,7 +462,7 @@ scenes = checks["scenes"]
 total = samples(checks["report"]["frames"])
 lines = [] if voice_dir == Path("-") else place(story.get("voice") or story["subs"], total)
 clicks = checks["report"].get("clicks", {})
-bed, hits = music(story, sections(story, scenes, checks["report"]["monitorStart"], total),samples(story["music"].get("grooveFrom", scenes["monitor"][0])), clicks, total)
+bed, hits = music(story, sections(story, scenes, checks["report"]["monitorStart"], total),samples(story["music"]["grooveFrom"] if "grooveFrom" in story["music"] else scenes["monitor"][0]), clicks, total)
 pcm, bed_db = mix(bed, hits, lines, total)
 mix_wav = out.with_suffix(".wav")
 write_wav(mix_wav, pcm)

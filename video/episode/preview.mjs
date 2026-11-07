@@ -8,6 +8,7 @@
 //   --step K             every K-th frame; the MP4 plays them at 30/K fps
 //   --at 10,200,480      just these frames, e.g. for a pose sheet
 //   --scale 0.5          smaller frames for drafts
+//   --size 1080x1080     frame size in px, default 1280x720
 //   --format jpeg        faster than png, fine for drafts
 //   --workers N          parallel Edge instances, default 6
 //   --js variant.js      render with this script in place of episode.js, no html copy needed
@@ -23,8 +24,6 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 import { evaluate, launch, open, screenshot } from "../tools/cdp.mjs";
 
-const WIDTH = 1280;
-const HEIGHT = 720;
 const FPS = 30;
 const BASE_PORT = 9340;
 const MAX_WORKERS = 12;
@@ -41,6 +40,7 @@ const { values: opt, positionals } = parseArgs({
     step: { type: "string", default: "1" },
     at: { type: "string" },
     scale: { type: "string", default: "1" },
+    size: { type: "string", default: "1280x720" },
     format: { type: "string", default: "png" },
     workers: { type: "string", default: "6" },
     js: { type: "string" },
@@ -49,6 +49,7 @@ const { values: opt, positionals } = parseArgs({
     mp4: { type: "string" },
   },
 });
+const [WIDTH, HEIGHT] = opt.size.split("x").map(Number);
 
 function int(value, flag, min = 0) {
   const n = Number(value);
@@ -63,6 +64,7 @@ function validate() {
   if (!["png", "jpeg"].includes(opt.format)) throw new Error("--format: png or jpeg");
   const scale = Number(opt.scale);
   if (!(scale > 0 && scale <= 1)) throw new Error("--scale: a number in (0, 1]");
+  if (!/^\d+x\d+$/.test(opt.size)) throw new Error("--size: WxH, e.g. 1080x1080");
   if (opt.sheet && !/^\d+x\d+$/.test(opt.sheet)) throw new Error("--sheet: COLSxROWS, e.g. 4x3");
   if (opt.crop && !/^\d+:\d+:\d+:\d+$/.test(opt.crop)) throw new Error("--crop: w:h:x:y");
   return {
@@ -117,7 +119,7 @@ function inputsKey(page, frames, cfg) {
   for (const [, src] of html.matchAll(/<script src="([^"]+)"/g)) {
     hash.update(readFileSync(path.resolve(path.dirname(page), src)));
   }
-  return hash.update(JSON.stringify({ frames, scale: cfg.scale, ext: cfg.ext })).digest("hex");
+  return hash.update(JSON.stringify({ frames, scale: cfg.scale, ext: cfg.ext, ...(opt.size === "1280x720" ? {} : { size: opt.size }) })).digest("hex");
 }
 
 async function startWorker(index, page) {

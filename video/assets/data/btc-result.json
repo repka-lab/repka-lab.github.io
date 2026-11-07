@@ -1,0 +1,192 @@
+{
+  "note": "The week 1 result video, for the calls of 2-6 November 2026. `result` holds the week's two Coinbase BTC-USD prices and when the end one was taken. Until `at` reaches the week's close, Friday 23:59:59 UTC, the end price is only the latest one and the video is not fit to publish, though no frame says so. The outcome, each HIT and MISS, the percentages and the tally all come from `result` and the Monday calls, and his voice lines are checked against them, so a different end price stops the build until the lines are rewritten. Frame 0 is the thumbnail: the count of hits and misses over the four logos, each stamped, with its Monday, Wednesday and Thursday calls as triangles under its name. Then the Monday calls under the logos; then the flips, each call turning into a triangle over its day and Wednesday's and Thursday's calls landing beside it; then Friday's close: the week's 4h candles sweep in and the camera punches in on the figures. Then one card at a time, the Monday call stamped HIT or MISS and a jab under it; then the hero's own words are marked, and the tally against a coin. result-story.js plays it; each card beat's `stamp` and `jab.at` count from its start, the flips beat's `wednesday` and `thursday` and the verdict beat's `said` from theirs.",
+  "sources": [
+    { "what": "BTC-USD 4h candles, Sunday 1 Nov 04:00 UTC to the one at 20:00 UTC on Friday 6 Nov, Monday's open $78,232.49 at 00:00 UTC", "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles" },
+    { "what": "End price $75,731.04: the close of the 4h candle at 20:00 UTC on Friday 6 Nov, the same as the 1-minute candle at 23:59 UTC", "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles" },
+    { "what": "The Monday calls and their confidences, P0001-P0004", "url": "data/ledger.json" },
+    { "what": "The checks of P0001-P0004 against that price", "url": "data/ledger.json" },
+    { "what": "The Wednesday check-in answers, word for word", "url": "data/answers/2026-11-04-checkin" },
+    { "what": "The Thursday check-in answers, word for word", "url": "data/answers/2026-11-05-checkin" }
+  ],
+  "title": "Grandpa week 1 result episode",
+  "html": "result.html",
+  "monitor": "monitor-result.svg",
+  "ideas": "ideas-2026-11-07-result.json",
+  "board": false,
+  "hookFigure": true,
+  "scripts": ["result-story.js"],
+  "charts": [{ "id": "btc", "file": "../../../data/btc-usd-4h.json", "last": 35, "until": "2026-11-06T20:00:00.000Z" }],
+  "result": {
+    "start": 78232.49,
+    "end": 75731.04,
+    "at": "2026-11-06T23:59:59.000Z"
+  },
+  "hookFrames": 322,
+  "monitorFrames": 725,
+  "endFrames": 72,
+  "music": {
+    "bpm": 80,
+    "grooveFrom": 0,
+    "chords": {
+      "hook": "Dm",
+      "monday": "F",
+      "close": "Dm",
+      "chatgpt": "A",
+      "claude": "Dm",
+      "gemini": "Bb",
+      "grok": "F",
+      "verdict": "A",
+      "scored": "Dm",
+      "end": "F",
+      "flips": "Gm"
+    },
+    "busy": [
+      "chatgpt",
+      "claude",
+      "gemini",
+      "grok"
+    ],
+    "hits": [
+      270,
+      885
+    ],
+    "rests": [
+      [
+        796,
+        885
+      ]
+    ]
+  },
+  "beats": [
+    {
+      "id": "monday",
+      "start": -292
+    },
+    {
+      "id": "flips",
+      "start": -167,
+      "wednesday": 16,
+      "thursday": 32
+    },
+    {
+      "id": "close",
+      "start": -101
+    },
+    {
+      "id": "chatgpt",
+      "start": 0,
+      "stamp": 38,
+      "jab": {
+        "at": 62,
+        "text": "Right Monday. Gone Wednesday."
+      }
+    },
+    {
+      "id": "claude",
+      "start": 132,
+      "stamp": 20,
+      "jab": {
+        "at": 41,
+        "text": "54% called. 68% flipped."
+      }
+    },
+    {
+      "id": "gemini",
+      "start": 251,
+      "stamp": 29,
+      "jab": {
+        "at": 48,
+        "text": "Three calls. One counted."
+      }
+    },
+    {
+      "id": "grok",
+      "start": 370,
+      "stamp": 23,
+      "jab": {
+        "at": 49,
+        "text": "The only UP."
+      }
+    },
+    {
+      "id": "verdict",
+      "start": 460,
+      "said": 36,
+      "hero": "Grok",
+      "lead": "Its own verdict?",
+      "words": "The luck that lifted Monday's call ran out"
+    },
+    {
+      "id": "scored",
+      "start": 579
+    }
+  ],
+  "end": {
+    "ask": "New calls Sunday. Who's right?",
+    "reply": "Reply with your pick",
+    "lead": "",
+    "ledger": "Every call is logged first: repka-lab.github.io/ledger.html"
+  },
+  "voice": [
+    {
+      "text": "Monday: 3 AIs said DOWN. Grok Bot said UP.",
+      "say": "Monday. Three A.I.s said down. Grok Bot said up.",
+      "from": 14,
+      "to": 134
+    },
+    {
+      "text": "Then 7 flips in 2 days.",
+      "say": "Then seven flips in two days.",
+      "from": 139,
+      "to": 190
+    },
+    {
+      "text": "Friday's close: Bitcoin down 3.2%.",
+      "say": "Friday's close. Bitcoin down three point two percent.",
+      "from": 205,
+      "to": 300
+    },
+    {
+      "text": "ChatGPT: hit. Right Monday. Gone Wednesday.",
+      "from": 306,
+      "to": 433
+    },
+    {
+      "text": "Claude: hit. 54% called. 68% flipped.",
+      "say": "Claude: hit. Fifty-four percent called. Sixty-eight flipped.",
+      "from": 438,
+      "to": 552
+    },
+    {
+      "text": "Gemini: hit. Three calls. One counted.",
+      "from": 557,
+      "to": 671
+    },
+    {
+      "text": "Grok Bot: miss. The only UP.",
+      "from": 676,
+      "to": 761
+    },
+    {
+      "text": "Its own verdict?",
+      "from": 766,
+      "to": 797
+    },
+    {
+      "text": "The luck that lifted Monday's call ran out.",
+      "from": 802,
+      "to": 880
+    },
+    {
+      "text": "3 of 4 hit. A coin averages 2. One week proves nothing.",
+      "say": "Three of four hit. A coin averages two. One week proves nothing.",
+      "from": 885,
+      "to": 1017
+    },
+    {
+      "text": "New calls Sunday. Who's right?",
+      "from": 1022,
+      "to": 1065
+    }
+  ]
+}

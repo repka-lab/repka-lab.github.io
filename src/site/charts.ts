@@ -259,12 +259,13 @@ function renderCheck(week: Week, prices: PriceSeries | undefined): string {
 
   checkOnePrice(checked, week.day);
   const sources = [...new Set(checked.map(({ verdict }) => verdict.price_source))].map(escapeHtml).join('; ');
-  const callAt = Date.parse(first.call.date);
+  // The start price is the week's: the calls are logged before Monday 00:00 UTC and measured from it.
+  const openAt = week.monday.getTime();
   const checkAt = Date.parse(first.call.verify_date);
   const plot = candlePlot(prices, {
-    from: callAt - WEEK_MS,
+    from: openAt - WEEK_MS,
     to: checkAt,
-    open: callAt,
+    open: openAt,
     close: checkAt,
     start: first.verdict.price_start,
     end: first.verdict.price_end,
@@ -274,7 +275,7 @@ function renderCheck(week: Week, prices: PriceSeries | undefined): string {
     plot === undefined
       ? 'Higher means the end price is above the start price.'
       : `${plot.note} The dashed line is the start price, from where the week opens, and the dot the end price; ${ARROWS}. Higher means the end price is above the start price.`;
-  return figure('check', caption, `${movePanel(first, plot?.html ?? '')}
+  return figure('check', caption, `${movePanel(first, week.monday.toISOString(), plot?.html ?? '')}
   <p class="chart-tally">${tally(checked, week.calls.length)}</p>
   ${tiles}
   <p class="chart-note">Prices: ${sources}. ${reading}</p>`);
@@ -336,11 +337,11 @@ function reviewBody(factors: readonly Factor[], review: Review | undefined): str
 }
 
 // One start price, one end price and the move between them, then the candles, when there are any, below.
-function movePanel({ call, verdict }: Checked, plot: string): string {
+function movePanel({ call, verdict }: Checked, openAt: string, plot: string): string {
   const point = (label: string, price: number, at: string): string =>
     `<p class="move-point"><span class="move-label">${label}</span><span class="move-price">${PRICE.format(price)}</span><span class="move-time">${formatUtc(at)}</span></p>`;
   return `<div class="move ${verdict.outcome}">
-    ${point('Start price', verdict.price_start, call.date)}
+    ${point('Start price', verdict.price_start, openAt)}
     <p class="move-change">${callLabel(verdict.outcome)} <span class="move-pct">${formatChange(verdict.change_pct)}</span></p>
     ${point('End price', verdict.price_end, call.verify_date)}
     ${plot}

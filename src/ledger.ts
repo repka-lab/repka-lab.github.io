@@ -53,7 +53,7 @@ export interface Verification {
   readonly prediction_id: string;
   readonly verified_at: string; // ISO 8601
   readonly price_source: string;
-  readonly price_start: number; // price at the prediction's recording time; an event call's own start, e.g. the offer price
+  readonly price_start: number; // the price the call is measured from: a BTC week's open, Monday 00:00 UTC; an event call's own start, e.g. the offer price
   readonly price_end: number; // price at its verify_date
   readonly change_pct: number; // rounded to 4 decimals, for display
   readonly outcome: Direction; // read from the raw prices, so a rise too small for change_pct is still up

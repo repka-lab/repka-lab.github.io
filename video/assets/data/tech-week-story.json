@@ -1,0 +1,197 @@
+{
+ "note": "The tech-week chart video with grandpa's voice. Timing (from/to, timeline, beats) is set by layout_tech.py from the measured voice lines; 'at' names where a beat lands: [cue, share of its line].",
+ "html": "../chart/tech-week.html",
+ "title": "Three AIs flipped twice.<br>Their Monday calls still hit.",
+ "voice": [
+  {
+   "id": "hook",
+   "lead": "",
+   "text": "Bitcoin is the AIs' call. Nasdaq and the chip index are context.",
+   "say": "Three A.I.s flipped their Bitcoin call twice. Their Monday calls still hit.",
+   "from": 6,
+   "said": 154,
+   "to": 162
+  },
+  {
+   "id": "monday",
+   "lead": "Monday 2 Nov:",
+   "text": "ChatGPT, Claude and Gemini call ▼ DOWN. Grok Bot calls ▲ UP.",
+   "say": "Monday: three say down. Grok Bot says up.",
+   "from": 162,
+   "said": 253,
+   "to": 261
+  },
+  {
+   "id": "wed",
+   "lead": "Wednesday, after the US midterms:",
+   "text": "Bitcoin is about 3% above its Monday start. All four now say ▲ UP.",
+   "say": "Wednesday, after the midterms, Bitcoin's up. All four say up.",
+   "from": 261,
+   "said": 370,
+   "to": 378
+  },
+  {
+   "id": "thu",
+   "lead": "Thursday:",
+   "text": "tech slides and Bitcoin falls below its Monday start. All four now say ▼ DOWN.",
+   "say": "Thursday, tech slides. All four now say down.",
+   "from": 378,
+   "said": 480,
+   "to": 488
+  },
+  {
+   "id": "close",
+   "lead": "Thursday's close:",
+   "text": "Chip index −12.2%, Nasdaq −5.5%. Investors feared the AI boom would slow (Fortune, Fox Business).",
+   "say": "Chips close down twelve percent, on fears the A.I. boom would slow.",
+   "from": 488,
+   "said": 617,
+   "to": 625
+  },
+  {
+   "id": "rule",
+   "lead": "",
+   "text": "Only Monday's calls count.",
+   "big": true,
+   "say": "But only Monday's calls count.",
+   "from": 625,
+   "said": 675,
+   "to": 683
+  },
+  {
+   "id": "week",
+   "lead": "Friday's close:",
+   "text": "Bitcoin −3.2% from its Monday start, ▼ DOWN. 3 of 4 Monday calls hit.",
+   "say": "Friday: Bitcoin ends down three percent. Three hits. Grok Bot misses.",
+   "from": 683,
+   "said": 857,
+   "to": 865
+  },
+  {
+   "id": "end",
+   "text": "New calls Sunday. Who's right?",
+   "from": 871,
+   "said": 915,
+   "to": 939
+  }
+ ],
+ "quotes": {
+  "wed": [
+   "gemini",
+   "The election overhang broke upward"
+  ],
+  "thu": [
+   "chatgpt",
+   "I reversed too quickly on Wednesday"
+  ]
+ },
+ "quoteSources": "Verbatim from data/answers/2026-11-04-checkin and 2026-11-05-checkin, one file per AI",
+ "at": {
+  "wed": [
+   "wed",
+   0.62
+  ],
+  "thu": [
+   "thu",
+   0.42
+  ],
+  "thuClose": [
+   "close",
+   0.5
+  ],
+  "weekEnd": [
+   "week",
+   0.3
+  ],
+  "score": [
+   "week",
+   0.58
+  ]
+ },
+ "timeline": {
+  "cover": 162,
+  "keys": [
+   [
+    162,
+    "MON"
+   ],
+   [
+    325,
+    "WED"
+   ],
+   [
+    417,
+    "THU"
+   ],
+   [
+    552,
+    "THU_CLOSE"
+   ],
+   [
+    735,
+    "WEEK"
+   ]
+  ],
+  "cols": {
+   "mon": 162,
+   "wed": 329,
+   "thu": 421
+  },
+  "quotes": {
+   "wed": [
+    333,
+    419
+   ],
+   "thu": [
+    425,
+    627
+   ]
+  },
+  "rule": 625,
+  "score": 784,
+  "end": 865,
+  "total": 939
+ },
+ "beats": [
+  {
+   "id": "monday",
+   "start": 162
+  },
+  {
+   "id": "wed",
+   "start": 261
+  },
+  {
+   "id": "thu",
+   "start": 378
+  },
+  {
+   "id": "rule",
+   "start": 625
+  },
+  {
+   "id": "week",
+   "start": 683
+  }
+ ],
+ "music": {
+  "bpm": 90,
+  "grooveFrom": 0,
+  "chords": {
+   "hook": "Dm",
+   "monday": "F",
+   "wed": "Bb",
+   "thu": "Gm",
+   "rule": "A",
+   "week": "Dm",
+   "end": "F"
+  },
+  "busy": [
+   "thu"
+  ],
+  "hits": [
+   421
+  ],
+  "rests": []
+ }
+}

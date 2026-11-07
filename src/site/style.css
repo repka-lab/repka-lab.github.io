@@ -1637,6 +1637,12 @@ dd {
   border-radius: var(--radius);
 }
 
+/* A square video or still would fill the column and stand taller than the screen, so it keeps to a narrower middle. */
+.prose .shot.square {
+  max-width: 560px;
+  margin-inline: auto;
+}
+
 .prose .shot figcaption {
   margin-top: 8px;
   color: var(--muted);
