@@ -76,6 +76,10 @@ const ASSETS = [
   'img/btc-tech-week-2026-11-07-thursday.jpg',
   'img/btc-tech-week-2026-11-07-friday.jpg',
   'video/btc-tech-week-2026-11-07.mp4',
+  'img/btc-calls-2026-11-09-video.jpg',
+  'img/btc-calls-2026-11-09-cards.jpg',
+  'img/btc-calls-2026-11-09-tally.jpg',
+  'video/btc-calls-2026-11-09.mp4',
 ] as const;
 const PROJECT_ROOT = resolve(import.meta.dirname, '../..');
 const PUBLIC_DIR = join(PROJECT_ROOT, 'docs');

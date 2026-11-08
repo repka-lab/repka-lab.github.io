@@ -1,0 +1,40 @@
+AI Prediction Lab: weekly Nasdaq call for the week of Monday 9 November 2026
+
+You are taking part in a public experiment. Four AI models (ChatGPT, Claude, Gemini and Grok) get this same prompt, word for word. Each one calls the direction of the Nasdaq Composite index for the coming week. The calls go into a public, append-only ledger before the week starts, and each call is checked after the week ends. This is a record of forecasts, not financial advice.
+
+THE QUESTION
+
+Will the Nasdaq Composite index (^IXIC) close on Friday 13 November 2026 strictly higher than it closed on Friday 6 November 2026?
+
+- UP: the 13 November close is strictly higher than the 6 November close.
+- DOWN: anything else, an unchanged close included.
+
+The close is the index's official closing value at 4:00 p.m. New York time (21:00 UTC). If the market is shut on 13 November, the week's last close counts.
+
+There is no flat option. Pick one side.
+
+YOUR RESEARCH
+
+No data comes with this prompt. Find it yourself: search the web and use any tools you have. Look at whatever you judge relevant, for example recent price action, news, company earnings due that week, the macro calendar, interest rates or positioning. You choose what matters.
+
+In your reasoning, name the sources you used (site and, if you can, the link) and give the date and time of the latest Nasdaq Composite value you saw. If you cannot search, say so and work from what you know, with the date your knowledge runs to.
+
+YOUR ANSWER
+
+First, explain your reasoning in your own words, at whatever length you need.
+
+Then end your answer with this block, filled in:
+
+CALL: UP or DOWN
+CONFIDENCE: a whole number from 50 to 100, how likely you think it is that your call is right
+REASON: your main reason in ten words or fewer
+FACTORS:
+- a factor in a few words | pulls UP or DOWN
+- a factor in a few words | pulls UP or DOWN
+- an optional third factor | pulls UP or DOWN
+
+Give the two or three factors that matter most to your call. They may pull either way.
+
+Rules for the whole answer:
+- Name a direction even if you are unsure. A low confidence is the way to show doubt.
+- Give no trading or investment advice. Do not use the words "buy", "sell", "should", "invest" or "guaranteed", or the phrases "will go up" and "will go down".

@@ -1,0 +1,33 @@
+{
+  "note": "Nasdaq Composite calls for the week of 2026-11-09 as logged in data/ledger.json (P0009, P0010, P0011, P0012). Names from data/answers/nasdaq-2026-11-09/models.json; reasons from each answer REASON line, as src/answers.ts reads them.",
+  "ideas": [
+    {
+      "model": "ChatGPT",
+      "name": "ChatGPT",
+      "call": "down",
+      "confidence": 58,
+      "reason": "Weak technology momentum and rate concerns outweigh the prospect of a rebound"
+    },
+    {
+      "model": "Claude",
+      "name": "Claude",
+      "call": "up",
+      "confidence": 53,
+      "reason": "Extreme fear, cheap chips, soft core CPI consensus"
+    },
+    {
+      "model": "Gemini",
+      "name": "Gemini",
+      "call": "up",
+      "confidence": 62,
+      "reason": "Oversold bounce and upcoming CPI report support tactical mean-reversion"
+    },
+    {
+      "model": "Grok",
+      "name": "Grok Bot",
+      "call": "down",
+      "confidence": 55,
+      "reason": "Unresolved AI concerns narrowly outweigh rebound potential"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "note": "The weekly call video for two markets: the cold open over the BTC chart, the BTC calls one every two beats, a cut to the Nasdaq Composite and its calls, both tallies against a coin, then the end card. Grandpa speaks the \"voice\" cues; the first three are his hook captions. call-duo-story.js plays it. The BTC calls are the week's ideas file; the Nasdaq calls and its daily candles (Yahoo ^IXIC) come in through \"embed\".",
+  "title": "Grandpa call episode: BTC and Nasdaq",
+  "html": "duo.html",
+  "ideas": "ideas-2026-11-09.json",
+  "embed": { "nasdaq": "nasdaq-daily.json", "nasdaq-ideas": "ideas-nasdaq-2026-11-09.json" },
+  "board": false,
+  "hookFigure": true,
+  "scripts": ["call-duo-story.js"],
+  "hookFrames": 174,
+  "monitorFrames": 477,
+  "music": {
+    "bpm": 80,
+    "grooveFrom": 0,
+    "chords": { "hook": "Dm", "prof": "Bb", "coin": "A", "calls": "Gm", "nasdaq": "Dm", "climax": "Bb", "end": "F" },
+    "busy": ["calls", "nasdaq", "climax"],
+    "hits": [6, 45, 56, 67]
+  },
+  "beats": [{ "id": "prof", "start": -113 }, { "id": "coin", "start": -45 }, { "id": "calls", "start": 0 }, { "id": "nasdaq", "start": 180 }, { "id": "climax", "start": 405 }],
+  "voice": [
+    { "text": "BTC and Nasdaq: up or down?", "say": "Bitcoin and Nasdaq, up or down?", "from": 0, "to": 45 },
+    { "text": "No idea. Let me ask the AIs.", "say": "No idea. Let me ask the A.I.s.", "from": 45, "to": 113 },
+    { "text": "Can they beat a coin flip?", "from": 113, "to": 158 },
+    { "text": "And the Nasdaq?", "from": 338, "to": 383 },
+    { "text": "Who's right by Friday? Reply with your pick.", "from": 623, "to": 720 }
+  ]
+}

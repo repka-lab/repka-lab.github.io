@@ -1,0 +1,33 @@
+{
+  "note": "Calls for the week of 2026-11-09 as logged in data/ledger.json (P0005, P0006, P0007, P0008). Names from data/answers/2026-11-09/models.json.",
+  "ideas": [
+    {
+      "model": "ChatGPT",
+      "name": "ChatGPT",
+      "call": "down",
+      "confidence": 65,
+      "reason": "Persistent ETF outflows and weakening momentum favor another negative week"
+    },
+    {
+      "model": "Claude",
+      "name": "Claude",
+      "call": "down",
+      "confidence": 55,
+      "reason": "Persistent outflows and hawkish Fed extend five-week downtrend"
+    },
+    {
+      "model": "Gemini",
+      "name": "Gemini",
+      "call": "up",
+      "confidence": 57,
+      "reason": "Oversold four-week drop and Tuesday CPI data favor mean-reversion bounce"
+    },
+    {
+      "model": "Grok",
+      "name": "Grok Bot",
+      "call": "down",
+      "confidence": 56,
+      "reason": "Persistent ETF withdrawals and failed recovery outweigh rebound potential"
+    }
+  ]
+}

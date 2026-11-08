@@ -9,7 +9,7 @@ An optional story json (assets/data/heist.json) swaps in its own hook and monito
 scripts that play them, the end card text, and the 4h candles of its charts. It may also leave the
 board or the desk out ("board": false, "desk": false) or write its own board ("boardScene", a copy of
 board.svg with other chalk), lay a question over the cut from its hook ("question"), run subtitles
-under the screen ("subs") and name the week's calls ("ideas").
+under the screen ("subs"), name the week's calls ("ideas") and embed more data files for its scripts ("embed").
 """
 import html
 import json
@@ -247,6 +247,9 @@ def story_extras(story: dict) -> tuple:
         data += json_script(f"candles-{chart['id']}", candles)
     if len(ends) > 1:
         raise SystemExit(f"the charts end on different candles: {sorted(ends)}")
+    # Any other data file its scripts read, by id: "embed": {"nasdaq": "nasdaq-daily.json"} -> <script id="data-nasdaq">.
+    for element_id, name in story.get("embed", {}).items():
+        data += json_script(f"data-{element_id}", json.loads(read(assets / "data" / name)))
     for name in story["scripts"]:
         if not (out_dir / name).is_file():
             raise SystemExit(f"story script {name} is not in {out_dir}")
