@@ -364,6 +364,37 @@ dd {
   margin: 0;
 }
 
+/* Ledger: a call's facts, then its details on a full-width row below */
+
+.ledger tr.call > * {
+  border-bottom: 0;
+  padding-bottom: 2px;
+}
+
+.ledger tr.more > td {
+  padding-top: 0;
+  white-space: normal;
+  font-size: 0.9rem;
+}
+
+.ledger details dl {
+  width: auto;
+  max-width: min(72ch, calc(100vw - 72px));
+}
+
+.ledger dd {
+  overflow-wrap: anywhere;
+}
+
+.reasoning p,
+.reasoning ul {
+  margin: 4px 0 8px;
+}
+
+.reasoning ul {
+  padding-left: 1.2em;
+}
+
 /* Articles */
 
 .back {
