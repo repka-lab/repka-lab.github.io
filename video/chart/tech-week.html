@@ -70,10 +70,12 @@
   #end .what { font-size: 30px; line-height: 1.35; margin-top: 40px; max-width: 900px; }
   #end .ask { font-family: 'Kalam', cursive; font-weight: 700; font-size: 50px; margin-top: 44px; color: var(--ink); }
 
-  /* The cover: the first frame X shows, held while the hook is said, then faded into the chart. Big words only. */
+  /* The cover: the first frame X shows, up for one second, then faded into the chart. Big words only. */
   #cover { padding: 0; overflow: hidden; background: var(--cover); }
-  #cover .push { position: absolute; left: 0; top: 0; width: 1080px; height: 1080px; transform-origin: 50% 40%; }
-  #cover .art { -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 42%); mask-image: linear-gradient(to right, transparent 0%, #000 42%); opacity: 0.55; }
+  #cover .push { position: absolute; left: 0; top: 0; width: 1080px; height: 1080px; }
+  #cover .tick { position: absolute; font-size: 22px; color: var(--base); white-space: nowrap; }
+  #cover .tick.y { width: 74px; text-align: right; transform: translateY(-50%); }
+  #cover .tick.d { font-weight: 600; letter-spacing: 0.08em; transform: translateX(-50%); }
   #cover h1 { position: absolute; left: 50px; top: 40px; margin: 0; font-family: 'Kalam', cursive; font-weight: 700; font-size: 150px; line-height: 0.92; white-space: nowrap; }
   #cover h1 .fall { color: var(--btc); }
   #cover .then { position: absolute; left: 340px; top: 716px; font-family: 'Kalam', cursive; font-weight: 700; font-size: 58px; line-height: 84px; white-space: nowrap; }

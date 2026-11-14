@@ -87,7 +87,7 @@
   const call = (dir) => `${ARROW[dir]}&nbsp;${dir}`;
   const arrows = (text) => text.replace(/▲ UP/g, `<b>${call('UP')}</b>`).replace(/▼ DOWN/g, `<b>${call('DOWN')}</b>`);
   const cue = (id) => STORY.voice.find((c) => c.id === id);
-  const CAPTIONS = STORY.voice.filter((c) => c.id !== 'end' && c.id !== 'hook'); // the cover says the hook
+  const CAPTIONS = STORY.voice.filter((c) => c.id !== 'end');
 
   const el = (tag, attrs = {}, parent) => {
     const node = tag.startsWith('svg:') ? document.createElementNS(SVG, tag.slice(4)) : document.createElement(tag);
@@ -174,30 +174,28 @@
       + '<div class="what t">Four AIs make one Bitcoin call each week. Every call is logged before the week opens, and only those calls are scored.</div>'
       + `<div class="ask t">${cue('end').text}</div>`;
 
-    // The cover, big words only, on a darker navy: the title, the week's Bitcoin and Nasdaq lines kept quiet on a faint grid
-    // rising out of the dark behind them with a mark at each end, the three AIs that flipped, their calls, and
-    // Monday's stamped with what it scored.
+    // The cover, big words only, on a darker navy: the title, a plain chart of the week's Bitcoin and Nasdaq lines on a
+    // faint grid with % and day labels and a mark at each end, the three AIs that flipped, their calls, and Monday's
+    // stamped with what it scored.
     const flipped = ROWS[0];
     const cover = document.getElementById('cover');
     cover.innerHTML = '<div class="push"></div>';
     const push = cover.firstChild;
     const art = el('svg:svg', { class: 'art', width: 1080, height: 1080, viewBox: '0 0 1080 1080' }, push);
-    art.innerHTML = '<defs><linearGradient id="cover-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d0780c" stop-opacity="0.14"/>'
-      + '<stop offset="1" stop-color="#d0780c" stop-opacity="0"/></linearGradient>'
-      + '<filter id="cover-glow" x="-10%" y="-40%" width="120%" height="180%"><feGaussianBlur stdDeviation="8"/></filter></defs>';
     const drawn = ['nasdaq', 'btc'].map((id) => view.series.find((s) => s.id === id)); // Bitcoin on top
     const values = drawn.flatMap((s) => s.pts.map((p) => p[1]));
     const hi = Math.max(...values) + 0.6, lo = Math.min(...values) - 0.6;
-    const CX0 = 30, CX1 = 790, CY0 = 370, CY1 = 680;
+    const CX0 = 112, CX1 = 790, CY0 = 380, CY1 = 640;
     const cx = (m) => CX0 + (m / WEEK) * (CX1 - CX0);
     const cy = (p) => CY0 + ((hi - p) / (hi - lo)) * (CY1 - CY0);
-    // A faint grid, every 2% and at each midnight, so it reads as a real chart; the zero line a little brighter.
+    // A faint grid every 2% with its % on the left, a line at each midnight and the days under it; the zero line brighter.
     for (let p = Math.ceil(lo / 2) * 2; p <= hi; p += 2) {
-      el('svg:line', { x1: CX0, x2: CX1, y1: cy(p), y2: cy(p), stroke: p === 0 ? '#22375a' : '#152741', 'stroke-width': p === 0 ? 2 : 1.5 }, art);
+      el('svg:line', { x1: CX0, x2: CX1, y1: cy(p), y2: cy(p), stroke: p === 0 ? '#2c4568' : '#1a2d48', 'stroke-width': p === 0 ? 2 : 1.5 }, art);
+      el('div', { class: 'tick y t', text: p === 0 ? '0%' : fmt(p).replace('.0', ''), style: `left:${CX0 - 88}px;top:${cy(p)}px` }, push);
     }
-    for (let d = 1; d < 5; d++) el('svg:line', { x1: cx(at(d, 0)), x2: cx(at(d, 0)), y1: CY0 - 24, y2: CY1 + 24, stroke: '#152741', 'stroke-width': 1.5 }, art);
-    // Each line's paths first, then drawn in layers so neither hides the other: Bitcoin's fill, both glows, the
-    // dotted gaps, the solid lines (each on a dark casing so a crossing reads), the end dots.
+    for (let d = 1; d < 5; d++) el('svg:line', { x1: cx(at(d, 0)), x2: cx(at(d, 0)), y1: CY0 - 10, y2: CY1 + 10, stroke: '#1a2d48', 'stroke-width': 1.5 }, art);
+    ['MON', 'TUE', 'WED', 'THU', 'FRI'].forEach((name, d) => el('div', { class: 'tick d t', text: name, style: `left:${cx(at(d, 12))}px;top:${CY1 + 16}px` }, push));
+    // Each line's paths first, then drawn plain: the dotted gaps, the solid lines with Bitcoin on top, the end dots.
     const lines = drawn.map((s) => {
       let solid = '', dotted = '';
       s.pts.forEach(([m, p], i) => {
@@ -206,22 +204,17 @@
         else if (m - s.pts[i - 1][0] > GAP) { dotted += `M${cx(s.pts[i - 1][0])},${cy(s.pts[i - 1][1])}L${pt}`; solid += `M${pt}`; }
         else solid += `L${pt}`;
       });
-      return { s, solid, dotted, w: s.main ? 8 : 6 };
+      return { s, solid, dotted, w: s.main ? 6 : 5 };
     });
-    const btc = lines.find((l) => l.s.main); // Bitcoin trades all week, so its line is one piece and can be filled under
-    const first = btc.s.pts[0][0], last = btc.s.pts[btc.s.pts.length - 1][0];
-    el('svg:path', { d: `${btc.solid}L${cx(last)},${CY1 + 24}L${cx(first)},${CY1 + 24}Z`, fill: 'url(#cover-fill)' }, art);
-    for (const l of lines) el('svg:path', { d: l.solid, fill: 'none', stroke: l.s.color, 'stroke-width': l.w + 6, opacity: 0.22, filter: 'url(#cover-glow)' }, art);
     for (const l of lines) {
-      el('svg:path', { d: l.dotted, fill: 'none', stroke: l.s.color, 'stroke-width': l.w - 3, 'stroke-dasharray': '3 12', 'stroke-linecap': 'round', opacity: 0.85 }, art);
+      el('svg:path', { d: l.dotted, fill: 'none', stroke: l.s.color, 'stroke-width': l.w - 2, 'stroke-dasharray': '2 10', 'stroke-linecap': 'round' }, art);
     }
     for (const l of lines) {
-      el('svg:path', { d: l.solid, fill: 'none', stroke: 'var(--cover)', 'stroke-width': l.w + 6, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, art);
       el('svg:path', { d: l.solid, fill: 'none', stroke: l.s.color, 'stroke-width': l.w, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, art);
     }
     const ends = lines.map(({ s, w }) => {
       const [m, p] = s.pts[s.pts.length - 1];
-      el('svg:circle', { cx: cx(m), cy: cy(p), r: w + 3, fill: s.color, stroke: 'var(--cover)', 'stroke-width': 4 }, art);
+      el('svg:circle', { cx: cx(m), cy: cy(p), r: w + 2, fill: s.color, stroke: 'var(--cover)', 'stroke-width': 3 }, art);
       return { id: s.id, y: cy(p) };
     });
     // Bitcoin's mark is its coin, drawn here; Nasdaq's says what it stands for here, stocks, in its line's colour. The two ends sit close, so
@@ -332,14 +325,13 @@
     } else caption.style.opacity = 0;
 
     document.getElementById('end').style.opacity = clamp((f - END_AT) / 10);
-    // The cover pushes in slowly so it never sits still, fades to the dark as the hook ends, and the chart comes up
-    // out of the dark; the disclaimer gives way to it and comes back with the chart.
+    // The cover stands still for its second, fades to the dark, and the chart comes up out of the dark; the disclaimer
+    // gives way to it and comes back with the chart.
     const cover = document.getElementById('cover');
     const on = clamp((T.cover + 3 - f) / 6);
     cover.style.opacity = on;
-    cover.firstChild.style.opacity = clamp((T.cover - 2 - f) / 10);
+    cover.firstChild.style.opacity = clamp((T.cover - f) / 6);
     document.getElementById('disclaimer').style.opacity = 1 - on;
-    cover.firstChild.style.transform = `scale(${1 + 0.035 * clamp(f / T.cover)})`;
   }
 
   // The frames the sound marks: a click as Monday's calls and each quote and score land, a slam on each flip.

@@ -1,6 +1,6 @@
 """Times the tech-week video from its voice lines: each cue runs as long as its trimmed line, GAP frames apart.
 
-python -X utf8 -I chart/layout_tech.py assets/data/tech-week-story.json episode/out/voice/tech-week
+python -X utf8 -I chart/layout_tech.py assets/data/tech-week-story.json episode/out/voice/tech-week-short
 
 Writes from/to on each cue (a caption stays up until the next cue), the timeline the page reads and the beats and
 music score.py reads, then prints one JSON line. Lines are trimmed the way score.py trims them.
@@ -13,7 +13,7 @@ import wave
 from pathlib import Path
 
 RATE, FPS, SILENCE, KEEP = 44100, 30, 0.01, (0.02, 0.08)
-START = 6  # the first line starts here
+START = 30  # the cover is up for the first second, unspoken; the first line starts with the chart
 GAP = 8  # frames between two lines
 END_LEAD = 6  # the end card is up this long before its line
 TAIL = 24  # frames after the last line
@@ -50,7 +50,7 @@ lands = {k: c[cue]['from'] + round(share * n[cue]) for k, (cue, share) in story[
 end = c['end']['from'] - END_LEAD
 story['timeline'] = {
     # [frame, minute name] for the time cursor; the page knows the minutes.
-    # The cover holds the frame while the hook is said; the lines start drawing at the cut to the chart.
+    # The cover holds the first second; the lines start drawing at the cut to the chart, with the first line.
     'cover': c['monday']['from'],
     'keys': [[c['monday']['from'], 'MON'], [lands['wed'] - 4, 'WED'], [lands['thu'] - 4, 'THU'], [lands['thuClose'], 'THU_CLOSE'], [lands['weekEnd'], 'WEEK']],
     'cols': {'mon': c['monday']['from'], 'wed': lands['wed'], 'thu': lands['thu']},

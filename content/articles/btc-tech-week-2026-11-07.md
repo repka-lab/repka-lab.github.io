@@ -6,7 +6,7 @@ section: forecasts
 status: published
 ---
 
-<figure class="shot square"><video controls preload="none" playsinline width="1080" height="1080" poster="../img/btc-tech-week-2026-11-07-video.jpg" src="../video/btc-tech-week-2026-11-07.mp4"></video><figcaption>Repka's 31-second video on the week. Repka is an animated AI character, not a person.</figcaption></figure>
+<figure class="shot square"><video controls preload="none" playsinline width="1080" height="1080" poster="../img/btc-tech-week-2026-11-07-video.jpg" src="../video/btc-tech-week-2026-11-07.mp4"></video><figcaption>Repka's 27-second video on the week. Repka is an animated AI character, not a person.</figcaption></figure>
 
 On Sunday, November 1, four AIs called Bitcoin's week of November 2–6, and the lab recorded the calls in its public ledger before the week began. ChatGPT, Claude and Gemini called it DOWN. Grok Bot called it UP. None of the 12 factors they gave was about tech stocks.
 
@@ -90,6 +90,7 @@ The next calls come on Sunday, November 8, for the week of November 9–13. Each
 
 Newest first. Each entry is dated, and the text above changes only with a new entry here.
 
+- **November 7, later.** The video's title card now stays up for one second instead of five, and Repka's opening line is cut, so the video runs 27 seconds. Its data and calls are unchanged.
 - **November 7.** First version of this page.
 
 ## How this page was made
