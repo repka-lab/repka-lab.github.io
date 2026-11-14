@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <title>Scene 3: the week's result monitor, two markets</title>
+  <!--
+    Episode scene 3 for the week's result on two markets, Bitcoin and the Nasdaq Composite, full frame.
+    The hook plays over it and the cards land on it. #screen fills the frame; #room is kept empty.
+    It is monitor-result.svg with a second chart tile and no disclaimer: the disclaimer goes in the post
+    text, not the frame (CLAUDE.md rule 4, owner decision of 9 November 2026).
+
+    Everything is 1.5 times the weekly screen's size, and the hook's tiles run nearly the frame's width,
+    left of x 530 and below the hook's shade, so he stands at their right edge:
+      #logos        the four models, each with its call on one market under its name, or on the thumbnail
+                    and the tally its score and both calls as triangles; filled by result-duo-story.js
+      #btc-tile     Coinbase 4h candles, the week's grown from Monday's open, dashed across them
+      #ndq-tile     Nasdaq Composite daily closes, the week's five sessions grown from Friday 6 Nov's close
+                    Each tile's #<id>-calls on the right gives way to its #<id>-figures; result-duo-story.js
+                    writes the prices and the tally of calls into both from the story's `result`
+    Then the cards: #top states both moves, result-duo-story.js fills #cards one at a time from
+    assets/data/ideas-2026-11-14-result.json, each card's two calls stamped HIT or MISS.
+
+    Model colours, dark steps validated on the #0a1526 screen in this adjacent order:
+      ChatGPT #199e70, Claude #d95926, Gemini #3987e5, Grok #c98500.
+    Claude and Grok are too close to tell apart by colour alone, so every card names its model,
+    and the call is a word, never a colour.
+  -->
+  <style>
+    .t-primary { fill: #eef2f6; font: 600 13px system-ui, 'Segoe UI', sans-serif; }
+    .t-secondary { fill: #b9c6d8; font: 11px system-ui, 'Segoe UI', sans-serif; }
+    .num { font-variant-numeric: tabular-nums; }
+    .grid { stroke: #1b2c45; stroke-width: 1; }
+    .axis { stroke: #2b4365; stroke-width: 1; }
+    .candle-up { --tone: #26a69a; }
+    .candle-down { --tone: #ef5350; }
+    .candle-body, .toned { fill: var(--tone); }
+    .candle-wick { stroke: var(--tone); stroke-width: 1; }
+    .open-line { stroke: #b9c6d8; stroke-width: 1.5; stroke-dasharray: 4 3; }
+    .card { fill: #0f1d33; stroke: #1b2c45; stroke-width: 1; }
+    .card-name { fill: #eef2f6; font: 700 23px system-ui, 'Segoe UI', sans-serif; }
+    .card-call { font: 700 22px system-ui, 'Segoe UI', sans-serif; }
+    .card-up { fill: #2fc4b2; }
+    .card-down { fill: #ff6b66; }
+    .card-conf { fill: #8193ad; font: 600 20px system-ui, 'Segoe UI', sans-serif; }
+    .card-market { fill: #b9c6d8; font: 19px system-ui, 'Segoe UI', sans-serif; }
+    .card-reason { fill: #b9c6d8; font: 19px system-ui, 'Segoe UI', sans-serif; }
+    .card-logo { fill: #0e0d0c; stroke: #2b4365; stroke-width: 1; }
+    .kicker { fill: #8193ad; font: 600 15px system-ui, 'Segoe UI', sans-serif; letter-spacing: 1px; }
+    .zone-text { fill: #b9c6d8; font: 19px system-ui, 'Segoe UI', sans-serif; }
+    .tile-big { fill: #eef2f6; font: 700 39px system-ui, 'Segoe UI', sans-serif; }
+    .tile-line { fill: #b9c6d8; font: 18px system-ui, 'Segoe UI', sans-serif; }
+    .top { fill: #eef2f6; font: 700 22px system-ui, 'Segoe UI', sans-serif; }
+    .stamp-box { fill: #0a1526; fill-opacity: 0.8; stroke-width: 4; }
+    .stamp-text { font: 900 34px 'Segoe UI', system-ui, sans-serif; letter-spacing: 3px; }
+  </style>
+
+  <g id="room"></g>
+  <rect id="screen" x="0" y="0" width="640" height="360" fill="#0a1526"/>
+
+  <text id="title" class="t-primary" x="626" y="28" text-anchor="end" style="font-size: 18px">AI PREDICTION LAB · NOV 9–13</text>
+  <line class="grid" x1="0" y1="40" x2="640" y2="40"/>
+
+  <g id="chart"></g>
+  <g id="week"></g>
+  <g id="ideas"></g>
+
+  <g id="logos"></g>
+
+  <g id="btc-tile">
+    <rect class="card" x="16" y="110" width="510" height="212" rx="8"/>
+    <text id="btc-label" class="kicker" x="34" y="138">BTC-USD · 4H · NOV 9–13</text>
+    <g id="btc-candles"></g>
+    <g id="btc-calls">
+      <text class="kicker" x="364" y="170">MON CALLS</text>
+      <text id="btc-start-big" class="tile-big num" x="364" y="210" style="font-size: 32px"></text>
+      <text class="tile-line" x="364" y="234">Monday open</text>
+      <line class="grid" x1="364" y1="250" x2="508" y2="250"/>
+      <text id="btc-tally" class="zone-text num" x="364" y="276" style="font-size: 20px"></text>
+    </g>
+    <g id="btc-figures">
+      <text class="kicker" x="364" y="170">NOV 9–13</text>
+      <text id="btc-big" class="tile-big num" x="364" y="210" style="font-size: 42px"></text>
+      <text class="tile-line" x="364" y="234">Monday to Friday</text>
+      <line class="grid" x1="364" y1="250" x2="508" y2="250"/>
+      <text class="zone-text num" x="364" y="276" style="font-size: 20px">open <tspan id="btc-from" font-weight="700"></tspan></text>
+      <text class="zone-text num" x="364" y="302" style="font-size: 20px">close <tspan id="btc-to" font-weight="700"></tspan></text>
+    </g>
+  </g>
+
+  <g id="ndq-tile">
+    <rect class="card" x="16" y="110" width="510" height="212" rx="8"/>
+    <text id="ndq-label" class="kicker" x="34" y="138">NASDAQ COMPOSITE · DAILY · NOV 9–13</text>
+    <g id="ndq-candles"></g>
+    <g id="ndq-calls">
+      <text class="kicker" x="364" y="170">MON CALLS</text>
+      <text id="ndq-start-big" class="tile-big num" x="364" y="210" style="font-size: 32px"></text>
+      <text class="tile-line" x="364" y="234">Nov 6 close</text>
+      <line class="grid" x1="364" y1="250" x2="508" y2="250"/>
+      <text id="ndq-tally" class="zone-text num" x="364" y="276" style="font-size: 20px"></text>
+    </g>
+    <g id="ndq-figures">
+      <text class="kicker" x="364" y="170">NOV 9–13</text>
+      <text id="ndq-big" class="tile-big num" x="364" y="210" style="font-size: 42px"></text>
+      <text class="tile-line" x="364" y="234">Friday to Friday</text>
+      <line class="grid" x1="364" y1="250" x2="508" y2="250"/>
+      <text class="zone-text num" x="364" y="276" style="font-size: 20px">Nov 6 <tspan id="ndq-from" font-weight="700"></tspan></text>
+      <text class="zone-text num" x="364" y="302" style="font-size: 20px">Nov 13 <tspan id="ndq-to" font-weight="700"></tspan></text>
+    </g>
+  </g>
+
+  <text id="top" class="top" x="16" y="68">This week: Bitcoin <tspan id="top-btc"></tspan> · Nasdaq <tspan id="top-ndq"></tspan></text>
+
+  <g id="cards"></g>
+</svg>

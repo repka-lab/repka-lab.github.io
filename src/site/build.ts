@@ -80,6 +80,13 @@ const ASSETS = [
   'img/btc-calls-2026-11-09-cards.jpg',
   'img/btc-calls-2026-11-09-tally.jpg',
   'video/btc-calls-2026-11-09.mp4',
+  'img/btc-nasdaq-result-2026-11-14-video.jpg',
+  'img/btc-nasdaq-result-2026-11-14-btc-close.jpg',
+  'img/btc-nasdaq-result-2026-11-14-nasdaq-close.jpg',
+  'img/btc-nasdaq-result-2026-11-14-claude.jpg',
+  'img/btc-nasdaq-result-2026-11-14-verdict.jpg',
+  'img/btc-nasdaq-result-2026-11-14-scored.jpg',
+  'video/btc-nasdaq-result-2026-11-14.mp4',
 ] as const;
 const PROJECT_ROOT = resolve(import.meta.dirname, '../..');
 const PUBLIC_DIR = join(PROJECT_ROOT, 'docs');

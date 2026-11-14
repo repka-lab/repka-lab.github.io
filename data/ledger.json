@@ -346,6 +346,86 @@
       "change_pct": -3.1975,
       "outcome": "down",
       "hit": false
+    },
+    {
+      "prediction_id": "P0005",
+      "verified_at": "2026-11-14T10:21:05.122Z",
+      "price_source": "Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-09T00:00Z; close of the 4h candle at 2026-11-13T20:00Z, the same as the 1-minute candle at 23:59Z",
+      "price_start": 74756.52,
+      "price_end": 68236.54,
+      "change_pct": -8.7216,
+      "outcome": "down",
+      "hit": true
+    },
+    {
+      "prediction_id": "P0006",
+      "verified_at": "2026-11-14T10:21:05.122Z",
+      "price_source": "Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-09T00:00Z; close of the 4h candle at 2026-11-13T20:00Z, the same as the 1-minute candle at 23:59Z",
+      "price_start": 74756.52,
+      "price_end": 68236.54,
+      "change_pct": -8.7216,
+      "outcome": "down",
+      "hit": true
+    },
+    {
+      "prediction_id": "P0007",
+      "verified_at": "2026-11-14T10:21:05.122Z",
+      "price_source": "Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-09T00:00Z; close of the 4h candle at 2026-11-13T20:00Z, the same as the 1-minute candle at 23:59Z",
+      "price_start": 74756.52,
+      "price_end": 68236.54,
+      "change_pct": -8.7216,
+      "outcome": "down",
+      "hit": false
+    },
+    {
+      "prediction_id": "P0008",
+      "verified_at": "2026-11-14T10:21:05.122Z",
+      "price_source": "Coinbase Exchange BTC-USD: open of the 4h candle at 2026-11-09T00:00Z; close of the 4h candle at 2026-11-13T20:00Z, the same as the 1-minute candle at 23:59Z",
+      "price_start": 74756.52,
+      "price_end": 68236.54,
+      "change_pct": -8.7216,
+      "outcome": "down",
+      "hit": true
+    },
+    {
+      "prediction_id": "P0009",
+      "verified_at": "2026-11-14T10:21:05.123Z",
+      "price_source": "Nasdaq Composite (^IXIC) official closes, 4:00 p.m. New York, on 2026-11-06 and 2026-11-13: FRED series NASDAQCOM (source Nasdaq); Yahoo Finance ^IXIC gives the same values",
+      "price_start": 24579.42,
+      "price_end": 25136.27,
+      "change_pct": 2.2655,
+      "outcome": "up",
+      "hit": false
+    },
+    {
+      "prediction_id": "P0010",
+      "verified_at": "2026-11-14T10:21:05.123Z",
+      "price_source": "Nasdaq Composite (^IXIC) official closes, 4:00 p.m. New York, on 2026-11-06 and 2026-11-13: FRED series NASDAQCOM (source Nasdaq); Yahoo Finance ^IXIC gives the same values",
+      "price_start": 24579.42,
+      "price_end": 25136.27,
+      "change_pct": 2.2655,
+      "outcome": "up",
+      "hit": true
+    },
+    {
+      "prediction_id": "P0011",
+      "verified_at": "2026-11-14T10:21:05.123Z",
+      "price_source": "Nasdaq Composite (^IXIC) official closes, 4:00 p.m. New York, on 2026-11-06 and 2026-11-13: FRED series NASDAQCOM (source Nasdaq); Yahoo Finance ^IXIC gives the same values",
+      "price_start": 24579.42,
+      "price_end": 25136.27,
+      "change_pct": 2.2655,
+      "outcome": "up",
+      "hit": true
+    },
+    {
+      "prediction_id": "P0012",
+      "verified_at": "2026-11-14T10:21:05.123Z",
+      "price_source": "Nasdaq Composite (^IXIC) official closes, 4:00 p.m. New York, on 2026-11-06 and 2026-11-13: FRED series NASDAQCOM (source Nasdaq); Yahoo Finance ^IXIC gives the same values",
+      "price_start": 24579.42,
+      "price_end": 25136.27,
+      "change_pct": 2.2655,
+      "outcome": "up",
+      "hit": false
     }
   ],
   "reviews": []

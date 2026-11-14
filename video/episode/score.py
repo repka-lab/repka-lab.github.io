@@ -3,7 +3,8 @@
   python -X utf8 -I episode/score.py assets/data/heist.json episode/out/voice/heist episode/out/heist.mp4 episode/out/heist-sound.mp4
   python -X utf8 -I episode/score.py assets/data/call.json - episode/out/review.mp4 episode/out/review-sound.mp4
 
-The music is synthesized here (stdlib only, no samples to license) from the scene cuts the page reports:
+The music is synthesized here (stdlib only, no samples to license) from the scene cuts the page reports
+(or the story's own "checks" block, {"scenes", "report"} in the same shape, for a video made without a page):
 a pad holds the chord of each section ("music.chords" in the story, keyed by "hook", "board" when the page
 has one, the beat ids and "end"), bass, kick and ticks pulse from the cut to the monitor (or "music.grooveFrom")
 until the end card. On top of that bed, a riser swells into a low boom on every cut, a glitch crackle lands on
@@ -457,7 +458,8 @@ def mux(mix_wav: Path) -> None:
 
 
 story = json.loads(story_path.read_text(encoding="utf-8"))
-checks = json.loads(run(["node", str(EPISODE / "preview.mjs"), str(EPISODE / story["html"]), "--checks"]))
+# A video rendered outside the page tools (e.g. dca-race) carries the same scenes and report inline as "checks".
+checks = story.get("checks") or json.loads(run(["node", str(EPISODE / "preview.mjs"), str(EPISODE / story["html"]), "--checks"]))
 scenes = checks["scenes"]
 total = samples(checks["report"]["frames"])
 lines = [] if voice_dir == Path("-") else place(story.get("voice") or story["subs"], total)

@@ -1,0 +1,262 @@
+{
+  "note": "The week 2 result video, for the Bitcoin and Nasdaq Composite calls of 9-13 November 2026. `result` holds each market's two prices: Bitcoin's Coinbase open at 00:00 UTC Monday and its close at 23:59:59 UTC Friday; the Nasdaq Composite's official closes on Friday 6 and Friday 13 November. Each HIT and MISS, the scores, the percentages and the tally come from `result` and the calls, and his voice lines are checked against them, so a different price stops the build until the lines are rewritten. Frame 0 is the thumbnail: how many AIs got both, both moves, and the four logos stamped with their scores, both calls as triangles under each name. Then the Bitcoin calls under the logos; Friday's close: the week's 4h candles sweep in and the camera punches in on the figures. Then the Nasdaq calls, and its close the same way, from the daily candles. Then one card at a time, both calls stamped HIT or MISS and a jab under it; then the hero's own words are marked, and the tally against a coin. No disclaimer in the frame: it goes in the post text (CLAUDE.md rule 4). result-duo-story.js plays it; each card beat's `stamps` and `jab.at` count from its start, the verdict beat's `said` and the scored beat's `reveal` (when \"A coin averages\" and \"One week proves nothing.\" start in his take) from their own. The timeline is the first cut's, 1.1 times faster, to match the takes in episode/out/voice/result-duo-2026-11-14-fast (atempo 1.1).",
+  "sources": [
+    {
+      "what": "BTC-USD 4h candles, Sunday 8 Nov 04:00 UTC to the one at 20:00 UTC on Friday 13 Nov; Monday's open $74,756.52 at 00:00 UTC",
+      "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles"
+    },
+    {
+      "what": "Bitcoin end price $68,236.54: the close of the 4h candle at 20:00 UTC on Friday 13 Nov, the same as the 1-minute candle at 23:59 UTC",
+      "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles"
+    },
+    {
+      "what": "Nasdaq Composite official closes: 24,579.42 on Friday 6 Nov and 25,136.27 on Friday 13 Nov",
+      "url": "https://fred.stlouisfed.org/series/NASDAQCOM"
+    },
+    {
+      "what": "Nasdaq Composite daily candles for the chart (Yahoo Finance ^IXIC, rounded to 2 dp; its 6 Nov close reads 24,579.43)",
+      "url": "assets/data/nasdaq-daily-2026-11-13.json"
+    },
+    {
+      "what": "The calls and their confidences, P0005-P0012, and their checks",
+      "url": "data/ledger.json"
+    },
+    {
+      "what": "Claude's Nasdaq answer, line 39, word for word",
+      "url": "data/answers/nasdaq-2026-11-09/claude.md"
+    },
+    {
+      "what": "ChatGPT's Nasdaq answer: UP on line 2, revised to DOWN on line 30",
+      "url": "data/answers/nasdaq-2026-11-09/chatgpt.md"
+    }
+  ],
+  "title": "Grandpa week 2 result episode, Bitcoin and Nasdaq",
+  "html": "result-duo.html",
+  "monitor": "monitor-result-duo.svg",
+  "ideas": "ideas-2026-11-14-result.json",
+  "board": false,
+  "hookFigure": true,
+  "scripts": [
+    "result-duo-story.js"
+  ],
+  "charts": [
+    {
+      "id": "btc",
+      "file": "../../../data/btc-usd-4h.json",
+      "last": 35,
+      "until": "2026-11-13T20:00:00.000Z"
+    }
+  ],
+  "embed": {
+    "nasdaq": "nasdaq-daily-2026-11-13.json"
+  },
+  "result": {
+    "btc": {
+      "start": 74756.52,
+      "end": 68236.54,
+      "at": "2026-11-13T23:59:59.000Z"
+    },
+    "nasdaq": {
+      "start": 24579.42,
+      "end": 25136.27,
+      "at": "2026-11-13T21:00:00.000Z"
+    }
+  },
+  "hookFrames": 431,
+  "monitorFrames": 787,
+  "endFrames": 65,
+  "music": {
+    "bpm": 88,
+    "grooveFrom": 0,
+    "chords": {
+      "hook": "Dm",
+      "btc": "F",
+      "btcclose": "Dm",
+      "nasdaq": "Bb",
+      "ndqclose": "F",
+      "chatgpt": "A",
+      "gemini": "Bb",
+      "grok": "F",
+      "claude": "Dm",
+      "verdict": "A",
+      "scored": "Dm",
+      "end": "F"
+    },
+    "busy": [
+      "chatgpt",
+      "gemini",
+      "grok",
+      "claude"
+    ],
+    "hits": [
+      203,
+      350,
+      1061
+    ],
+    "rests": [
+      [
+        917,
+        1061
+      ]
+    ]
+  },
+  "beats": [
+    {
+      "id": "btc",
+      "start": -402
+    },
+    {
+      "id": "btcclose",
+      "start": -277
+    },
+    {
+      "id": "nasdaq",
+      "start": -177
+    },
+    {
+      "id": "ndqclose",
+      "start": -106
+    },
+    {
+      "id": "chatgpt",
+      "start": 0,
+      "stamps": [
+        36,
+        49
+      ],
+      "jab": {
+        "at": 70,
+        "text": "Said UP first. Then DOWN."
+      }
+    },
+    {
+      "id": "gemini",
+      "start": 134,
+      "stamps": [
+        18,
+        31
+      ],
+      "jab": {
+        "at": 46,
+        "text": "Bounce on both. Got one."
+      }
+    },
+    {
+      "id": "grok",
+      "start": 230,
+      "stamps": [
+        23,
+        35
+      ],
+      "jab": {
+        "at": 58,
+        "text": "DOWN on both. Stocks rose."
+      }
+    },
+    {
+      "id": "claude",
+      "start": 371,
+      "stamps": [
+        23,
+        35
+      ],
+      "jab": {
+        "at": 60,
+        "text": "The only split call."
+      }
+    },
+    {
+      "id": "verdict",
+      "start": 476,
+      "said": 31,
+      "hero": "Claude",
+      "lead": "Why split them?",
+      "words": "stock indexes tend to partly reverse their weekly moves"
+    },
+    {
+      "id": "scored",
+      "start": 646,
+      "reveal": [
+        38,
+        83
+      ]
+    }
+  ],
+  "end": {
+    "ask": "New calls Sunday. Who's right?",
+    "reply": "Reply with your pick",
+    "lead": "",
+    "ledger": "Every call is logged first: repka-lab.github.io/ledger.html"
+  },
+  "voice": [
+    {
+      "text": "Bitcoin: 3 AIs said DOWN. Gemini said UP.",
+      "say": "Bitcoin. Three A.I.s said down. Gemini said up.",
+      "from": 13,
+      "to": 134
+    },
+    {
+      "text": "Friday's close: Bitcoin down 8.7%.",
+      "say": "Friday's close. Bitcoin down eight point seven percent.",
+      "from": 138,
+      "to": 234
+    },
+    {
+      "text": "Nasdaq: 2 said UP. 2 said DOWN.",
+      "say": "Nasdaq. Two said up. Two said down.",
+      "from": 238,
+      "to": 305
+    },
+    {
+      "text": "Friday's close: Nasdaq up 2.3%.",
+      "say": "Friday's close. Nasdaq up two point three percent.",
+      "from": 309,
+      "to": 410
+    },
+    {
+      "text": "ChatGPT: 1 of 2. Said UP first. Then DOWN.",
+      "say": "ChatGPT: one of two. Said up first. Then down.",
+      "from": 415,
+      "to": 545
+    },
+    {
+      "text": "Gemini: 1 of 2. Bounce on both. Got one.",
+      "say": "Gemini: one of two. Bounce on both. Got one.",
+      "from": 549,
+      "to": 641
+    },
+    {
+      "text": "Grok Bot: 1 of 2. DOWN on both. Stocks rose.",
+      "say": "Grok Bot: one of two. Down on both. Stocks rose.",
+      "from": 645,
+      "to": 782
+    },
+    {
+      "text": "Claude: 2 of 2. The only split call.",
+      "say": "Claude: two of two. The only split call.",
+      "from": 786,
+      "to": 886
+    },
+    {
+      "text": "Why split them?",
+      "from": 891,
+      "to": 917
+    },
+    {
+      "text": "Unlike crypto, stock indexes tend to partly reverse their weekly moves.",
+      "from": 922,
+      "to": 1056
+    },
+    {
+      "text": "5 of 8 hit. A coin averages 4. One week proves nothing.",
+      "say": "Five of eight hit. A coin averages four. One week proves nothing.",
+      "from": 1061,
+      "to": 1185
+    },
+    {
+      "text": "New calls Sunday. Who's right?",
+      "from": 1193,
+      "to": 1255
+    }
+  ]
+}

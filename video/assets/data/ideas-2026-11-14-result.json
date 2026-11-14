@@ -1,0 +1,30 @@
+{
+  "note": "The week of 9-13 November 2026: each model's Bitcoin call (data/ledger.json P0005-P0008, as in ideas-2026-11-09.json) and Nasdaq Composite call (P0009-P0012, as in ideas-nasdaq-2026-11-09.json), with their confidences. Only the hero of the verdict carries a reason: a sentence from its Nasdaq answer, word for word (data/answers/nasdaq-2026-11-09/claude.md, line 39).",
+  "ideas": [
+    {
+      "model": "ChatGPT",
+      "name": "ChatGPT",
+      "btc": { "call": "down", "confidence": 65 },
+      "nasdaq": { "call": "down", "confidence": 58 }
+    },
+    {
+      "model": "Claude",
+      "name": "Claude",
+      "btc": { "call": "down", "confidence": 55 },
+      "nasdaq": { "call": "up", "confidence": 53 },
+      "reason": "Unlike crypto, stock indexes tend to partly reverse their weekly moves rather than extend them."
+    },
+    {
+      "model": "Gemini",
+      "name": "Gemini",
+      "btc": { "call": "up", "confidence": 57 },
+      "nasdaq": { "call": "up", "confidence": 62 }
+    },
+    {
+      "model": "Grok",
+      "name": "Grok Bot",
+      "btc": { "call": "down", "confidence": 56 },
+      "nasdaq": { "call": "down", "confidence": 55 }
+    }
+  ]
+}

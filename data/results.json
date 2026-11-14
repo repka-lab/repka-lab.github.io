@@ -1,42 +1,42 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T10:44:12.148Z",
+  "updated_at": "2026-11-14T10:21:05.127Z",
   "models": {
     "chatgpt": {
-      "predictions": 1,
-      "verified": 1,
+      "predictions": 3,
+      "verified": 3,
       "pending": 0,
-      "hits": 1,
-      "misses": 0,
-      "hit_rate": 1,
-      "avg_confidence": 62
+      "hits": 2,
+      "misses": 1,
+      "hit_rate": 0.6667,
+      "avg_confidence": 61.6667
     },
     "claude": {
-      "predictions": 1,
-      "verified": 1,
+      "predictions": 3,
+      "verified": 3,
       "pending": 0,
-      "hits": 1,
+      "hits": 3,
       "misses": 0,
       "hit_rate": 1,
       "avg_confidence": 54
     },
     "gemini": {
-      "predictions": 1,
-      "verified": 1,
+      "predictions": 3,
+      "verified": 3,
       "pending": 0,
-      "hits": 1,
-      "misses": 0,
-      "hit_rate": 1,
-      "avg_confidence": 58
+      "hits": 2,
+      "misses": 1,
+      "hit_rate": 0.6667,
+      "avg_confidence": 59
     },
     "grok": {
-      "predictions": 1,
-      "verified": 1,
+      "predictions": 3,
+      "verified": 3,
       "pending": 0,
-      "hits": 0,
-      "misses": 1,
-      "hit_rate": 0,
-      "avg_confidence": 52
+      "hits": 1,
+      "misses": 2,
+      "hit_rate": 0.3333,
+      "avg_confidence": 54.3333
     }
   }
 }
