@@ -60,7 +60,7 @@ export function renderLedgerTable(ledger: Ledger): string {
 
   return `<div class="table-wrap">
   <table class="ledger">
-    <thead><tr><th scope="col">ID</th><th scope="col">Recorded</th><th scope="col">Model</th><th scope="col">BTC call</th><th scope="col" class="num">Confidence</th><th scope="col">Check date</th><th scope="col">Result</th><th scope="col">Details</th></tr></thead>
+    <thead><tr><th scope="col">ID</th><th scope="col">Recorded</th><th scope="col">Model</th><th scope="col">BTC call</th><th scope="col" class="num">Confidence</th><th scope="col">Check date</th><th scope="col">Result</th></tr></thead>
     <tbody>
       ${rows.join('\n      ')}
     </tbody>
@@ -68,18 +68,23 @@ export function renderLedgerTable(ledger: Ledger): string {
 </div>`;
 }
 
+const COLUMNS = 7;
+
+// Each call is two rows: the facts, then its reasoning and prices across the full width,
+// so long text wraps on the page instead of widening the table.
 function ledgerRow(p: Prediction, verdict: Verification | undefined): string {
+  const name = MODEL_NAMES[p.model];
+  const version = p.model_version.trim().toLowerCase() === name.toLowerCase() ? '' : `<br><small>${escapeHtml(p.model_version)}</small>`;
   const cells = [
     `<th scope="row">${p.id}</th>`,
     `<td>${formatUtc(p.date)}</td>`,
-    `<td>${MODEL_NAMES[p.model]}<br><small>${escapeHtml(p.model_version)}</small></td>`,
+    `<td>${name}${version}</td>`,
     `<td>${DIRECTION_NAMES[p.direction]}</td>`,
     `<td class="num">${p.confidence}%</td>`,
     `<td>${formatUtc(p.verify_date)}</td>`,
     `<td>${resultCell(verdict)}</td>`,
-    `<td>${detailsCell(p, verdict)}</td>`,
   ];
-  return `<tr>${cells.join('')}</tr>`;
+  return `<tr class="call">${cells.join('')}</tr><tr class="more"><td colspan="${COLUMNS}">${detailsCell(p, verdict)}</td></tr>`;
 }
 
 // ✓ Hit, ✗ Miss or Pending: a sign and a word, never color alone.
@@ -98,9 +103,38 @@ function resultCell(verdict: Verification | undefined): string {
   return `${resultLabel(verdict)}<br><small>${DIRECTION_NAMES[verdict.outcome]}, ${formatChange(verdict.change_pct)}</small>`;
 }
 
+// The model's answer is untrusted text. It is escaped first; then only bold, inline code, http(s) links
+// and bullet lists are turned into markup. Every other line keeps its own line.
+export function renderReasoning(text: string): string {
+  const BULLET = /^\s*[-*•]\s+/;
+  const blocks = text.split(/\n\s*\n/).map((block) => block.split('\n').map((line) => line.trim()).filter(Boolean));
+  const html: string[] = [];
+  for (const lines of blocks) {
+    let i = 0;
+    while (i < lines.length) {
+      const bullets = BULLET.test(lines[i] ?? '');
+      const run: string[] = [];
+      while (i < lines.length && BULLET.test(lines[i] ?? '') === bullets) run.push(lines[i++] ?? '');
+      html.push(
+        bullets
+          ? `<ul>${run.map((line) => `<li>${inline(line.replace(BULLET, ''))}</li>`).join('')}</ul>`
+          : `<p>${run.map(inline).join('<br>')}</p>`,
+      );
+    }
+  }
+  return html.join('');
+}
+
+function inline(text: string): string {
+  return escapeHtml(text)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" rel="nofollow noopener noreferrer">$1</a>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+
 function detailsCell(p: Prediction, verdict: Verification | undefined): string {
   const facts = [
-    `<dt>Reasoning</dt><dd>${escapeHtml(p.reasoning)}</dd>`,
+    `<dt>Reasoning</dt><dd class="reasoning">${renderReasoning(p.reasoning)}</dd>`,
     `<dt>Prompt hash</dt><dd><code>${p.prompt_hash}</code></dd>`,
   ];
   const prices = verdict
@@ -109,5 +143,6 @@ function detailsCell(p: Prediction, verdict: Verification | undefined): string {
         `<dt>Checked</dt><dd>${formatUtc(verdict.verified_at)}</dd>`,
       ]
     : [];
-  return `<details><summary>Show</summary><dl>${[...facts, ...prices].join('')}</dl></details>`;
+  const label = verdict ? 'Reasoning, prices and prompt hash' : 'Reasoning and prompt hash';
+  return `<details><summary>${label} · ${p.id}</summary><dl>${[...facts, ...prices].join('')}</dl></details>`;
 }

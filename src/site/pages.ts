@@ -93,11 +93,11 @@ export function renderLedgerPage(ledger: Ledger): string {
   <ul class="rules">
     <li><strong>Ledger first.</strong> A call is written here before any video or post about it goes out.</li>
     <li><strong>Append-only.</strong> Entries are never edited or deleted. A check is added as a new entry next to its call, and misses stay.</li>
-    <li><strong>What a call holds.</strong> The model and its exact version, the direction (higher or lower), a confidence from 0 to 100%, the check date and the model&rsquo;s own reasoning.</li>
+    <li><strong>What a call holds.</strong> The model, the direction (higher or lower), a confidence from 0 to 100%, the check date and the model&rsquo;s own reasoning.</li>
     <li><strong>Higher or lower.</strong> The BTC price at the end of the week is compared with the price at the start. Higher means the end price is above the start price; anything else, an unchanged price included, counts as lower.</li>
     <li><strong>Prompt hash.</strong> The SHA-256 hash of the exact prompt text the model received. Anyone holding the prompt can recompute it, so the prompt cannot be quietly changed later.</li>
     <li><strong>Times</strong> are in UTC.</li>
-    <li><strong>Still open.</strong> The exact start and end times of the week in UTC, and which public BTC price source is used for the check. Both are written here before the first call is recorded.</li>
+    <li><strong>The week.</strong> Calls are recorded before Monday 00:00 UTC. The start price is Coinbase BTC-USD at Monday 00:00 UTC, the end price is Coinbase BTC-USD at Friday 23:59:59 UTC. Every prompt states this window, so the prompt hash covers it too.</li>
   </ul>
   <p><a href="data/ledger.json">Download the raw ledger (JSON)</a></p>
 </section>

@@ -50,12 +50,12 @@ The scoreboard shows two numbers per model. Hit rate is the share of checked cal
 
 Average confidence is how sure the model said it was on those same calls. A model that says 80% and is right half the time is overconfident. The gap between the two numbers is part of what this experiment measures.
 
-## Still open
+## The week
 
-Two things are not settled yet. Both will be written here before the first call goes into the ledger:
+- **The times:** calls are recorded before Monday 00:00 UTC. The week runs from Monday 00:00 UTC to Friday 23:59:59 UTC.
+- **The price source:** Coinbase BTC-USD sets both the start and the end price.
 
-- **The exact times:** when the week starts and ends, in UTC.
-- **The price source:** which public BTC price feed sets the start and end prices.
+Every prompt states this window, so the prompt hash covers it.
 
 ---
 

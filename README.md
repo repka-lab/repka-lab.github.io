@@ -44,12 +44,13 @@ npm run site      # rebuild docs/ from the ledger and the articles
 
 Node 24 or newer.
 
-## Still open
+## The week
 
-- The exact start and end times of the week in UTC.
-- Which public BTC price source is used for the check.
+- Calls are recorded before Monday 00:00 UTC.
+- Start price: Coinbase BTC-USD at Monday 00:00 UTC. End price: Coinbase BTC-USD at Friday 23:59:59 UTC.
+- Higher means the end price is strictly above the start price; anything else, an unchanged price included, counts as lower.
 
-Both will be fixed here before the first call is recorded.
+Every prompt states this window, so the prompt hash covers it.
 
 ## About the host
 

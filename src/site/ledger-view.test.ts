@@ -2,13 +2,16 @@ import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 
 import { emptyLedger } from '../ledger.ts';
-import { formatChange, formatUtc, renderLedgerTable, renderScoreboard } from './ledger-view.ts';
+import { formatChange, formatUtc, renderLedgerTable, renderReasoning, renderScoreboard } from './ledger-view.ts';
 import { sampleLedger } from './test-fixtures.ts';
 
+// A row and, in the ledger, the details row that follows it.
 function rowOf(html: string, id: string): string {
-  const row = html.split('<tr').find((part) => part.includes(`>${id}<`));
-  assert.ok(row, `no row for ${id}`);
-  return row;
+  const parts = html.split('<tr');
+  const at = parts.findIndex((part) => part.includes(`>${id}<`));
+  assert.ok(at >= 0, `no row for ${id}`);
+  const next = parts[at + 1] ?? '';
+  return next.startsWith(' class="more"') ? `${parts[at]}<tr${next}` : (parts[at] ?? '');
 }
 
 describe('formatUtc', () => {
@@ -94,5 +97,41 @@ describe('renderLedgerTable', () => {
 
   test('shows the full prompt hash', () => {
     assert.match(rowOf(renderLedgerTable(sampleLedger()), 'P0001'), new RegExp('a'.repeat(64)));
+  });
+
+  test('puts the details on their own full-width row', () => {
+    const row = rowOf(renderLedgerTable(sampleLedger()), 'P0001');
+
+    assert.match(row, /<tr class="more"><td colspan="7"><details>/);
+  });
+
+  test('shows the model version only when it differs from the name', () => {
+    const ledger = sampleLedger();
+    const named = { ...ledger, predictions: ledger.predictions.map((p) => ({ ...p, model_version: p.model === 'grok' ? 'Grok Bot' : p.model_version })) };
+
+    assert.match(rowOf(renderLedgerTable(ledger), 'P0001'), /<small>claude-test-1<\/small>/);
+    assert.doesNotMatch(rowOf(renderLedgerTable(named), 'P0002'), /Grok Bot<br>/);
+  });
+});
+
+describe('renderReasoning', () => {
+  test('turns bold, code, links and bullet lists into markup', () => {
+    const html = renderReasoning('**DOWN** at `55%`.\n\n- one [source](https://example.com/a)\n- two');
+
+    assert.equal(
+      html,
+      '<p><strong>DOWN</strong> at <code>55%</code>.</p><ul><li>one <a href="https://example.com/a" rel="nofollow noopener noreferrer">source</a></li><li>two</li></ul>',
+    );
+  });
+
+  test('keeps single line breaks inside a paragraph', () => {
+    assert.equal(renderReasoning('first\nsecond'), '<p>first<br>second</p>');
+  });
+
+  test('escapes raw HTML and links only http(s)', () => {
+    const html = renderReasoning('<img src=x onerror=alert(1)> [x](javascript:alert(1))');
+
+    assert.doesNotMatch(html, /<img|<a /);
+    assert.match(html, /&lt;img/);
   });
 });
